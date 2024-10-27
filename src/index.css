@@ -47,7 +47,7 @@
 }
 
 .chat-bubble-user {
-  @apply bg-primary text-primary-foreground ml-auto;
+  @apply bg-primary text-white ml-auto;
 }
 
 .chat-bubble-ai {
