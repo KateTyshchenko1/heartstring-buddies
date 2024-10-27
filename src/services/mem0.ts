@@ -6,8 +6,7 @@ const client = new MemoryClient(API_KEY);
 export const saveToMem0 = async (messages: any[], userId: string) => {
   try {
     const response = await client.add(messages, { 
-      user_id: userId, 
-      output_format: "v1.1" 
+      user_id: userId
     });
     return response;
   } catch (error) {
@@ -19,8 +18,7 @@ export const saveToMem0 = async (messages: any[], userId: string) => {
 export const saveAgentMemory = async (messages: any[]) => {
   try {
     const response = await client.add(messages, { 
-      agent_id: "ai-companion", 
-      output_format: "v1.1" 
+      agent_id: "ai-companion"
     });
     return response;
   } catch (error) {
