@@ -20,7 +20,7 @@ export const generateResponse = async (message: string, context: string = '') =>
             content: message
           }
         ],
-        model: 'xai-chat-v1',
+        model: 'x-1-latest',
         max_tokens: 500,
       }),
     });
