@@ -20,13 +20,14 @@ export const generateResponse = async (message: string, context: string = '') =>
             content: message
           }
         ],
-        model: 'x-1-latest',
+        model: 'xai-chat-v1',
         max_tokens: 500,
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to generate response');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to generate response');
     }
 
     const data = await response.json();
