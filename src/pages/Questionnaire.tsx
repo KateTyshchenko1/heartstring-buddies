@@ -23,7 +23,8 @@ const Questionnaire = () => {
   const navigate = useNavigate();
 
   const handleAnswer = async (answer: string) => {
-    const newAnswers = [...answers, answer];
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
     try {
@@ -56,7 +57,6 @@ const Questionnaire = () => {
           current_goals: []
         };
 
-        // Store the context in localStorage for now
         localStorage.setItem('userContext', JSON.stringify(userContext));
         
         toast.success("Thank you for sharing! Your AI companion is ready.");
@@ -66,6 +66,53 @@ const Questionnaire = () => {
       }
     } catch (error) {
       toast.error("There was an error saving your response. Please try again.");
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const handleSkip = () => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = "";
+    setAnswers(newAnswers);
+    
+    if (currentQuestion === questions.length - 1) {
+      const userContext = {
+        name: newAnswers[0] || "User",
+        questionnaire_responses: {
+          ideal_future: newAnswers[1],
+          perfect_day: newAnswers[2],
+          meaningful_compliment: newAnswers[3],
+          stress_relief: newAnswers[4],
+          learning_desires: newAnswers[5],
+          dinner_guest: newAnswers[6],
+          resonant_media: newAnswers[7],
+          childhood_memory: newAnswers[8],
+          impactful_gesture: newAnswers[9]
+        },
+        soulmate_name: newAnswers[10],
+        communication_style: {
+          formality_level: "casual",
+          emoji_usage: "moderate",
+          message_length: "medium",
+          response_speed: "quick",
+          vulnerability: "mixed",
+          love_language: "words"
+        },
+        relationship_stage: "initial",
+        key_memories: [],
+        inside_jokes: [],
+        current_goals: []
+      };
+      localStorage.setItem('userContext', JSON.stringify(userContext));
+      toast.success("Thank you for sharing! Your AI companion is ready.");
+      navigate("/chat");
+    } else {
+      setCurrentQuestion(currentQuestion + 1);
     }
   };
 
@@ -89,6 +136,9 @@ const Questionnaire = () => {
         <Question
           question={questions[currentQuestion]}
           onAnswer={handleAnswer}
+          onBack={handleBack}
+          onSkip={handleSkip}
+          isFirstQuestion={currentQuestion === 0}
         />
       </div>
     </div>

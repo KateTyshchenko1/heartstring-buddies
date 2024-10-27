@@ -51,7 +51,7 @@ const Index = () => {
               Create Your Soulmate
             </Button>
             <span className="text-sm text-gray-500">
-              5-minute personality match • Free to start
+              Free to start (for now)
             </span>
           </div>
         </motion.div>

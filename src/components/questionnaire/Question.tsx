@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 interface QuestionProps {
   question: string;
   onAnswer: (answer: string) => void;
+  onBack: () => void;
+  onSkip: () => void;
+  isFirstQuestion: boolean;
 }
 
-const Question = ({ question, onAnswer }: QuestionProps) => {
+const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion }: QuestionProps) => {
   const [answer, setAnswer] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,15 +29,34 @@ const Question = ({ question, onAnswer }: QuestionProps) => {
           onChange={(e) => setAnswer(e.target.value)}
           className="w-full p-4 rounded-lg border border-gray-200 h-32 resize-none
                      focus:ring-2 focus:ring-primary focus:border-transparent"
-          placeholder="Share your thoughts..."
         />
-        <button
-          type="submit"
-          className="primary-button mt-4 w-full"
-          disabled={!answer.trim()}
-        >
-          Continue
-        </button>
+        <div className="flex gap-3 mt-4">
+          {!isFirstQuestion && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBack}
+              className="flex-1"
+            >
+              Back
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onSkip}
+            className="flex-1"
+          >
+            Skip
+          </Button>
+          <Button
+            type="submit"
+            className="flex-1"
+            disabled={!answer.trim()}
+          >
+            Continue
+          </Button>
+        </div>
       </form>
     </div>
   );
