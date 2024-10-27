@@ -20,7 +20,8 @@ export const generateResponse = async (message: string, context: string = '') =>
             content: message
           }
         ],
-        model: 'x-1-latest',
+        model: 'grok-beta',
+        temperature: 0.7,
         max_tokens: 500,
       }),
     });
