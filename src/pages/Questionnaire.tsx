@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import { toast } from "sonner";
+import { saveToMem0, saveAgentMemory } from "@/services/mem0";
 
 const questions = [
   "When you daydream about your ideal future, what does that look like?",
@@ -17,15 +18,38 @@ const questions = [
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const handleAnswer = (answer: string) => {
-    // In a real app, we'd save the answer here
-    if (currentQuestion === questions.length - 1) {
-      toast.success("Thank you for sharing! Your AI companion is ready.");
-      navigate("/chat");
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
+  const handleAnswer = async (answer: string) => {
+    const newAnswers = [...answers, answer];
+    setAnswers(newAnswers);
+
+    try {
+      // Save the Q&A to Mem0
+      const messages = [
+        { role: "assistant", content: questions[currentQuestion] },
+        { role: "user", content: answer }
+      ];
+      
+      // For demo purposes, using a temporary userId. In production, use actual user authentication
+      await saveToMem0(messages, "temp-user-id");
+
+      // Save agent context
+      await saveAgentMemory([
+        { role: "system", content: "You are an empathetic AI companion." },
+        { role: "assistant", content: `I learned that for question "${questions[currentQuestion]}", the user answered: ${answer}` }
+      ]);
+
+      if (currentQuestion === questions.length - 1) {
+        toast.success("Thank you for sharing! Your AI companion is ready.");
+        navigate("/chat");
+      } else {
+        setCurrentQuestion(currentQuestion + 1);
+      }
+    } catch (error) {
+      toast.error("There was an error saving your response. Please try again.");
+      console.error(error);
     }
   };
 
