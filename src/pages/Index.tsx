@@ -92,8 +92,8 @@ const Index = () => {
               className="relative group"
             >
               <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50 h-full flex flex-col items-center text-center">
-                <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-primary-dark/10 to-secondary-dark/10 group-hover:scale-110 transition-transform duration-300">
-                  <div className="text-primary-dark group-hover:text-secondary-dark transition-colors duration-300">
+                <div className="mb-4 p-3 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+                  <div className="text-primary">
                     {feature.icon}
                   </div>
                 </div>
