@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Brain, Clock, Memory } from "lucide-react";
+import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Brain, Clock, Microchip } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/shared/Logo";
@@ -104,7 +104,7 @@ const Index = () => {
               description: "Gentle encouragement to achieve your goals"
             },
             {
-              icon: <Memory className="w-6 h-6 text-primary" />,
+              icon: <Microchip className="w-6 h-6 text-primary" />,
               title: "Memory That Builds Over Time",
               description: "A connection that deepens with every conversation"
             }
