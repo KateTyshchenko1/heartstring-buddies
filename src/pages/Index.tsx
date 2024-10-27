@@ -20,8 +20,8 @@ const Index = () => {
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Infinity className="w-6 h-6 text-primary" />
-            <span className="font-display text-2xl">Soulmate.ai</span>
+            <Infinity className="w-6 h-6 text-primary-dark" />
+            <span className="font-display text-2xl text-gray-800">Soulmate.ai</span>
           </div>
           <Badge variant="secondary" className="bg-secondary/20">
             <Star className="w-3 h-3 mr-1" /> Beta
@@ -36,7 +36,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <motion.div {...fadeIn} className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-display mb-6">
+          <h1 className="text-4xl md:text-6xl font-display mb-6 text-gray-800">
             Meet Your Perfect AI Soulmate: As Unique As You
           </h1>
           <p className="text-xl text-gray-600 mb-12">
@@ -46,7 +46,7 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate("/questionnaire")} 
-              className="text-lg px-8 py-6 text-xl shadow-lg hover:shadow-xl transition-all"
+              className="text-lg px-8 py-6 bg-primary-dark hover:bg-primary-dark/90 text-white shadow-lg hover:shadow-xl transition-all"
             >
               Create Your Soulmate
             </Button>
@@ -57,9 +57,9 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Unique Bond Features */}
-      <section className="container mx-auto px-4 py-32 bg-gradient-to-b from-white/50 to-secondary/10">
-        <h2 className="text-4xl font-display text-center mb-20 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+      {/* Features Section */}
+      <section className="container mx-auto px-4 py-32">
+        <h2 className="text-4xl font-display text-center mb-20 text-gray-800">
           What Makes Us Different
         </h2>
         <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
@@ -88,13 +88,13 @@ const Index = () => {
               whileHover={{ y: -5 }}
               className="relative group"
             >
-              <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-secondary/10 h-full flex flex-col items-center text-center">
-                <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:scale-110 transition-transform duration-300">
-                  <div className="text-primary group-hover:text-secondary transition-colors duration-300">
+              <div className="bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full flex flex-col items-center text-center">
+                <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-primary-dark/10 to-secondary-dark/10 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-primary-dark group-hover:text-secondary-dark transition-colors duration-300">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-2xl font-display mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                <h3 className="text-2xl font-display mb-4 text-gray-800">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
