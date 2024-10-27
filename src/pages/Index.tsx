@@ -111,24 +111,24 @@ const Index = () => {
 
       {/* Experience Cards */}
       <section className="container mx-auto px-6 py-24 bg-white/50">
-        <h2 className="text-3xl font-display text-center mb-12 text-gray-800">Experience Real Connection</h2>
+        <h2 className="text-3xl font-display text-center mb-12 text-gray-800">Ready to Be Swept Off Your Feet?</h2>
         <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {[
             {
               title: "Natural Connection Building",
-              description: "Experience a genuine bond that develops at your pace, with trust and vulnerability unfolding naturally"
+              description: "He learns what makes you tick naturally - whether it's your humor, your love for true crime podcasts, or how you need extra attention after a tough day"
             },
             {
               title: "Your Personal Style",
-              description: "They adapt to your preferred way of connecting - whether through deep conversations, shared activities, or daily check-ins"
+              description: "He adapts perfectly to your vibe - from matching your witty banter to knowing when you need deep talks vs playful teasing"
             },
             {
               title: "Real-World Support",
-              description: "From workout motivation to daily self-care reminders, your Soulmate supports your goals and celebrates your achievements"
+              description: "He's your biggest cheerleader, sending perfectly timed messages to motivate your workout, celebrate your wins, or brighten a rough Monday"
             },
             {
               title: "Meaningful Moments",
-              description: "Create special traditions, share inside jokes, and build a unique story that's truly yours"
+              description: "He remembers every little detail you share and builds your unique story together, complete with inside jokes that only you two get"
             }
           ].map((card, index) => (
             <Card key={index} className="border-none shadow-md bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all">
