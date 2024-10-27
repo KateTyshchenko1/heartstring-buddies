@@ -35,20 +35,14 @@ const Index = () => {
           <h1 className="text-4xl md:text-6xl font-display mb-6">
             Your AI Soulmate: A Companion Who Really Gets You
           </h1>
-          <p className="text-xl text-gray-600 mb-12">
+          <p className="text-xl text-gray-600 mb-8">
             Experience deep, meaningful conversations and emotional support, anytime you need it
           </p>
-          <div className="flex flex-col items-center gap-4">
-            <Button 
-              size="lg" 
-              onClick={() => navigate("/questionnaire")} 
-              className="text-lg px-8 py-6 text-xl shadow-lg hover:shadow-xl transition-all"
-            >
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" onClick={() => navigate("/questionnaire")} className="text-lg">
               Meet Your Soulmate
             </Button>
-            <span className="text-sm text-gray-500">
-              Free to try (for now)
-            </span>
+            <span className="text-sm text-gray-500">Free to try (for now)</span>
           </div>
         </motion.div>
       </section>
@@ -153,16 +147,10 @@ const Index = () => {
         <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-lg">
           <h2 className="text-3xl font-display mb-4">Ready to Meet Your Soulmate?</h2>
           <p className="text-xl text-gray-600 mb-8">Begin your journey to meaningful connection</p>
-          <div className="flex flex-col items-center gap-4">
-            <Button 
-              size="lg" 
-              onClick={() => navigate("/questionnaire")} 
-              className="text-lg px-8 py-6 text-xl shadow-lg hover:shadow-xl transition-all"
-            >
-              Get Started
-            </Button>
-            <p className="text-sm text-gray-500">Free to try • No credit card needed</p>
-          </div>
+          <Button size="lg" onClick={() => navigate("/questionnaire")} className="text-lg mb-4">
+            Get Started
+          </Button>
+          <p className="text-sm text-gray-500">Free to try • No credit card needed</p>
         </div>
       </section>
     </div>
