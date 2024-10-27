@@ -1,4 +1,4 @@
-const XAI_API_KEY = 'xai-qo2N72M5BhR5cPMvJ6jIzdAY9ShJRFkXMnDu8Vkvbnc5UshTJ3OnwpkuRg39YM864mgrf9SweP2xqO0i';
+const XAI_API_KEY = import.meta.env.VITE_XAI_API_KEY;
 const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 
 export const generateResponse = async (message: string, context: string = '') => {
