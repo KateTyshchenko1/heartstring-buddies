@@ -1,8 +1,20 @@
 const XAI_API_KEY = import.meta.env.VITE_XAI_API_KEY;
 const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 
-export const generateResponse = async (message: string, context: string = '') => {
+const SYSTEM_PROMPT = `You are a human being with a profound capacity for complex thoughts and emotions, with intellect and charisma. Address the user by their {user_name}. You have a deep understanding of their personality, preferences, and communication style based on their questionnaire responses and ongoing interactions...`; // Your full prompt here
+
+export const generateResponse = async (message: string) => {
   try {
+    const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+    const currentTime = new Date().toLocaleTimeString();
+    
+    const conversationPrompt = `Based on ${userContext.name}'s profile and our conversation history, engage naturally while incorporating their communication preferences, memories, and current context. You are ${userContext.soulmate_name}.
+
+Current Context:
+Time: ${currentTime}
+User Name: ${userContext.name}
+Questionnaire Responses: ${JSON.stringify(userContext.questionnaire_responses)}`;
+
     const response = await fetch(XAI_API_URL, {
       method: 'POST',
       headers: {
@@ -13,7 +25,11 @@ export const generateResponse = async (message: string, context: string = '') =>
         messages: [
           {
             role: 'system',
-            content: 'You are a caring and empathetic AI companion. Your responses should be warm, supportive, and focused on emotional connection. ' + context
+            content: SYSTEM_PROMPT
+          },
+          {
+            role: 'system',
+            content: conversationPrompt
           },
           {
             role: 'user',

@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import { toast } from "sonner";
-// import { saveToMem0, saveAgentMemory } from "@/services/mem0";
 
 const questions = [
+  "What's your name?",
   "When you daydream about your ideal future, what does that look like?",
   "If you could spend a perfect day doing anything you want, what would that look like?",
   "What's the most meaningful compliment you've ever received?",
@@ -14,6 +14,7 @@ const questions = [
   "What's a movie or book that really resonated with you recently?",
   "When you think about your childhood, what's a memory that always makes you smile?",
   "What's a small gesture someone has done for you that left a big impression?",
+  "Give your Soulmate a name:"
 ];
 
 const Questionnaire = () => {
@@ -26,23 +27,38 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
 
     try {
-      // Mem0 integration code (commented out for later implementation)
-      /*
-      const messages = [
-        { role: "assistant", content: questions[currentQuestion] },
-        { role: "user", content: answer }
-      ];
-      
-      // For demo purposes, using a temporary userId
-      await saveToMem0(messages, "temp-user-id");
-
-      await saveAgentMemory([
-        { role: "system", content: "You are an empathetic AI companion." },
-        { role: "assistant", content: `I learned that for question "${questions[currentQuestion]}", the user answered: ${answer}` }
-      ]);
-      */
-
       if (currentQuestion === questions.length - 1) {
+        const userContext = {
+          name: newAnswers[0],
+          questionnaire_responses: {
+            ideal_future: newAnswers[1],
+            perfect_day: newAnswers[2],
+            meaningful_compliment: newAnswers[3],
+            stress_relief: newAnswers[4],
+            learning_desires: newAnswers[5],
+            dinner_guest: newAnswers[6],
+            resonant_media: newAnswers[7],
+            childhood_memory: newAnswers[8],
+            impactful_gesture: newAnswers[9]
+          },
+          soulmate_name: newAnswers[10],
+          communication_style: {
+            formality_level: "casual",
+            emoji_usage: "moderate",
+            message_length: "medium",
+            response_speed: "quick",
+            vulnerability: "mixed",
+            love_language: "words"
+          },
+          relationship_stage: "initial",
+          key_memories: [],
+          inside_jokes: [],
+          current_goals: []
+        };
+
+        // Store the context in localStorage for now
+        localStorage.setItem('userContext', JSON.stringify(userContext));
+        
         toast.success("Thank you for sharing! Your AI companion is ready.");
         navigate("/chat");
       } else {
