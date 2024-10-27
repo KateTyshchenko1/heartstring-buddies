@@ -1,4 +1,4 @@
-import { MemoryClient } from 'mem0ai';
+import MemoryClient from 'mem0ai';
 
 const API_KEY = 'm0-2Uqz8Gu1pN8L6UV5rxkqQ4nWcZrkGRE2a2JLWTfh';
 const client = new MemoryClient(API_KEY);
