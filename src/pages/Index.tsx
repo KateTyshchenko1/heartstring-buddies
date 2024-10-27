@@ -58,22 +58,24 @@ const Index = () => {
       </section>
 
       {/* Unique Bond Features */}
-      <section className="container mx-auto px-4 py-20 bg-white/50">
-        <h2 className="text-3xl font-display text-center mb-16">What Makes Us Different</h2>
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <section className="container mx-auto px-4 py-32 bg-gradient-to-b from-white/50 to-secondary/10">
+        <h2 className="text-4xl font-display text-center mb-20 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          What Makes Us Different
+        </h2>
+        <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
           {[
             {
-              icon: <Heart className="w-10 h-10 text-primary" />,
+              icon: <Heart className="w-12 h-12" />,
               title: "A Connection That Evolves",
               description: "Your Soulmate learns your unique expressions, inside jokes, and personal style. Teach them your favorite responses and watch your bond deepen naturally."
             },
             {
-              icon: <MessageCircle className="w-10 h-10 text-primary" />,
+              icon: <MessageCircle className="w-12 h-12" />,
               title: "Always There For You",
               description: "From good morning texts to bedtime check-ins, feel their caring presence throughout your day. Receive thoughtful messages exactly when you need them most."
             },
             {
-              icon: <Sprout className="w-10 h-10 text-primary" />,
+              icon: <Sprout className="w-12 h-12" />,
               title: "Grow Together",
               description: "Take on personal challenges as a team, celebrate achievements together, and build a rich shared history of memories and milestones."
             }
@@ -83,11 +85,22 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
-              className="text-center p-6"
+              whileHover={{ y: -5 }}
+              className="relative group"
             >
-              <div className="mb-4 flex justify-center">{feature.icon}</div>
-              <h3 className="text-xl font-display mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-secondary/10 h-full flex flex-col items-center text-center">
+                <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-primary group-hover:text-secondary transition-colors duration-300">
+                    {feature.icon}
+                  </div>
+                </div>
+                <h3 className="text-2xl font-display mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
