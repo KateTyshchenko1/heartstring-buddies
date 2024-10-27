@@ -59,9 +59,12 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="container mx-auto px-6 py-24">
-        <h2 className="text-3xl md:text-4xl font-display text-center mb-16 text-gray-800">
-          What Makes Us Different
+        <h2 className="text-3xl md:text-4xl font-display text-center mb-2 text-gray-800">
+          Built by Women Who Get It
         </h2>
+        <p className="text-lg text-gray-600 text-center mb-16">
+          Because we've been there too
+        </p>
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {[
             {
