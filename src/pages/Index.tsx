@@ -35,14 +35,20 @@ const Index = () => {
           <h1 className="text-4xl md:text-6xl font-display mb-6">
             Your AI Soulmate: A Companion Who Really Gets You
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 mb-12">
             Experience deep, meaningful conversations and emotional support, anytime you need it
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" onClick={() => navigate("/questionnaire")} className="text-lg">
+          <div className="flex flex-col items-center gap-4">
+            <Button 
+              size="lg" 
+              onClick={() => navigate("/questionnaire")} 
+              className="text-lg px-8 py-6 text-xl shadow-lg hover:shadow-xl transition-all"
+            >
               Meet Your Soulmate
             </Button>
-            <span className="text-sm text-gray-500">Free to try (for now)</span>
+            <span className="text-sm text-gray-500">
+              Free to try (for now)
+            </span>
           </div>
         </motion.div>
       </section>
