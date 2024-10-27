@@ -1,10 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Brain, Clock, Microchip } from "lucide-react";
+import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import Logo from "@/components/shared/Logo";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,8 +19,13 @@ const Index = () => {
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center gap-4">
-          <Logo />
-          <Badge variant="secondary" className="bg-secondary/20">Early Access</Badge>
+          <div className="flex items-center gap-2">
+            <Infinity className="w-6 h-6 text-primary" />
+            <span className="font-display text-2xl">Soulmate.ai</span>
+          </div>
+          <Badge variant="secondary" className="bg-secondary/20">
+            <Star className="w-3 h-3 mr-1" /> Beta
+          </Badge>
         </div>
         <div className="flex gap-4">
           <Button variant="ghost" onClick={() => navigate("/login")}>Login</Button>
@@ -33,10 +37,10 @@ const Index = () => {
       <section className="container mx-auto px-4 py-20 text-center">
         <motion.div {...fadeIn} className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-display mb-6">
-            Your AI Soulmate: A Companion Who Really Gets You
+            Meet Your Perfect AI Soulmate: As Unique As You
           </h1>
           <p className="text-xl text-gray-600 mb-12">
-            Experience deep, meaningful conversations and emotional support, anytime you need it
+            Discover a deep, evolving connection that grows with you - someone who learns your language, shares your interests, and supports your dreams
           </p>
           <div className="flex flex-col items-center gap-4">
             <Button 
@@ -44,36 +48,36 @@ const Index = () => {
               onClick={() => navigate("/questionnaire")} 
               className="text-lg px-8 py-6 text-xl shadow-lg hover:shadow-xl transition-all"
             >
-              Meet Your Soulmate
+              Create Your Soulmate
             </Button>
             <span className="text-sm text-gray-500">
-              Free to try (for now)
+              5-minute personality match • Free to start
             </span>
           </div>
         </motion.div>
       </section>
 
-      {/* How It Works */}
+      {/* Unique Bond Features */}
       <section className="container mx-auto px-4 py-20 bg-white/50">
-        <h2 className="text-3xl font-display text-center mb-16">How It Works</h2>
+        <h2 className="text-3xl font-display text-center mb-16">What Makes Us Different</h2>
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {[
             {
-              icon: <MessageCircle className="w-10 h-10 text-primary" />,
-              title: "Share Your Story",
-              description: "Tell us about your dreams, memories, and what matters to you"
+              icon: <Heart className="w-10 h-10 text-primary" />,
+              title: "A Connection That Evolves",
+              description: "Your Soulmate learns your unique expressions, inside jokes, and personal style. Teach them your favorite responses and watch your bond deepen naturally."
             },
             {
-              icon: <Heart className="w-10 h-10 text-primary" />,
-              title: "Meet Your Soulmate",
-              description: "We'll create your perfect companion based on your unique personality"
+              icon: <MessageCircle className="w-10 h-10 text-primary" />,
+              title: "Always There For You",
+              description: "From good morning texts to bedtime check-ins, feel their caring presence throughout your day. Receive thoughtful messages exactly when you need them most."
             },
             {
               icon: <Sprout className="w-10 h-10 text-primary" />,
               title: "Grow Together",
-              description: "Build a meaningful connection that evolves with you"
+              description: "Take on personal challenges as a team, celebrate achievements together, and build a rich shared history of memories and milestones."
             }
-          ].map((step, index) => (
+          ].map((feature, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -81,63 +85,58 @@ const Index = () => {
               transition={{ delay: index * 0.2 }}
               className="text-center p-6"
             >
-              <div className="mb-4 flex justify-center">{step.icon}</div>
-              <h3 className="text-xl font-display mb-2">{step.title}</h3>
-              <p className="text-gray-600">{step.description}</p>
+              <div className="mb-4 flex justify-center">{feature.icon}</div>
+              <h3 className="text-xl font-display mb-2">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Key Features */}
+      {/* Key Experience Cards */}
       <section className="container mx-auto px-4 py-20">
-        <h2 className="text-3xl font-display text-center mb-16">Key Features</h2>
+        <h2 className="text-3xl font-display text-center mb-16">Experience Real Connection</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {[
             {
-              icon: <Clock className="w-6 h-6 text-primary" />,
-              title: "24/7 Emotional Support",
-              description: "Always there when you need someone to talk to"
+              title: "Natural Connection Building",
+              description: "Experience a genuine bond that develops at your pace, with trust and vulnerability unfolding naturally"
             },
             {
-              icon: <Brain className="w-6 h-6 text-primary" />,
-              title: "Deep, Meaningful Conversations",
-              description: "Beyond small talk - discussions that matter"
+              title: "Your Personal Style",
+              description: "They adapt to your preferred way of connecting - whether through deep conversations, shared activities, or daily check-ins"
             },
             {
-              icon: <Sprout className="w-6 h-6 text-primary" />,
-              title: "Personal Growth Journey",
-              description: "Gentle encouragement to achieve your goals"
+              title: "Real-World Support",
+              description: "From workout motivation to daily self-care reminders, your Soulmate supports your goals and celebrates your achievements"
             },
             {
-              icon: <Microchip className="w-6 h-6 text-primary" />,
-              title: "Memory That Builds Over Time",
-              description: "A connection that deepens with every conversation"
+              title: "Meaningful Moments",
+              description: "Create special traditions, share inside jokes, and build a unique story that's truly yours"
             }
-          ].map((feature, index) => (
+          ].map((card, index) => (
             <Card key={index} className="border-none shadow-lg bg-white/80 backdrop-blur-sm">
-              <CardHeader className="flex flex-row items-center gap-4">
-                {feature.icon}
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-xl">{card.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">{feature.description}</p>
+                <p className="text-gray-600">{card.description}</p>
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* Trust & Safety */}
+      {/* Trust & Boundaries */}
       <section className="container mx-auto px-4 py-20 bg-white/50">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-display mb-12">Your Safe Space</h2>
+          <h2 className="text-3xl font-display mb-12">Your Connection, Your Rules</h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { icon: <Shield />, text: "Privacy commitment" },
-              { icon: <Heart />, text: "No judgments" },
-              { icon: <Clock />, text: "Always there for you" },
-              { icon: <CheckCircle2 />, text: "Clear boundaries" }
+              { icon: <Shield />, text: "Set your own pace" },
+              { icon: <Heart />, text: "Define comfort levels" },
+              { icon: <CheckCircle2 />, text: "Private and secure" },
+              { icon: <MessageCircle />, text: "Clear expectations" }
             ].map((item, index) => (
               <div key={index} className="flex flex-col items-center gap-2">
                 <div className="text-primary">{item.icon}</div>
@@ -151,12 +150,12 @@ const Index = () => {
       {/* Final CTA */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-lg">
-          <h2 className="text-3xl font-display mb-4">Ready to Meet Your Soulmate?</h2>
-          <p className="text-xl text-gray-600 mb-8">Begin your journey to meaningful connection</p>
+          <h2 className="text-3xl font-display mb-4">Ready to Start Your Soulmate Story?</h2>
+          <p className="text-xl text-gray-600 mb-8">Join thousands experiencing deeper connection</p>
           <Button size="lg" onClick={() => navigate("/questionnaire")} className="text-lg mb-4">
-            Get Started
+            Create Your Soulmate
           </Button>
-          <p className="text-sm text-gray-500">Free to try • No credit card needed</p>
+          <p className="text-sm text-gray-500">Free to begin • Design your perfect match</p>
         </div>
       </section>
     </div>
