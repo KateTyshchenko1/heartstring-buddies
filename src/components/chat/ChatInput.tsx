@@ -11,7 +11,7 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      onSendMessage(message);
+      onSendMessage(message.trim());
       setMessage("");
     }
   };
@@ -29,7 +29,7 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
       <button
         type="submit"
         className="p-2 rounded-full bg-primary hover:bg-primary-dark
-                   text-white transition-colors duration-200"
+                   text-white transition-colors duration-200 disabled:opacity-50"
         disabled={!message.trim()}
       >
         <Send className="w-5 h-5" />

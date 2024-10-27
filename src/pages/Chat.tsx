@@ -2,6 +2,8 @@ import { useState } from "react";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import Logo from "@/components/shared/Logo";
+import { generateResponse } from "@/services/xai";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -19,8 +21,9 @@ const Chat = () => {
       timestamp: new Date(),
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = async (text: string) => {
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -29,17 +32,24 @@ const Chat = () => {
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Get AI response
+      const response = await generateResponse(text);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "I understand how you feel. Would you like to tell me more about that?",
+        text: response,
         isUser: false,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
-    }, 1000);
+    } catch (error) {
+      toast.error("Failed to get response. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,6 +68,13 @@ const Chat = () => {
               timestamp={message.timestamp}
             />
           ))}
+          {isLoading && (
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className="animate-bounce">●</div>
+              <div className="animate-bounce delay-100">●</div>
+              <div className="animate-bounce delay-200">●</div>
+            </div>
+          )}
         </div>
         
         <div className="p-4 bg-white/80 backdrop-blur-sm border-t">
