@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const HeartAnimation = () => {
   return (
-    <div className="pointer-events-none fixed inset-0 flex items-center justify-center" style={{ top: '60%' }}>
+    <div className="pointer-events-none fixed inset-0 flex items-center justify-center" style={{ top: '50%' }}>
       <motion.div
         initial={{ 
           opacity: 1,
