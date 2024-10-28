@@ -2,7 +2,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import Logo from "@/components/shared/Logo";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -12,7 +11,6 @@ const Login = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
-        // Check if user has completed questionnaire
         const { data: profile } = await supabase
           .from('profiles')
           .select('questionnaire_completed')
@@ -55,6 +53,7 @@ const Login = () => {
             }
           }}
           providers={[]}
+          redirectTo={`${window.location.origin}/questionnaire`}
           theme="light"
         />
       </div>
