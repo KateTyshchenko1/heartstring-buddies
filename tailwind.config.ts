@@ -31,10 +31,10 @@ export default {
           dark: "#B91830",
         },
         secondary: {
-          DEFAULT: "#475569", // Softer slate color
+          DEFAULT: "#64748B", // Warmer slate blue
           foreground: "#FFFFFF",
-          soft: "#F1F5F9",
-          dark: "#334155",
+          soft: "#F8FAFC",
+          dark: "#475569",
         },
         accent: {
           DEFAULT: "#F8F3D4",
