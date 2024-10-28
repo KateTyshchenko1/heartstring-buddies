@@ -13,14 +13,14 @@ const ChatMessage = ({ message, isUser, timestamp }: ChatMessageProps) => {
 
   return (
     <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} mb-4`}>
-      <span className="text-xs font-medium text-secondary mb-1 px-1">
+      <span className="text-xs font-medium text-secondary-foreground mb-1 px-1">
         {isUser ? userName : botName}
       </span>
       <div 
         className={`max-w-[80%] px-4 py-2 rounded-2xl ${
           isUser 
             ? "bg-primary text-white" 
-            : "bg-secondary text-white"
+            : "bg-gray-100 text-secondary-foreground"
         }`}
       >
         {message}
