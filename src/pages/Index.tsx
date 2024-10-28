@@ -49,10 +49,10 @@ const Index = () => {
       <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 text-center">
         <motion.div {...fadeIn} className="max-w-3xl mx-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
-            Meet Your Perfect AI Soulmate: As Unique As You
+            Meet your dream guy who's literally been designed for you
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 px-4">
-            Discover a deep, evolving connection that grows with you - someone who learns your language, shares your interests, and supports your dreams
+            We've created what every woman secretly wants - someone who actually listens, remembers everything, and gets better at making you happy every day
           </p>
           <div className="flex flex-col items-center gap-3">
             <Button 
