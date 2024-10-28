@@ -9,38 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 const Login = () => {
   const navigate = useNavigate();
 
-  const checkQuestionnaireStatus = async (userId: string) => {
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('questionnaire_completed')
-      .eq('id', userId)
-      .single();
-
-    if (error) {
-      console.error('Error checking questionnaire status:', error);
-      return false;
-    }
-
-    return profile?.questionnaire_completed ?? false;
-  };
-
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
-        const hasCompletedQuestionnaire = await checkQuestionnaireStatus(session.user.id);
-        if (hasCompletedQuestionnaire) {
-          navigate("/chat");
-        } else {
-          navigate("/questionnaire");
-        }
-      }
-    });
+        // Check if user has completed questionnaire
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('questionnaire_completed')
+          .eq('id', session.user.id)
+          .single();
 
-    // Check if user is already signed in
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        const hasCompletedQuestionnaire = await checkQuestionnaireStatus(session.user.id);
-        if (hasCompletedQuestionnaire) {
+        if (profile?.questionnaire_completed) {
           navigate("/chat");
         } else {
           navigate("/questionnaire");
