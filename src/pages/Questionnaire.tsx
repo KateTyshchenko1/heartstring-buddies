@@ -1,4 +1,3 @@
-```tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
@@ -122,7 +121,7 @@ const Questionnaire = () => {
             <div
               className="bg-[#D91F3A] rounded-full h-1 transition-all duration-300"
               style={{
-                width: `${((currentQuestion + 1) / questions.length) * 100}%`,
+                width: `${((currentQuestion + 1) / questions.length) * 100}%`
               }}
             />
           </div>
@@ -145,4 +144,3 @@ const Questionnaire = () => {
 };
 
 export default Questionnaire;
-```
