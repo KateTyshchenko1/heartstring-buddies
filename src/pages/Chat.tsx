@@ -24,7 +24,6 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendMessage = async (text: string) => {
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       text,
@@ -35,7 +34,6 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
-      // Get AI response
       const response = await generateResponse(text);
       
       const aiMessage: Message = {
@@ -53,9 +51,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream via-primary/10 to-secondary/20">
+    <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/5">
       <div className="container mx-auto max-w-4xl h-screen flex flex-col">
-        <div className="p-4 border-b bg-white/80 backdrop-blur-sm">
+        <div className="p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100">
           <Logo />
         </div>
         
@@ -69,15 +67,15 @@ const Chat = () => {
             />
           ))}
           {isLoading && (
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <div className="animate-bounce">●</div>
-              <div className="animate-bounce delay-100">●</div>
-              <div className="animate-bounce delay-200">●</div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce" />
+              <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce delay-100" />
+              <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce delay-200" />
             </div>
           )}
         </div>
         
-        <div className="p-4 bg-white/80 backdrop-blur-sm border-t">
+        <div className="p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
           <ChatInput onSendMessage={handleSendMessage} />
         </div>
       </div>

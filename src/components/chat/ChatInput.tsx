@@ -24,15 +24,15 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message..."
-          className="w-full bg-transparent border-0 border-b-2 border-gray-200 
-                     focus:border-primary focus:ring-0 px-0 font-sans text-base
-                     placeholder:text-gray-400"
+          className="w-full bg-transparent border-0 border-b border-gray-200 
+                   focus:border-primary focus:ring-0 px-0 font-sans text-base
+                   placeholder:text-gray-400 outline-none"
         />
       </div>
       <button
         type="submit"
         className="p-2 rounded-full bg-primary hover:bg-primary-dark
-                   text-white transition-colors duration-200 disabled:opacity-50"
+                 text-white transition-colors duration-200 disabled:opacity-50"
         disabled={!message.trim()}
       >
         <Send className="w-5 h-5" />
