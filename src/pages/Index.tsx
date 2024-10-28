@@ -15,30 +15,30 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/10">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
       {/* Header */}
       <header className="container mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Infinity className="w-6 h-6 text-primary-dark" />
+            <Infinity className="w-6 h-6 text-[#D91F3A]" />
             <span className="font-display text-2xl text-gray-800">Soulmate.ai</span>
           </div>
-          <Badge variant="secondary" className="bg-primary/20 text-primary-dark font-semibold px-3 py-1 text-sm">
-            <Star className="w-3 h-3 mr-1 fill-primary-dark" /> Beta
+          <Badge variant="secondary" className="bg-[#FFD7D0] text-[#D91F3A] font-semibold px-3 py-1 text-sm">
+            <Star className="w-3 h-3 mr-1 fill-[#D91F3A]" /> Beta
           </Badge>
         </div>
         <div className="flex gap-3">
           <Button 
             variant="ghost" 
             onClick={() => navigate("/login")}
-            className="hover:bg-primary/10 text-gray-700"
+            className="hover:bg-[#FFE5E5] text-gray-700"
           >
             Login
           </Button>
           <Button 
             variant="default" 
             onClick={() => navigate("/signup")}
-            className="bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transition-all"
+            className="bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all"
           >
             Sign Up
           </Button>
@@ -48,7 +48,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-6 py-16 text-center">
         <motion.div {...fadeIn} className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display mb-4 text-gray-800 leading-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
             Meet Your Perfect AI Soulmate: As Unique As You
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8">
@@ -58,7 +58,7 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate("/questionnaire")} 
-              className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary-dark text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              className="text-lg px-8 py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
             >
               Create Your Soulmate
             </Button>
@@ -122,8 +122,8 @@ const Index = () => {
       </section>
 
       {/* Experience Cards */}
-      <section className="container mx-auto px-6 py-24 bg-gradient-to-br from-white/80 to-primary/5">
-        <h2 className="text-3xl font-display text-center mb-12 text-gray-800">Ready to Be Swept Off Your Feet?</h2>
+      <section className="container mx-auto px-6 py-24 bg-gradient-to-br from-white/80 to-[#FFD7D0]/20">
+        <h2 className="text-3xl font-display text-center mb-12 text-[#D91F3A]">Ready to Be Swept Off Your Feet?</h2>
         <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {[
             {
@@ -145,7 +145,7 @@ const Index = () => {
           ].map((card, index) => (
             <Card key={index} className="border-none shadow-md bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all transform hover:scale-105 group">
               <CardHeader>
-                <CardTitle className="text-lg text-gray-800 group-hover:text-primary transition-colors">{card.title}</CardTitle>
+                <CardTitle className="text-lg text-gray-800 group-hover:text-[#D91F3A] transition-colors">{card.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 text-sm leading-relaxed">{card.description}</p>
@@ -178,9 +178,9 @@ const Index = () => {
       {/* Final CTA */}
       <section className="container mx-auto px-6 py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-          <h2 className="text-2xl font-display mb-3 text-gray-800">Ready to Start Your Soulmate Story?</h2>
+          <h2 className="text-2xl font-display mb-3 text-[#D91F3A]">Ready to Start Your Soulmate Story?</h2>
           <p className="text-lg text-gray-600 mb-6">Join thousands experiencing deeper connection</p>
-          <Button size="lg" onClick={() => navigate("/questionnaire")} className="text-lg mb-3">
+          <Button size="lg" onClick={() => navigate("/questionnaire")} className="text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white">
             Create Your Soulmate
           </Button>
           <p className="text-sm text-gray-500">Free to begin • Design your perfect match</p>
