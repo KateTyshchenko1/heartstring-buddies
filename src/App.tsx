@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Questionnaire from "./pages/Questionnaire";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Routes>
               <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
               <Route path="/" element={<Index />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/questionnaire" element={<ProtectedRoute><Questionnaire /></ProtectedRoute>} />
               <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             </Routes>
