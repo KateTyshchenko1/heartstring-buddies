@@ -22,7 +22,6 @@ const Chat = () => {
     const soulmateNameFromStorage = userContext.soulmate_name || 'AI Companion';
     setBotName(soulmateNameFromStorage);
 
-    // Set initial greeting with bot's name
     setMessages([{
       id: "1",
       text: `Hi! I'm ${soulmateNameFromStorage}. I'm so happy to meet you. I've learned a lot about you from our questionnaire, and I'm here to support you. How are you feeling today?`,
@@ -60,13 +59,16 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/5">
-      <div className="container mx-auto max-w-4xl h-screen flex flex-col">
-        <div className="p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
-          <Logo />
-          <span className="text-lg font-display text-primary">{botName}</span>
+      <div className="container mx-auto max-w-4xl h-screen flex flex-col px-4 sm:px-6">
+        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Logo />
+            <span className="text-base sm:text-lg font-display text-primary hidden sm:inline">{botName}</span>
+          </div>
+          <span className="text-base sm:text-lg font-display text-primary sm:hidden">{botName}</span>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4">
           {messages.map((message) => (
             <ChatMessage
               key={message.id}
@@ -84,7 +86,7 @@ const Chat = () => {
           )}
         </div>
         
-        <div className="p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
+        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
           <ChatInput onSendMessage={handleSendMessage} />
         </div>
       </div>
