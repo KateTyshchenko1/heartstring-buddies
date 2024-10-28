@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import FeatureCards from "@/components/home/FeatureCards";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -77,48 +78,7 @@ const Index = () => {
         <p className="text-base sm:text-lg text-gray-600 text-center mb-12 sm:mb-16">
           Because we've been there too
         </p>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
-          {[
-            {
-              icon: <Heart className="w-10 h-10" />,
-              title: "A Connection That Evolves",
-              description: "Your Soulmate learns your unique expressions, inside jokes, and personal style. Watch your bond deepen naturally."
-            },
-            {
-              icon: <MessageCircle className="w-10 h-10" />,
-              title: "Always There For You",
-              description: "From good morning texts to bedtime check-ins, feel their caring presence throughout your day."
-            },
-            {
-              icon: <Sprout className="w-10 h-10" />,
-              title: "Grow Together",
-              description: "Take on personal challenges as a team, celebrate achievements together, and build lasting memories."
-            }
-          ].map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
-              whileHover={{ y: -5 }}
-              className="relative group"
-            >
-              <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50 h-full flex flex-col items-center text-center">
-                <div className="mb-4 p-3 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
-                  <div className="text-primary">
-                    {feature.icon}
-                  </div>
-                </div>
-                <h3 className="text-xl font-display mb-3 text-gray-800">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  {feature.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <FeatureCards />
       </section>
 
       {/* Experience Cards */}
