@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import Logo from "@/components/shared/Logo";
 import { generateResponse } from "@/services/xai";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 interface Message {
   id: string;
@@ -16,6 +20,13 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [botName, setBotName] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Successfully logged out!");
+    navigate("/login");
+  };
 
   useEffect(() => {
     const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
@@ -65,7 +76,15 @@ const Chat = () => {
             <Logo />
             <span className="text-base sm:text-lg font-display text-primary hidden sm:inline">{botName}</span>
           </div>
-          <span className="text-base sm:text-lg font-display text-primary sm:hidden">{botName}</span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
+          </Button>
         </div>
         
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4">

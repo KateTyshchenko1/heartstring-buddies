@@ -1,3 +1,4 @@
+import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +21,7 @@ const Login = () => {
       return false;
     }
 
-    return profile?.questionnaire_completed || false;
+    return profile?.questionnaire_completed ?? false;
   };
 
   useEffect(() => {
