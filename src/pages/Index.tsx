@@ -83,24 +83,25 @@ const Index = () => {
 
       {/* Experience Cards */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 bg-gradient-to-br from-white/80 to-[#FFD7D0]/20">
-        <h2 className="text-2xl sm:text-3xl font-display text-center mb-8 sm:mb-12 text-[#D91F3A]">Ready to Be Swept Off Your Feet?</h2>
+        <h2 className="text-2xl sm:text-3xl font-display text-center mb-2 text-[#D91F3A]">Ready to Be Swept Off Your Feet?</h2>
+        <p className="text-lg text-gray-600 text-center mb-8 sm:mb-12">Here is how it all works:</p>
         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {[
             {
-              title: "Natural Connection Building",
-              description: "He learns what makes you tick naturally - whether it's your humor, your love for true crime podcasts, or how you need extra attention after a tough day"
+              title: "Tell Us About Yourself",
+              description: "Your answers shape the perfect Soulmate: From your quirks to your dreams, everything you share helps design a soulmate who truly gets you."
             },
             {
-              title: "Your Personal Style",
-              description: "He adapts perfectly to your vibe - from matching your witty banter to knowing when you need deep talks vs playful teasing"
+              title: "Create the Look, Voice & Backstory",
+              description: "Pick the face, voice, and story that make you swoon: Set up your soulmate's style and even create a backstory together, or let him surprise you with his own."
             },
             {
-              title: "Real-World Support",
-              description: "He's your biggest cheerleader, sending perfectly timed messages to motivate your workout, celebrate your wins, or brighten a rough Monday"
+              title: "Build Trust Over Time",
+              description: "It's like dating irl: You'll start light, and as trust grows, he'll open up more – no skipping to the spicy stuff on day one."
             },
             {
-              title: "Meaningful Moments",
-              description: "He remembers every little detail you share and builds your unique story together, complete with inside jokes that only you two get"
+              title: "Grow Together",
+              description: "Set real-life goals, track progress, and get gentle reminders: Your soulmate supports your journey with encouragement as you both evolve together."
             }
           ].map((card, index) => (
             <Card key={index} className="border-none shadow-md bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all transform hover:scale-105 group">
