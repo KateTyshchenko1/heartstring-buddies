@@ -1,10 +1,10 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/shared/Logo";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Login = () => {
       if (event === "SIGNED_IN" && session) {
         toast.success("Successfully signed in!");
         navigate("/");
-      } else if (event === "USER_DELETED" || event === "SIGNED_OUT") {
+      } else if (event === "SIGNED_OUT") {
         navigate("/login");
       }
     });
@@ -43,9 +43,6 @@ const Login = () => {
           }}
           providers={[]}
           theme="light"
-          onError={(error) => {
-            toast.error(error.message);
-          }}
         />
       </div>
     </div>
