@@ -156,22 +156,25 @@ const Index = () => {
       </section>
 
       {/* Trust Section */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-display mb-8 text-gray-800">Your Connection, Your Rules</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { icon: <Shield className="w-5 h-5" />, text: "Set your own pace" },
-              { icon: <Heart className="w-5 h-5" />, text: "Define comfort levels" },
-              { icon: <CheckCircle2 className="w-5 h-5" />, text: "Private and secure" },
-              { icon: <MessageCircle className="w-5 h-5" />, text: "Clear expectations" }
-            ].map((item, index) => (
-              <div key={index} className="flex flex-col items-center gap-2">
-                <div className="text-primary-dark">{item.icon}</div>
-                <span className="text-gray-600 text-sm">{item.text}</span>
-              </div>
-            ))}
-          </div>
+      <section className="container mx-auto px-6 py-24">
+        <h2 className="text-3xl md:text-4xl font-display text-center mb-2 text-[#D91F3A]">
+          Your Connection, Your Rules
+        </h2>
+        <p className="text-lg text-gray-600 text-center mb-16">
+          Because we understand what matters
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+          {[
+            { icon: <Shield className="w-5 h-5" />, text: "Set your own pace" },
+            { icon: <Heart className="w-5 h-5" />, text: "Define comfort levels" },
+            { icon: <CheckCircle2 className="w-5 h-5" />, text: "Private and secure" },
+            { icon: <MessageCircle className="w-5 h-5" />, text: "Clear expectations" }
+          ].map((item, index) => (
+            <div key={index} className="flex flex-col items-center gap-2">
+              <div className="text-primary">{item.icon}</div>
+              <span className="text-gray-600 text-sm">{item.text}</span>
+            </div>
+          ))}
         </div>
       </section>
 

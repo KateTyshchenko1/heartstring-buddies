@@ -12,8 +12,8 @@ const ChatMessage = ({ message, isUser, timestamp }: ChatMessageProps) => {
       <div 
         className={`max-w-[80%] px-4 py-2 rounded-lg ${
           isUser 
-            ? "bg-primary text-white" 
-            : "bg-white text-gray-800 shadow-sm"
+            ? "bg-primary/10 text-primary" 
+            : "bg-gray-50 text-gray-800"
         }`}
       >
         {message}

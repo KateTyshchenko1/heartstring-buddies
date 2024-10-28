@@ -57,8 +57,8 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQ
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             placeholder="Type your answer here..."
-            className="w-full p-0 text-xl border-0 border-b-2 border-gray-200 
-                     focus:border-primary focus:ring-0 bg-transparent resize-none 
+            className="w-full p-0 text-xl border-0 border-b border-gray-200 
+                     focus:border-primary focus:outline-none bg-transparent resize-none 
                      min-h-[100px] transition-colors placeholder:text-gray-300
                      font-sans"
             autoFocus
@@ -68,7 +68,7 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQ
         <div className="flex flex-col items-center gap-4">
           <Button
             type="submit"
-            className="w-full max-w-xs bg-primary hover:bg-primary-dark text-white py-6 text-lg"
+            className="w-full max-w-xs bg-primary/10 hover:bg-primary/20 text-primary py-6 text-lg"
             disabled={!answer.trim()}
           >
             Continue
