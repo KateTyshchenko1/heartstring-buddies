@@ -40,7 +40,7 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQ
       {!isFirstQuestion && (
         <button 
           onClick={onBack}
-          className="absolute -top-12 left-0 text-gray-400 hover:text-[#D91F3A] transition-colors flex items-center gap-2 text-sm"
+          className="absolute -top-12 left-0 text-gray-400 hover:text-primary transition-colors flex items-center gap-2 text-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -52,19 +52,23 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQ
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <textarea
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Type your answer here..."
-          className="w-full p-0 text-xl border-0 border-b-2 border-gray-200 focus:outline-none focus:border-[#D91F3A] 
-                     bg-transparent resize-none min-h-[100px] transition-colors placeholder:text-gray-300"
-          autoFocus
-        />
+        <div className="relative">
+          <textarea
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            placeholder="Type your answer here..."
+            className="w-full p-0 text-xl border-0 border-b-2 border-gray-200 
+                     focus:border-primary focus:ring-0 bg-transparent resize-none 
+                     min-h-[100px] transition-colors placeholder:text-gray-300
+                     font-sans"
+            autoFocus
+          />
+        </div>
         
         <div className="flex flex-col items-center gap-4">
           <Button
             type="submit"
-            className="w-full max-w-xs bg-[#D91F3A] hover:bg-[#B91830] text-white py-6 text-lg"
+            className="w-full max-w-xs bg-primary hover:bg-primary-dark text-white py-6 text-lg"
             disabled={!answer.trim()}
           >
             Continue
@@ -74,7 +78,7 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQ
             <button
               type="button"
               onClick={onSkip}
-              className="text-sm text-gray-400 hover:text-[#D91F3A] transition-colors"
+              className="text-sm text-gray-400 hover:text-primary transition-colors"
             >
               Skip this question
             </button>

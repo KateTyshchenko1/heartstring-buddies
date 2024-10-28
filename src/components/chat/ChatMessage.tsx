@@ -9,7 +9,13 @@ interface ChatMessageProps {
 const ChatMessage = ({ message, isUser, timestamp }: ChatMessageProps) => {
   return (
     <div className={`flex flex-col ${isUser ? "items-end" : "items-start"} mb-4`}>
-      <div className={`chat-bubble ${isUser ? "chat-bubble-user" : "chat-bubble-ai"}`}>
+      <div 
+        className={`max-w-[80%] px-4 py-2 rounded-2xl ${
+          isUser 
+            ? "bg-primary text-white" 
+            : "bg-secondary text-white"
+        }`}
+      >
         {message}
       </div>
       <span className="text-xs text-gray-500 mt-1">

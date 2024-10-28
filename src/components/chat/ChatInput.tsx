@@ -17,15 +17,18 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type a message..."
-        className="flex-1 px-4 py-2 rounded-full border border-gray-200
-                   focus:ring-2 focus:ring-primary focus:border-transparent"
-      />
+    <form onSubmit={handleSubmit} className="flex gap-2 items-end">
+      <div className="flex-1 relative">
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message..."
+          className="w-full bg-transparent border-0 border-b-2 border-gray-200 
+                     focus:border-primary focus:ring-0 px-0 font-sans text-base
+                     placeholder:text-gray-400"
+        />
+      </div>
       <button
         type="submit"
         className="p-2 rounded-full bg-primary hover:bg-primary-dark
