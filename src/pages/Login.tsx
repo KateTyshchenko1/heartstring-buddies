@@ -1,12 +1,14 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/shared/Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -21,6 +23,18 @@ const Login = () => {
           navigate("/chat");
         } else {
           navigate("/questionnaire");
+        }
+      }
+
+      // Handle password reset error
+      if (event === "PASSWORD_RECOVERY") {
+        const error = new URLSearchParams(window.location.search).get('error_description');
+        if (error) {
+          if (error.includes('rate_limit')) {
+            toast.error("Please wait a moment before requesting another reset link");
+          } else {
+            toast.error(error);
+          }
         }
       }
     });
@@ -53,7 +67,7 @@ const Login = () => {
             }
           }}
           providers={[]}
-          redirectTo={`${window.location.origin}/questionnaire`}
+          redirectTo={`${window.location.origin}/reset-password`}
           theme="light"
         />
       </div>
