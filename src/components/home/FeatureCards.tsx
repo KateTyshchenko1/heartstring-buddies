@@ -47,7 +47,7 @@ const FeatureCards = () => {
         </motion.div>
       ))}
     </div>
-  </div>
-);
+  );
+};
 
 export default FeatureCards;
