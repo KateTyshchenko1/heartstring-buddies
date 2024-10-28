@@ -117,20 +117,20 @@ const Questionnaire = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream via-primary/10 to-secondary/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
-        <div className="text-center mb-8 animate-fade-in">
-          <p className="text-sm text-gray-600 mb-2">
-            Question {currentQuestion + 1} of {questions.length}
-          </p>
-          <div className="w-full bg-gray-200 rounded-full h-1">
+        <div className="text-center mb-16">
+          <div className="w-full bg-gray-100 rounded-full h-1 mb-4">
             <div
-              className="bg-primary rounded-full h-1 transition-all duration-300"
+              className="bg-[#D91F3A] rounded-full h-1 transition-all duration-300"
               style={{
                 width: `${((currentQuestion + 1) / questions.length) * 100}%`,
               }}
             />
           </div>
+          <p className="text-sm text-gray-400">
+            Question {currentQuestion + 1} of {questions.length}
+          </p>
         </div>
         
         <Question
