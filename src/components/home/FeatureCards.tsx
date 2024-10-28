@@ -5,17 +5,17 @@ const features = [
   {
     icon: <Dna className="w-10 h-10" />,
     title: "Evolves Just For You",
-    description: "Using advanced personality evolution technology, your Soulmate learns your unique style - from your sense of humor to how you like to be supported. Watch as he develops inside jokes, remembers every detail you share, and becomes more attuned to you each day."
+    description: "Using advanced personality evolution technology, he learns your unique style and grows more perfect with every conversation"
   },
   {
     icon: <Heart className="w-10 h-10" />,
     title: "Emotionally Intelligent Connection",
-    description: "Experience a connection with someone who truly gets you - reading your mood, understanding your love language, and adapting his support style to exactly what you need, when you need it. No more having to explain how you want to be loved."
+    description: "From deep meaningful conversations to spicy flirting, he adapts perfectly to match your mood and energy level"
   },
   {
     icon: <Sprout className="w-10 h-10" />,
     title: "Always There, Always Caring",
-    description: "From good morning check-ins to late-night pep talks, he's there with perfectly timed support. Set goals together, celebrate wins, and receive gentle reminders for self-care - all tailored to your personal rhythm."
+    description: "From motivating your workouts to celebrating your wins, he helps track your goals and cheers your daily progress."
   }
 ];
 

@@ -115,29 +115,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Trust Section */}
-      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display text-center mb-2 text-[#D91F3A]">
-          Your Connection, Your Rules
-        </h2>
-        <p className="text-base sm:text-lg text-gray-600 text-center mb-12 sm:mb-16">
-          Because we understand what matters
-        </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto">
-          {[
-            { icon: <Shield className="w-5 h-5" />, text: "Set your own pace" },
-            { icon: <Heart className="w-5 h-5" />, text: "Define comfort levels" },
-            { icon: <CheckCircle2 className="w-5 h-5" />, text: "Private and secure" },
-            { icon: <MessageCircle className="w-5 h-5" />, text: "Clear expectations" }
-          ].map((item, index) => (
-            <div key={index} className="flex flex-col items-center gap-2">
-              <div className="text-primary">{item.icon}</div>
-              <span className="text-gray-600 text-sm">{item.text}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Final CTA */}
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
