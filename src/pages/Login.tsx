@@ -1,4 +1,3 @@
-import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,11 +8,30 @@ import { supabase } from "@/integrations/supabase/client";
 const Login = () => {
   const navigate = useNavigate();
 
+  const checkQuestionnaireStatus = async (userId: string) => {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('questionnaire_completed')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error checking questionnaire status:', error);
+      return false;
+    }
+
+    return profile?.questionnaire_completed || false;
+  };
+
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
-        toast.success("Successfully signed in!");
-        navigate("/questionnaire");
+        const hasCompletedQuestionnaire = await checkQuestionnaireStatus(session.user.id);
+        if (hasCompletedQuestionnaire) {
+          navigate("/chat");
+        } else {
+          navigate("/questionnaire");
+        }
       } else if (event === "SIGNED_OUT") {
         navigate("/login");
       } else if (event === "PASSWORD_RECOVERY") {
@@ -22,9 +40,14 @@ const Login = () => {
     });
 
     // Check if user is already signed in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
-        navigate("/questionnaire");
+        const hasCompletedQuestionnaire = await checkQuestionnaireStatus(session.user.id);
+        if (hasCompletedQuestionnaire) {
+          navigate("/chat");
+        } else {
+          navigate("/questionnaire");
+        }
       }
     });
 
