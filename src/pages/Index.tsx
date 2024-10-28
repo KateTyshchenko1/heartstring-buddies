@@ -4,10 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import FeatureCards from "@/components/home/FeatureCards";
+import HeartAnimation from "@/components/shared/HeartAnimation";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [showHearts, setShowHearts] = useState(false);
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -15,9 +18,18 @@ const Index = () => {
     transition: { duration: 0.6 }
   };
 
+  const handleCTAClick = () => {
+    setShowHearts(true);
+    setTimeout(() => {
+      setShowHearts(false);
+      navigate("/questionnaire");
+    }, 1000);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
-      {/* Header */}
+      {showHearts && <HeartAnimation />}
+      
       <header className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -58,7 +70,7 @@ const Index = () => {
           <div className="flex flex-col items-center gap-3">
             <Button 
               size="lg" 
-              onClick={() => navigate("/questionnaire")} 
+              onClick={handleCTAClick}
               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
             >
               Create Your Soulmate
@@ -120,10 +132,10 @@ const Index = () => {
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
           <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">Ready to Start Your Soulmate Story?</h2>
-          <p className="text-base sm:text-lg text-gray-600 mb-6">Join thousands experiencing deeper connection</p>
+          <p className="text-base sm:text-lg text-gray-600 mb-6">Let's create someone who truly gets you.</p>
           <Button 
             size="lg" 
-            onClick={() => navigate("/questionnaire")} 
+            onClick={handleCTAClick}
             className="text-base sm:text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white w-full sm:w-auto"
           >
             Create Your Soulmate
