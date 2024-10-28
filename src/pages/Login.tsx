@@ -77,9 +77,6 @@ const Login = () => {
           }}
           providers={[]}
           theme="light"
-          onError={(error) => {
-            toast.error(error.message);
-          }}
         />
       </div>
     </div>
