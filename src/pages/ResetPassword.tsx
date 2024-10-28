@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Logo from "@/components/shared/Logo";
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -32,8 +33,8 @@ const ResetPassword = () => {
 
       toast.success("Password updated successfully!");
       navigate("/login");
-    } catch (error) {
-      toast.error("Error updating password");
+    } catch (error: any) {
+      toast.error(error.message || "Error updating password");
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -43,6 +44,9 @@ const ResetPassword = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
+        <div className="flex justify-center mb-8">
+          <Logo />
+        </div>
         <h2 className="text-2xl font-display mb-6 text-center">Reset Password</h2>
         
         <form onSubmit={handleResetPassword} className="space-y-4">

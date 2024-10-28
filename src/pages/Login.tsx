@@ -1,6 +1,6 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/shared/Logo";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,6 @@ import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {

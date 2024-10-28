@@ -36,7 +36,6 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (session) {
-    // Check if questionnaire is completed in localStorage
     const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
     if (userContext.questionnaire_completed) {
       return <Navigate to="/chat" />;
