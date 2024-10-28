@@ -13,9 +13,23 @@ const Login = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         toast.success("Successfully signed in!");
-        navigate("/");
+        navigate("/questionnaire");
       } else if (event === "SIGNED_OUT") {
         navigate("/login");
+      } else if (event === "USER_UPDATED") {
+        console.log("User updated:", session);
+      } else if (event === "PASSWORD_RECOVERY") {
+        toast.info("Please check your email for password reset instructions.");
+      } else if (event === "USER_DELETED") {
+        toast.error("Account deleted.");
+        navigate("/login");
+      }
+    });
+
+    // Check if user is already signed in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/questionnaire");
       }
     });
 
@@ -39,10 +53,25 @@ const Login = () => {
                   brandAccent: '#B91830',
                 }
               }
+            },
+            className: {
+              container: 'auth-container',
+              button: 'auth-button',
+              input: 'auth-input',
             }
           }}
           providers={[]}
           theme="light"
+          onError={(error) => {
+            console.error('Auth error:', error);
+            if (error.message.includes('invalid_credentials')) {
+              toast.error('Invalid email or password. Please try again.');
+            } else if (error.message.includes('Email not confirmed')) {
+              toast.error('Please confirm your email address before signing in.');
+            } else {
+              toast.error(error.message);
+            }
+          }}
         />
       </div>
     </div>
