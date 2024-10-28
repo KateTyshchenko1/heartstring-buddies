@@ -33,10 +33,6 @@ const Login = () => {
         } else {
           navigate("/questionnaire");
         }
-      } else if (event === "SIGNED_OUT") {
-        navigate("/login");
-      } else if (event === "PASSWORD_RECOVERY") {
-        toast.info("Please check your email for password reset instructions.");
       }
     });
 
@@ -81,6 +77,9 @@ const Login = () => {
           }}
           providers={[]}
           theme="light"
+          onError={(error) => {
+            toast.error(error.message);
+          }}
         />
       </div>
     </div>
