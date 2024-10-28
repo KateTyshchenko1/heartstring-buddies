@@ -35,6 +35,11 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (session) {
+    // Check if questionnaire is completed in localStorage
+    const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+    if (userContext.questionnaire_completed) {
+      return <Navigate to="/chat" />;
+    }
     return <Navigate to="/questionnaire" />;
   }
 
@@ -51,7 +56,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-              <Route path="/" element={<PublicRoute><Index /></PublicRoute>} />
+              <Route path="/" element={<Index />} />
               <Route path="/questionnaire" element={<ProtectedRoute><Questionnaire /></ProtectedRoute>} />
               <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             </Routes>
