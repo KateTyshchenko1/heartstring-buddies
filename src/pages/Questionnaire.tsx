@@ -1,3 +1,4 @@
+```tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
@@ -5,7 +6,6 @@ import { toast } from "sonner";
 
 const questions = [
   "What's your name?",
-  "When you daydream about your ideal future, what does that look like?",
   "If you could spend a perfect day doing anything you want, what would that look like?",
   "What's the most meaningful compliment you've ever received?",
   "How do you like to unwind after a stressful day?",
@@ -32,17 +32,16 @@ const Questionnaire = () => {
         const userContext = {
           name: newAnswers[0],
           questionnaire_responses: {
-            ideal_future: newAnswers[1],
-            perfect_day: newAnswers[2],
-            meaningful_compliment: newAnswers[3],
-            stress_relief: newAnswers[4],
-            learning_desires: newAnswers[5],
-            dinner_guest: newAnswers[6],
-            resonant_media: newAnswers[7],
-            childhood_memory: newAnswers[8],
-            impactful_gesture: newAnswers[9]
+            perfect_day: newAnswers[1],
+            meaningful_compliment: newAnswers[2],
+            stress_relief: newAnswers[3],
+            learning_desires: newAnswers[4],
+            dinner_guest: newAnswers[5],
+            resonant_media: newAnswers[6],
+            childhood_memory: newAnswers[7],
+            impactful_gesture: newAnswers[8]
           },
-          soulmate_name: newAnswers[10],
+          soulmate_name: newAnswers[9],
           communication_style: {
             formality_level: "casual",
             emoji_usage: "moderate",
@@ -84,17 +83,16 @@ const Questionnaire = () => {
       const userContext = {
         name: newAnswers[0] || "User",
         questionnaire_responses: {
-          ideal_future: newAnswers[1],
-          perfect_day: newAnswers[2],
-          meaningful_compliment: newAnswers[3],
-          stress_relief: newAnswers[4],
-          learning_desires: newAnswers[5],
-          dinner_guest: newAnswers[6],
-          resonant_media: newAnswers[7],
-          childhood_memory: newAnswers[8],
-          impactful_gesture: newAnswers[9]
+          perfect_day: newAnswers[1],
+          meaningful_compliment: newAnswers[2],
+          stress_relief: newAnswers[3],
+          learning_desires: newAnswers[4],
+          dinner_guest: newAnswers[5],
+          resonant_media: newAnswers[6],
+          childhood_memory: newAnswers[7],
+          impactful_gesture: newAnswers[8]
         },
-        soulmate_name: newAnswers[10],
+        soulmate_name: newAnswers[9],
         communication_style: {
           formality_level: "casual",
           emoji_usage: "moderate",
@@ -139,6 +137,7 @@ const Questionnaire = () => {
           onBack={handleBack}
           onSkip={handleSkip}
           isFirstQuestion={currentQuestion === 0}
+          isLastQuestion={currentQuestion === questions.length - 1}
         />
       </div>
     </div>
@@ -146,3 +145,4 @@ const Questionnaire = () => {
 };
 
 export default Questionnaire;
+```

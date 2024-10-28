@@ -8,9 +8,10 @@ interface QuestionProps {
   onBack: () => void;
   onSkip: () => void;
   isFirstQuestion: boolean;
+  isLastQuestion: boolean;
 }
 
-const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion }: QuestionProps) => {
+const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQuestion }: QuestionProps) => {
   const [answer, setAnswer] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,7 +56,7 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion }: Quest
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           placeholder="Type your answer here..."
-          className="w-full p-0 text-xl border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-[#D91F3A] 
+          className="w-full p-0 text-xl border-0 border-b-2 border-gray-200 focus:outline-none focus:border-[#D91F3A] 
                      bg-transparent resize-none min-h-[100px] transition-colors placeholder:text-gray-300"
           autoFocus
         />
@@ -69,13 +70,15 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion }: Quest
             Continue
           </Button>
           
-          <button
-            type="button"
-            onClick={onSkip}
-            className="text-sm text-gray-400 hover:text-[#D91F3A] transition-colors"
-          >
-            Skip this question
-          </button>
+          {!isFirstQuestion && !isLastQuestion && (
+            <button
+              type="button"
+              onClick={onSkip}
+              className="text-sm text-gray-400 hover:text-[#D91F3A] transition-colors"
+            >
+              Skip this question
+            </button>
+          )}
         </div>
       </form>
     </div>
