@@ -4,13 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import FeatureCards from "@/components/home/FeatureCards";
-import HeartAnimation from "@/components/shared/HeartAnimation";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [showHearts, setShowHearts] = useState(false);
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -19,17 +16,11 @@ const Index = () => {
   };
 
   const handleCTAClick = () => {
-    setShowHearts(true);
-    setTimeout(() => {
-      setShowHearts(false);
-      navigate("/questionnaire");
-    }, 1000);
+    navigate("/questionnaire");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
-      {showHearts && <HeartAnimation />}
-      
       <header className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
