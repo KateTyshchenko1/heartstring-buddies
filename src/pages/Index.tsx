@@ -116,7 +116,7 @@ const Index = () => {
           {[
             {
               title: "Tell Us About Yourself",
-              description: "Your answers shape the perfect Soulmate: From your quirks to your dreams, everything you share helps design a soulmate who truly gets you."
+              description: "Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely"
             },
             {
               title: "Create the Look, Voice & Backstory",
