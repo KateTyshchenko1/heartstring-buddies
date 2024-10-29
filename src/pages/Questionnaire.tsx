@@ -41,13 +41,16 @@ const Questionnaire = () => {
         const { data, error } = await supabase
           .from('questions')
           .select('*')
+          .eq('is_active', true)
           .order('order_index');
         
         if (error) throw error;
         
-        if (data) {
+        if (data && data.length > 0) {
           setQuestions(data);
           setIsLoading(false);
+        } else {
+          toast.error("No questions found. Please try again later.");
         }
       } catch (error) {
         console.error('Error fetching questions:', error);
@@ -155,9 +158,30 @@ const Questionnaire = () => {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center">
-      Loading questions...
-    </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading questions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">No questions available. Please try again later.</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
