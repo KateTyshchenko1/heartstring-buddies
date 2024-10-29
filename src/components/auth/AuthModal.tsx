@@ -15,12 +15,6 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('questionnaire_completed')
-          .eq('id', session.user.id)
-          .single();
-
         if (isSignUp) {
           // For new users, mark questionnaire as completed and redirect to chat
           await supabase
@@ -32,6 +26,12 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
           navigate('/chat');
         } else {
           // For existing users, check questionnaire status
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('questionnaire_completed')
+            .eq('id', session.user.id)
+            .single();
+
           if (profile?.questionnaire_completed) {
             toast.success("Welcome back!");
             navigate('/chat');
