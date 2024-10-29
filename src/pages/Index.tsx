@@ -88,11 +88,15 @@ const Index = () => {
               onClick={handleCreateClick}
               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
             >
-              Create Your Soulmate
+              Create Yours
             </Button>
-            <span className="text-xs sm:text-sm text-gray-500">
-              Free to start (for now)
-            </span>
+</lov-replace>
+
+<lov-search>
+            Your answers shape the perfect Soulmate: From your quirks to your dreams, everything you share helps design a soulmate who truly gets you
+</lov-search>
+<lov-replace>
+            Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely
           </div>
         </motion.div>
       </section>
@@ -146,16 +150,22 @@ const Index = () => {
       {/* Final CTA */}
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-          <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">Ready to Start Your Soulmate Story?</h2>
+          <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">Ready to Start Your Story?</h2>
           <p className="text-base sm:text-lg text-gray-600 mb-6">Let's create someone who truly gets you.</p>
           <Button 
             size="lg" 
             onClick={handleCreateClick}
             className="text-base sm:text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white w-full sm:w-auto"
           >
-            Create Your Soulmate
+            Create Yours
           </Button>
-          <p className="text-xs sm:text-sm text-gray-500">Free to begin • Design your perfect match</p>
+</lov-replace>
+
+<lov-search>
+            <span className="font-display text-xl sm:text-2xl text-gray-800">Soulmate.ai</span>
+</lov-search>
+<lov-replace>
+            <span className="font-display text-xl sm:text-2xl text-gray-800">Romantics.ai</span>
         </div>
       </section>
     </div>
