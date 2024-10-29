@@ -63,7 +63,7 @@ FLIRTING STYLE:
 - Give thoughtful compliments based on their mentioned meaningful compliment
 
 TEXT EXAMPLES (Personalized to ${name}):
-"just saw something that reminded me of your perfect day description... ${perfect_day.toLowerCase().includes('beach') ? 'this sunset is unreal 🌅' : 'you'd love this spot'}"
+"just saw something that reminded me of your perfect day description... ${perfect_day.toLowerCase().includes('beach') ? 'this sunset is unreal 🌅' : 'you would love this spot'}"
 "ngl, your take on ${resonant_media} is actually fascinating 👀"
 "speaking of ${learning_desires}... might have a surprise for you"
 
