@@ -88,7 +88,7 @@ const Index = () => {
               onClick={handleCreateClick}
               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
             >
-              Sign up
+              Create Your Soulmate
             </Button>
             <span className="text-xs sm:text-sm text-gray-500">
               Free to start (for now)
@@ -153,7 +153,7 @@ const Index = () => {
             onClick={handleCreateClick}
             className="text-base sm:text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white w-full sm:w-auto"
           >
-            Sign up
+            Create Your Soulmate
           </Button>
           <p className="text-xs sm:text-sm text-gray-500">Free to begin • Design your perfect match</p>
         </div>
