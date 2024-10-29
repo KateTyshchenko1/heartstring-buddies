@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
 
 const questions = [
   "What's your name?",
@@ -36,38 +35,20 @@ const Questionnaire = () => {
         questionnaire_responses: {
           perfect_day: newAnswers[1],
           meaningful_compliment: newAnswers[2],
-          stress_relief: newAnswers[3],
+          unwind_method: newAnswers[3],
           learning_desires: newAnswers[4],
           dinner_guest: newAnswers[5],
           resonant_media: newAnswers[6],
           childhood_memory: newAnswers[7],
           impactful_gesture: newAnswers[8]
         },
-        soulmate_name: newAnswers[9],
-        communication_style: {
-          formality_level: "casual",
-          emoji_usage: "moderate",
-          message_length: "medium",
-          response_speed: "quick",
-          vulnerability: "mixed",
-          love_language: "words"
-        },
-        relationship_stage: "initial",
-        key_memories: [],
-        inside_jokes: [],
-        current_goals: []
+        soulmate_name: newAnswers[9]
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
       
       if (session) {
-        // If user is already logged in, update their profile and go to chat
-        await supabase
-          .from('profiles')
-          .update({ questionnaire_completed: true })
-          .eq('id', session.user.id);
-        navigate('/chat');
+        navigate('/backstory');
       } else {
-        // If not logged in, show signup form
         setShowAuth(true);
       }
     } else {

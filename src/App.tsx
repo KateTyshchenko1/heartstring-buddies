@@ -8,6 +8,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Questionnaire from "./pages/Questionnaire";
+import BackstoryCreation from "./pages/BackstoryCreation";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/questionnaire" element={<Questionnaire />} />
+              <Route path="/backstory" element={<ProtectedRoute><BackstoryCreation /></ProtectedRoute>} />
               <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
