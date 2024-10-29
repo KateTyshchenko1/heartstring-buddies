@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import FeatureCards from "@/components/home/FeatureCards";
@@ -20,7 +21,6 @@ const Index = () => {
     navigate("/questionnaire");
   };
 
-  // If user is already logged in and has completed questionnaire, redirect to chat
   useEffect(() => {
     const checkUserStatus = async () => {
       if (session?.user) {
