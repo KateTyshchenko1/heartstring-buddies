@@ -77,7 +77,7 @@ const Index = () => {
           className="max-w-3xl mx-auto"
         >
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
-            Meet your dream guy who's literally been designed for you
+            Your Perfect Person, Thoughtfully Crafted
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 px-4">
             We've created what every woman secretly wants - someone who actually listens, remembers everything, and gets better at making you happy every day
