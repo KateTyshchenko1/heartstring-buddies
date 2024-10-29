@@ -23,6 +23,8 @@ const Questionnaire = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [soulmateData, setSoulmateData] = useState({
     age: "34",
     occupation: "Child psychologist working with art therapy",
@@ -46,15 +48,15 @@ const Questionnaire = () => {
         
         if (error) throw error;
         
-        if (data && data.length > 0) {
+        if (data) {
           setQuestions(data);
           setIsLoading(false);
-        } else {
-          toast.error("No questions found. Please try again later.");
+          setError(null);
         }
       } catch (error) {
         console.error('Error fetching questions:', error);
-        toast.error("Failed to load questions. Please try again.");
+        setError('Failed to load questions. Please try again.');
+        setIsLoading(false);
       }
     };
 
@@ -259,5 +261,3 @@ const Questionnaire = () => {
     </div>
   );
 };
-
-export default Questionnaire;
