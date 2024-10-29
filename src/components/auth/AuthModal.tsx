@@ -49,7 +49,7 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
       }}
       providers={[]}
       view={isSignUp ? "sign_up" : "sign_in"}
-      onAuthStateChange={handleAuthStateChange}
+      onAuthStateChange={({ event, session }) => handleAuthStateChange(event, session)}
     />
   );
 };
