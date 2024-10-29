@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ArrowRight } from "lucide-react";
 
 const questions = [
   "What's your name?",
@@ -14,13 +18,31 @@ const questions = [
   "What's a movie or book that really resonated with you recently?",
   "When you think about your childhood, what's a memory that always makes you smile?",
   "What's a small gesture someone has done for you that left a big impression?",
-  "Give your Soulmate a name:"
+  "Give your Soulmate a name:",
+  "Let's bring your Soulmate to life!"
 ];
+
+interface BackstoryFields {
+  age: string;
+  occupation: string;
+  location: string;
+  personality: string;
+  interests: string;
+  funFact: string;
+}
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [showAuth, setShowAuth] = useState(false);
+  const [soulmateData, setSoulmateData] = useState<BackstoryFields>({
+    age: "34",
+    occupation: "Child psychologist working with art therapy",
+    location: "Lives in Seattle, but loves traveling to small towns on weekends",
+    personality: "Empathetic and attentive, with a calm presence. Known for asking thoughtful questions and remembering the small details",
+    interests: "Reading psychology books, cooking Mediterranean food, practicing mindfulness, and collecting vinyl records of ambient music",
+    funFact: "Started a small community garden that donates fresh produce to local shelters"
+  });
   const navigate = useNavigate();
   const { session } = useAuth();
 
@@ -29,7 +51,9 @@ const Questionnaire = () => {
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
-    if (currentQuestion === questions.length - 1) {
+    if (currentQuestion === questions.length - 2) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else if (currentQuestion === questions.length - 1) {
       const userContext = {
         name: newAnswers[0],
         questionnaire_responses: {
@@ -42,18 +66,21 @@ const Questionnaire = () => {
           childhood_memory: newAnswers[7],
           impactful_gesture: newAnswers[8]
         },
-        soulmate_name: newAnswers[9]
+        soulmate_name: newAnswers[9],
+        soulmate_backstory: soulmateData
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
-      
-      if (session) {
-        navigate('/backstory');
-      } else {
-        setShowAuth(true);
-      }
+      setShowAuth(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
+  };
+
+  const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
+    setSoulmateData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleBack = () => {
@@ -68,14 +95,14 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
     
     if (currentQuestion === questions.length - 1) {
-      if (session) {
-        navigate('/chat');
-      } else {
-        setShowAuth(true);
-      }
+      setShowAuth(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
+  };
+
+  const handleSubmitBackstory = () => {
+    handleAnswer("backstory_completed");
   };
 
   return (
@@ -96,14 +123,52 @@ const Questionnaire = () => {
             </p>
           </div>
           
-          <Question
-            question={questions[currentQuestion]}
-            onAnswer={handleAnswer}
-            onBack={handleBack}
-            onSkip={handleSkip}
-            isFirstQuestion={currentQuestion === 0}
-            isLastQuestion={currentQuestion === questions.length - 1}
-          />
+          {currentQuestion < questions.length - 1 ? (
+            <Question
+              question={questions[currentQuestion]}
+              onAnswer={handleAnswer}
+              onBack={handleBack}
+              onSkip={handleSkip}
+              isFirstQuestion={currentQuestion === 0}
+              isLastQuestion={currentQuestion === questions.length - 1}
+            />
+          ) : (
+            <div className="w-full max-w-3xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
+                  Let's bring {answers[9]} to life together!
+                </h1>
+                <p className="text-lg text-gray-600">
+                  Help shape {answers[9]}'s world – after all, you two might have chemistry ✨
+                </p>
+              </div>
+
+              <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
+                {Object.entries(soulmateData).map(([field, value]) => (
+                  <div key={field} className="space-y-2">
+                    <Label htmlFor={field} className="text-lg capitalize text-gray-700">
+                      {field === 'funFact' ? 'Fun Fact' : field}
+                    </Label>
+                    <Textarea
+                      id={field}
+                      value={value}
+                      onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
+                      className="min-h-[100px] text-base resize-none bg-white/90"
+                      placeholder={`Enter ${field}`}
+                    />
+                  </div>
+                ))}
+
+                <Button
+                  onClick={handleSubmitBackstory}
+                  className="w-full max-w-xs mx-auto mt-8 bg-primary hover:bg-primary/90 text-white py-6 text-lg flex items-center justify-center gap-2"
+                >
+                  Start Your Story
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
