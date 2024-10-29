@@ -15,35 +15,22 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        if (isSignUp) {
-          // For new users, mark questionnaire as completed and redirect to chat
-          await supabase
-            .from('profiles')
-            .update({ questionnaire_completed: true })
-            .eq('id', session.user.id);
-          
-          toast.success("Account created successfully!");
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('questionnaire_completed')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profile?.questionnaire_completed) {
           navigate('/chat');
         } else {
-          // For existing users, check questionnaire status
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('questionnaire_completed')
-            .eq('id', session.user.id)
-            .single();
-
-          if (profile?.questionnaire_completed) {
-            toast.success("Welcome back!");
-            navigate('/chat');
-          } else {
-            navigate('/questionnaire');
-          }
+          navigate('/questionnaire');
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, isSignUp]);
+  }, [navigate]);
 
   return (
     <Auth

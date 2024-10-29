@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
 import { toast } from "sonner";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const questions = [
   "What's your name?",
@@ -22,6 +23,7 @@ const Questionnaire = () => {
   const [answers, setAnswers] = useState<string[]>([]);
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   const handleAnswer = async (answer: string) => {
     const newAnswers = [...answers];
@@ -56,7 +58,18 @@ const Questionnaire = () => {
         current_goals: []
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
-      setShowAuth(true);
+      
+      if (session) {
+        // If user is already logged in, update their profile and go to chat
+        await supabase
+          .from('profiles')
+          .update({ questionnaire_completed: true })
+          .eq('id', session.user.id);
+        navigate('/chat');
+      } else {
+        // If not logged in, show signup form
+        setShowAuth(true);
+      }
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -74,7 +87,11 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
     
     if (currentQuestion === questions.length - 1) {
-      setShowAuth(true);
+      if (session) {
+        navigate('/chat');
+      } else {
+        setShowAuth(true);
+      }
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
