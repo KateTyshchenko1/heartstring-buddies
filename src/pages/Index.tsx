@@ -45,7 +45,7 @@ const Index = () => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Infinity className="w-6 h-6 text-[#D91F3A]" />
-            <span className="font-display text-xl sm:text-2xl text-gray-800">Soulmate.ai</span>
+            <span className="font-display text-xl sm:text-2xl text-gray-800">Romantics.ai</span>
           </div>
           <Badge variant="secondary" className="bg-[#FFD7D0] text-[#D91F3A] font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm">
             <Star className="w-3 h-3 mr-1 fill-[#D91F3A]" /> Beta
@@ -90,13 +90,9 @@ const Index = () => {
             >
               Create Yours
             </Button>
-</lov-replace>
-
-<lov-search>
-            Your answers shape the perfect Soulmate: From your quirks to your dreams, everything you share helps design a soulmate who truly gets you
-</lov-search>
-<lov-replace>
-            Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely
+            <p className="text-base sm:text-lg text-gray-600">
+              Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely
+            </p>
           </div>
         </motion.div>
       </section>
@@ -159,13 +155,6 @@ const Index = () => {
           >
             Create Yours
           </Button>
-</lov-replace>
-
-<lov-search>
-            <span className="font-display text-xl sm:text-2xl text-gray-800">Soulmate.ai</span>
-</lov-search>
-<lov-replace>
-            <span className="font-display text-xl sm:text-2xl text-gray-800">Romantics.ai</span>
         </div>
       </section>
     </div>
