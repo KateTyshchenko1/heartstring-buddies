@@ -42,21 +42,27 @@ const Questionnaire = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from('questions')
           .select('*')
           .eq('is_active', true)
           .order('order_index');
         
-        if (error) throw error;
-        
-        if (data) {
-          setQuestions(data);
-          setIsLoading(false);
-          setError(null);
+        if (fetchError) {
+          throw fetchError;
         }
-      } catch (error) {
-        console.error('Error fetching questions:', error);
+        
+        if (!data || data.length === 0) {
+          setError('No questions found in the database.');
+          setIsLoading(false);
+          return;
+        }
+
+        setQuestions(data);
+        setIsLoading(false);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching questions:', err);
         setError('Failed to load questions. Please try again.');
         setIsLoading(false);
       }
@@ -162,14 +168,11 @@ const Questionnaire = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading questions...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
   }
 
   if (!questions || questions.length === 0) {
