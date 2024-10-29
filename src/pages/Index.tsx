@@ -90,9 +90,6 @@ const Index = () => {
             >
               Create Yours
             </Button>
-            <p className="text-base sm:text-lg text-gray-600">
-              Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely
-            </p>
           </div>
         </motion.div>
       </section>
