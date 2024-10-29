@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
@@ -7,35 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-const questions = [
-  "What's your name?",
-  "If you could spend a perfect day doing anything you want, what would that look like?",
-  "What's the most meaningful compliment you've ever received?",
-  "How do you like to unwind after a stressful day?",
-  "What's something you've always wanted to learn or try but haven't had the chance to yet?",
-  "If you could have dinner with anyone, living or dead, who would you choose and why?",
-  "What's a movie or book that really resonated with you recently?",
-  "When you think about your childhood, what's a memory that always makes you smile?",
-  "What's a small gesture someone has done for you that left a big impression?",
-  "Give your Soulmate a name:",
-  "Let's bring your Soulmate to life!"
-];
-
-interface BackstoryFields {
-  age: string;
-  occupation: string;
-  location: string;
-  personality: string;
-  interests: string;
-  funFact: string;
+interface QuestionType {
+  id: string;
+  question_text: string;
+  order_index: number;
+  category: string;
 }
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [showAuth, setShowAuth] = useState(false);
-  const [soulmateData, setSoulmateData] = useState<BackstoryFields>({
+  const [questions, setQuestions] = useState<QuestionType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [soulmateData, setSoulmateData] = useState({
     age: "34",
     occupation: "Child psychologist working with art therapy",
     location: "Lives in Seattle, but loves traveling to small towns on weekends",
@@ -43,8 +31,32 @@ const Questionnaire = () => {
     interests: "Reading psychology books, cooking Mediterranean food, practicing mindfulness, and collecting vinyl records of ambient music",
     funFact: "Started a small community garden that donates fresh produce to local shelters"
   });
+  
   const navigate = useNavigate();
   const { session } = useAuth();
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('questions')
+          .select('*')
+          .order('order_index');
+        
+        if (error) throw error;
+        
+        if (data) {
+          setQuestions(data);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+        toast.error("Failed to load questions. Please try again.");
+      }
+    };
+
+    fetchQuestions();
+  }, []);
 
   const handleAnswer = async (answer: string) => {
     const newAnswers = [...answers];
@@ -54,29 +66,66 @@ const Questionnaire = () => {
     if (currentQuestion === questions.length - 2) {
       setCurrentQuestion(currentQuestion + 1);
     } else if (currentQuestion === questions.length - 1) {
-      const userContext = {
-        name: newAnswers[0],
-        questionnaire_responses: {
-          perfect_day: newAnswers[1],
-          meaningful_compliment: newAnswers[2],
-          unwind_method: newAnswers[3],
-          learning_desires: newAnswers[4],
-          dinner_guest: newAnswers[5],
-          resonant_media: newAnswers[6],
-          childhood_memory: newAnswers[7],
-          impactful_gesture: newAnswers[8]
-        },
-        soulmate_name: newAnswers[9],
-        soulmate_backstory: soulmateData
-      };
-      localStorage.setItem('userContext', JSON.stringify(userContext));
-      setShowAuth(true);
+      try {
+        if (!session?.user?.id) throw new Error("No user ID found");
+
+        // Save questionnaire responses
+        const { error: responseError } = await supabase
+          .from('questionnaire_responses')
+          .insert({
+            profile_id: session.user.id,
+            name: newAnswers[0],
+            perfect_day: newAnswers[1],
+            meaningful_compliment: newAnswers[2],
+            unwind_method: newAnswers[3],
+            learning_desires: newAnswers[4],
+            dinner_guest: newAnswers[5],
+            resonant_media: newAnswers[6],
+            childhood_memory: newAnswers[7],
+            impactful_gesture: newAnswers[8]
+          });
+
+        if (responseError) throw responseError;
+
+        // Save companion profile
+        const { error: companionError } = await supabase
+          .from('companion_profiles')
+          .insert({
+            profile_id: session.user.id,
+            name: newAnswers[9],
+            ...soulmateData
+          });
+
+        if (companionError) throw companionError;
+
+        const userContext = {
+          name: newAnswers[0],
+          questionnaire_responses: {
+            perfect_day: newAnswers[1],
+            meaningful_compliment: newAnswers[2],
+            unwind_method: newAnswers[3],
+            learning_desires: newAnswers[4],
+            dinner_guest: newAnswers[5],
+            resonant_media: newAnswers[6],
+            childhood_memory: newAnswers[7],
+            impactful_gesture: newAnswers[8]
+          },
+          soulmate_name: newAnswers[9],
+          soulmate_backstory: soulmateData
+        };
+        
+        localStorage.setItem('userContext', JSON.stringify(userContext));
+        setShowAuth(true);
+      } catch (error) {
+        console.error('Error saving responses:', error);
+        toast.error("Failed to save your responses. Please try again.");
+      }
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
 
-  const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
+  const handleFieldChange = (field: keyof typeof soulmateData, value: string) => {
     setSoulmateData(prev => ({
       ...prev,
       [field]: value
@@ -94,7 +143,6 @@ const Questionnaire = () => {
     newAnswers[currentQuestion] = "";
     setAnswers(newAnswers);
     
-    // Don't allow skipping the soulmate name question (index 9)
     if (currentQuestion === 9) {
       return;
     }
@@ -106,9 +154,11 @@ const Questionnaire = () => {
     }
   };
 
-  const handleSubmitBackstory = () => {
-    handleAnswer("backstory_completed");
-  };
+  if (isLoading) {
+    return <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center">
+      Loading questions...
+    </div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
@@ -130,13 +180,13 @@ const Questionnaire = () => {
           
           {currentQuestion < questions.length - 1 ? (
             <Question
-              question={questions[currentQuestion]}
+              question={questions[currentQuestion]?.question_text || ""}
               onAnswer={handleAnswer}
               onBack={handleBack}
               onSkip={handleSkip}
               isFirstQuestion={currentQuestion === 0}
               isLastQuestion={currentQuestion === questions.length - 1}
-              hideSkip={currentQuestion === 9} // Hide skip button for soulmate name question
+              hideSkip={currentQuestion === 9}
             />
           ) : (
             <div className="w-full max-w-3xl mx-auto">
@@ -158,7 +208,7 @@ const Questionnaire = () => {
                     <Textarea
                       id={field}
                       value={value}
-                      onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
+                      onChange={(e) => handleFieldChange(field as keyof typeof soulmateData, e.target.value)}
                       className="min-h-[100px] text-base resize-none bg-white/90"
                       placeholder={`Enter ${field}`}
                     />
@@ -166,7 +216,7 @@ const Questionnaire = () => {
                 ))}
 
                 <Button
-                  onClick={handleSubmitBackstory}
+                  onClick={() => handleAnswer("backstory_completed")}
                   className="w-full max-w-xs mx-auto mt-8 bg-primary hover:bg-primary/90 text-white py-6 text-lg flex items-center justify-center gap-2"
                 >
                   Start Your Story

@@ -9,6 +9,94 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      companion_profiles: {
+        Row: {
+          age: string | null
+          created_at: string | null
+          fun_fact: string | null
+          id: string
+          interests: string | null
+          location: string | null
+          name: string
+          occupation: string | null
+          personality: string | null
+          profile_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          age?: string | null
+          created_at?: string | null
+          fun_fact?: string | null
+          id?: string
+          interests?: string | null
+          location?: string | null
+          name: string
+          occupation?: string | null
+          personality?: string | null
+          profile_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          age?: string | null
+          created_at?: string | null
+          fun_fact?: string | null
+          id?: string
+          interests?: string | null
+          location?: string | null
+          name?: string
+          occupation?: string | null
+          personality?: string | null
+          profile_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "companion_profiles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          context_type: string | null
+          id: string
+          is_user: boolean
+          message: string
+          metadata: Json | null
+          profile_id: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          context_type?: string | null
+          id?: string
+          is_user: boolean
+          message: string
+          metadata?: Json | null
+          profile_id?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          context_type?: string | null
+          id?: string
+          is_user?: boolean
+          message?: string
+          metadata?: Json | null
+          profile_id?: string | null
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -30,6 +118,86 @@ export type Database = {
           id?: string
           questionnaire_completed?: boolean | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      questionnaire_responses: {
+        Row: {
+          childhood_memory: string | null
+          created_at: string | null
+          dinner_guest: string | null
+          id: string
+          impactful_gesture: string | null
+          learning_desires: string | null
+          meaningful_compliment: string | null
+          name: string
+          perfect_day: string | null
+          profile_id: string | null
+          resonant_media: string | null
+          unwind_method: string | null
+        }
+        Insert: {
+          childhood_memory?: string | null
+          created_at?: string | null
+          dinner_guest?: string | null
+          id?: string
+          impactful_gesture?: string | null
+          learning_desires?: string | null
+          meaningful_compliment?: string | null
+          name: string
+          perfect_day?: string | null
+          profile_id?: string | null
+          resonant_media?: string | null
+          unwind_method?: string | null
+        }
+        Update: {
+          childhood_memory?: string | null
+          created_at?: string | null
+          dinner_guest?: string | null
+          id?: string
+          impactful_gesture?: string | null
+          learning_desires?: string | null
+          meaningful_compliment?: string | null
+          name?: string
+          perfect_day?: string | null
+          profile_id?: string | null
+          resonant_media?: string | null
+          unwind_method?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionnaire_responses_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          order_index: number
+          question_text: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          order_index: number
+          question_text: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          order_index?: number
+          question_text?: string
         }
         Relationships: []
       }
