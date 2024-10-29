@@ -10,7 +10,7 @@ const Login = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session) {
+      if (event === 'SIGNED_IN' && session) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('questionnaire_completed')
@@ -18,20 +18,9 @@ const Login = () => {
           .single();
 
         if (profile?.questionnaire_completed) {
-          navigate("/chat");
+          navigate('/chat');
         } else {
-          navigate("/questionnaire");
-        }
-      }
-
-      if (event === "PASSWORD_RECOVERY") {
-        const error = new URLSearchParams(window.location.search).get('error_description');
-        if (error) {
-          if (error.includes('rate_limit')) {
-            toast.error("Please wait a moment before requesting another reset link");
-          } else {
-            toast.error(error);
-          }
+          navigate('/questionnaire');
         }
       }
     });

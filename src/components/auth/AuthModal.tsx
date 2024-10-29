@@ -11,50 +11,46 @@ interface AuthModalProps {
 const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   const navigate = useNavigate();
 
-  const handleAuthSuccess = async () => {
-    const userContext = localStorage.getItem('userContext');
-    if (userContext) {
-      const { data, error } = await supabase
+  const handleAuthStateChange = async (event: string, session: any) => {
+    if (event === 'SIGNED_IN' && session) {
+      const { data: profile } = await supabase
         .from('profiles')
-        .update({ questionnaire_completed: true })
-        .eq('id', (await supabase.auth.getUser()).data.user?.id);
+        .select('questionnaire_completed')
+        .eq('id', session.user.id)
+        .single();
 
-      if (!error) {
+      if (profile?.questionnaire_completed) {
+        toast.success("Successfully signed in!");
         navigate('/chat');
+      } else {
+        navigate('/questionnaire');
       }
     }
   };
 
   return (
-    <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-display mb-6 text-center">
-        {isSignUp ? "Create Your Account" : "Welcome Back"}
-      </h2>
-      <Auth
-        supabaseClient={supabase}
-        appearance={{
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: '#D91F3A',
-                brandAccent: '#B91830',
-              }
+    <Auth
+      supabaseClient={supabase}
+      appearance={{
+        theme: ThemeSupa,
+        variables: {
+          default: {
+            colors: {
+              brand: '#D91F3A',
+              brandAccent: '#B91830',
             }
-          },
-          className: {
-            container: 'auth-container',
-            button: 'auth-button',
-            input: 'auth-input',
           }
-        }}
-        providers={[]}
-        view={isSignUp ? "sign_up" : "sign_in"}
-        redirectTo={`${window.location.origin}/chat`}
-        onSuccess={handleAuthSuccess}
-        theme="light"
-      />
-    </div>
+        },
+        className: {
+          container: 'auth-container',
+          button: 'auth-button',
+          input: 'auth-input',
+        }
+      }}
+      providers={[]}
+      view={isSignUp ? "sign_up" : "sign_in"}
+      onAuthStateChange={handleAuthStateChange}
+    />
   );
 };
 

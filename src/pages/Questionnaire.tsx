@@ -28,59 +28,9 @@ const Questionnaire = () => {
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
-    try {
-      if (currentQuestion === questions.length - 1) {
-        const userContext = {
-          name: newAnswers[0],
-          questionnaire_responses: {
-            perfect_day: newAnswers[1],
-            meaningful_compliment: newAnswers[2],
-            stress_relief: newAnswers[3],
-            learning_desires: newAnswers[4],
-            dinner_guest: newAnswers[5],
-            resonant_media: newAnswers[6],
-            childhood_memory: newAnswers[7],
-            impactful_gesture: newAnswers[8]
-          },
-          soulmate_name: newAnswers[9],
-          communication_style: {
-            formality_level: "casual",
-            emoji_usage: "moderate",
-            message_length: "medium",
-            response_speed: "quick",
-            vulnerability: "mixed",
-            love_language: "words"
-          },
-          relationship_stage: "initial",
-          key_memories: [],
-          inside_jokes: [],
-          current_goals: []
-        };
-
-        localStorage.setItem('userContext', JSON.stringify(userContext));
-        setShowAuth(true);
-      } else {
-        setCurrentQuestion(currentQuestion + 1);
-      }
-    } catch (error) {
-      toast.error("There was an error saving your response. Please try again.");
-    }
-  };
-
-  const handleBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
-  };
-
-  const handleSkip = () => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = "";
-    setAnswers(newAnswers);
-    
     if (currentQuestion === questions.length - 1) {
       const userContext = {
-        name: newAnswers[0] || "User",
+        name: newAnswers[0],
         questionnaire_responses: {
           perfect_day: newAnswers[1],
           meaningful_compliment: newAnswers[2],
@@ -108,6 +58,23 @@ const Questionnaire = () => {
       localStorage.setItem('userContext', JSON.stringify(userContext));
       setShowAuth(true);
     } else {
+      setCurrentQuestion(currentQuestion + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const handleSkip = () => {
+    if (currentQuestion === questions.length - 1) {
+      setShowAuth(true);
+    } else {
+      const newAnswers = [...answers];
+      newAnswers[currentQuestion] = "";
+      setAnswers(newAnswers);
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -140,7 +107,10 @@ const Questionnaire = () => {
           />
         </div>
       ) : (
-        <AuthModal isSignUp={true} />
+        <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-display mb-6 text-center">Create Your Account</h2>
+          <AuthModal isSignUp={true} />
+        </div>
       )}
     </div>
   );
