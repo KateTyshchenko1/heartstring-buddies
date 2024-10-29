@@ -113,7 +113,7 @@ const Index = () => {
           {[
             {
               title: "Tell Us About Yourself",
-              description: "Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely"
+              description: "Your story shapes him: From your quirks to your dreams, every detail you share creates someone who'll understand you completely."
             },
             {
               title: "Create the Look, Voice & Backstory",
