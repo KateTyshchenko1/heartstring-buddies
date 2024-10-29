@@ -2,7 +2,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useEffect } from "react";
 
 interface AuthModalProps {
   isSignUp?: boolean;
@@ -11,22 +11,25 @@ interface AuthModalProps {
 const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   const navigate = useNavigate();
 
-  const handleAuthStateChange = async (event: string, session: any) => {
-    if (event === 'SIGNED_IN' && session) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('questionnaire_completed')
-        .eq('id', session.user.id)
-        .single();
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('questionnaire_completed')
+          .eq('id', session.user.id)
+          .single();
 
-      if (profile?.questionnaire_completed) {
-        toast.success("Successfully signed in!");
-        navigate('/chat');
-      } else {
-        navigate('/questionnaire');
+        if (profile?.questionnaire_completed) {
+          navigate('/chat');
+        } else {
+          navigate('/questionnaire');
+        }
       }
-    }
-  };
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   return (
     <Auth
@@ -49,7 +52,6 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
       }}
       providers={[]}
       view={isSignUp ? "sign_up" : "sign_in"}
-      onAuthStateChange={({ event, session }) => handleAuthStateChange(event, session)}
     />
   );
 };
