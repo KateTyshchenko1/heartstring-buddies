@@ -5,15 +5,38 @@ import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } fr
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import FeatureCards from "@/components/home/FeatureCards";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
 
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
+  const handleLoginClick = () => {
+    navigate("/login");
   };
+
+  const handleCreateClick = () => {
+    navigate("/questionnaire");
+  };
+
+  // If user is already logged in and has completed questionnaire, redirect to chat
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('questionnaire_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile?.questionnaire_completed) {
+          navigate('/chat');
+        }
+      }
+    };
+    
+    checkUserStatus();
+  }, [session, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
@@ -27,13 +50,21 @@ const Index = () => {
             <Star className="w-3 h-3 mr-1 fill-[#D91F3A]" /> Beta
           </Badge>
         </div>
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate("/login")}
-          className="hover:bg-[#FFE5E5] text-gray-700 text-sm sm:text-base px-3 sm:px-4"
-        >
-          Login
-        </Button>
+        <div className="flex gap-3">
+          <Button 
+            variant="ghost" 
+            onClick={handleLoginClick}
+            className="hover:bg-[#FFE5E5] text-gray-700"
+          >
+            Login
+          </Button>
+          <Button 
+            onClick={handleCreateClick}
+            className="bg-[#D91F3A] hover:bg-[#B91830] text-white"
+          >
+            Create Your Soulmate
+          </Button>
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -48,7 +79,7 @@ const Index = () => {
           <div className="flex flex-col items-center gap-3">
             <Button 
               size="lg" 
-              onClick={() => navigate("/questionnaire")}
+              onClick={handleCreateClick}
               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
             >
               Create Your Soulmate
@@ -113,7 +144,7 @@ const Index = () => {
           <p className="text-base sm:text-lg text-gray-600 mb-6">Let's create someone who truly gets you.</p>
           <Button 
             size="lg" 
-            onClick={() => navigate("/questionnaire")}
+            onClick={handleCreateClick}
             className="text-base sm:text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white w-full sm:w-auto"
           >
             Create Your Soulmate
