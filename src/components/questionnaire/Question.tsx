@@ -9,9 +9,18 @@ interface QuestionProps {
   onSkip: () => void;
   isFirstQuestion: boolean;
   isLastQuestion: boolean;
+  hideSkip?: boolean;
 }
 
-const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQuestion }: QuestionProps) => {
+const Question = ({ 
+  question, 
+  onAnswer, 
+  onBack, 
+  onSkip, 
+  isFirstQuestion, 
+  isLastQuestion,
+  hideSkip = false 
+}: QuestionProps) => {
   const [answer, setAnswer] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -74,7 +83,7 @@ const Question = ({ question, onAnswer, onBack, onSkip, isFirstQuestion, isLastQ
             Continue
           </Button>
           
-          {!isFirstQuestion && !isLastQuestion && (
+          {!isFirstQuestion && !isLastQuestion && !hideSkip && (
             <button
               type="button"
               onClick={onSkip}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -94,6 +93,11 @@ const Questionnaire = () => {
     newAnswers[currentQuestion] = "";
     setAnswers(newAnswers);
     
+    // Don't allow skipping the soulmate name question (index 9)
+    if (currentQuestion === 9) {
+      return;
+    }
+    
     if (currentQuestion === questions.length - 1) {
       setShowAuth(true);
     } else {
@@ -131,6 +135,7 @@ const Questionnaire = () => {
               onSkip={handleSkip}
               isFirstQuestion={currentQuestion === 0}
               isLastQuestion={currentQuestion === questions.length - 1}
+              hideSkip={currentQuestion === 9} // Hide skip button for soulmate name question
             />
           ) : (
             <div className="w-full max-w-3xl mx-auto">
