@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
-import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
 
 const questions = [
   "What's your name?",

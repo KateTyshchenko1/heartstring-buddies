@@ -1,8 +1,8 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
 interface AuthModalProps {
@@ -15,22 +15,35 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('questionnaire_completed')
-          .eq('id', session.user.id)
-          .single();
-
-        if (profile?.questionnaire_completed) {
+        if (isSignUp) {
+          // For new users, mark questionnaire as completed and redirect to chat
+          await supabase
+            .from('profiles')
+            .update({ questionnaire_completed: true })
+            .eq('id', session.user.id);
+          
+          toast.success("Account created successfully!");
           navigate('/chat');
         } else {
-          navigate('/questionnaire');
+          // For existing users, check questionnaire status and redirect accordingly
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('questionnaire_completed')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile?.questionnaire_completed) {
+            toast.success("Welcome back!");
+            navigate('/chat');
+          } else {
+            navigate('/questionnaire');
+          }
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, isSignUp]);
 
   return (
     <Auth
