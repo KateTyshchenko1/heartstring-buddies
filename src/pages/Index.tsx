@@ -15,10 +15,6 @@ const Index = () => {
     transition: { duration: 0.6 }
   };
 
-  const handleCTAClick = () => {
-    navigate("/questionnaire");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
       <header className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -31,22 +27,13 @@ const Index = () => {
             <Star className="w-3 h-3 mr-1 fill-[#D91F3A]" /> Beta
           </Badge>
         </div>
-        <div className="flex gap-2 sm:gap-3">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/login")}
-            className="hover:bg-[#FFE5E5] text-gray-700 text-sm sm:text-base px-3 sm:px-4"
-          >
-            Login
-          </Button>
-          <Button 
-            variant="default" 
-            onClick={() => navigate("/signup")}
-            className="bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all text-sm sm:text-base px-3 sm:px-4"
-          >
-            Sign Up
-          </Button>
-        </div>
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate("/login")}
+          className="hover:bg-[#FFE5E5] text-gray-700 text-sm sm:text-base px-3 sm:px-4"
+        >
+          Login
+        </Button>
       </header>
 
       {/* Hero Section */}
@@ -61,7 +48,7 @@ const Index = () => {
           <div className="flex flex-col items-center gap-3">
             <Button 
               size="lg" 
-              onClick={handleCTAClick}
+              onClick={() => navigate("/questionnaire")}
               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
             >
               Create Your Soulmate
@@ -126,7 +113,7 @@ const Index = () => {
           <p className="text-base sm:text-lg text-gray-600 mb-6">Let's create someone who truly gets you.</p>
           <Button 
             size="lg" 
-            onClick={handleCTAClick}
+            onClick={() => navigate("/questionnaire")}
             className="text-base sm:text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white w-full sm:w-auto"
           >
             Create Your Soulmate

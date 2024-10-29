@@ -69,12 +69,13 @@ const Questionnaire = () => {
   };
 
   const handleSkip = () => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = "";
+    setAnswers(newAnswers);
+    
     if (currentQuestion === questions.length - 1) {
       setShowAuth(true);
     } else {
-      const newAnswers = [...answers];
-      newAnswers[currentQuestion] = "";
-      setAnswers(newAnswers);
       setCurrentQuestion(currentQuestion + 1);
     }
   };

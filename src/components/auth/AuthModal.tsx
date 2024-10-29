@@ -3,6 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface AuthModalProps {
   isSignUp?: boolean;
@@ -20,16 +21,29 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
           .eq('id', session.user.id)
           .single();
 
-        if (profile?.questionnaire_completed) {
+        if (isSignUp) {
+          // For new users, mark questionnaire as completed and redirect to chat
+          await supabase
+            .from('profiles')
+            .update({ questionnaire_completed: true })
+            .eq('id', session.user.id);
+          
+          toast.success("Account created successfully!");
           navigate('/chat');
         } else {
-          navigate('/questionnaire');
+          // For existing users, check questionnaire status
+          if (profile?.questionnaire_completed) {
+            toast.success("Welcome back!");
+            navigate('/chat');
+          } else {
+            navigate('/questionnaire');
+          }
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, isSignUp]);
 
   return (
     <Auth
