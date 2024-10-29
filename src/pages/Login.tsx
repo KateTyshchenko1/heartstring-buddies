@@ -25,7 +25,6 @@ const Login = () => {
         }
       }
 
-      // Handle password reset error
       if (event === "PASSWORD_RECOVERY") {
         const error = new URLSearchParams(window.location.search).get('error_description');
         if (error) {
@@ -66,7 +65,7 @@ const Login = () => {
             }
           }}
           providers={[]}
-          redirectTo={`${window.location.origin}/reset-password`}
+          redirectTo={`${window.location.origin}/chat`}
           theme="light"
         />
       </div>

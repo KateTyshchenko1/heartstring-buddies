@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import { toast } from "sonner";
+import AuthModal from "@/components/auth/AuthModal";
 
 const questions = [
   "What's your name?",
@@ -19,6 +20,7 @@ const questions = [
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
 
   const handleAnswer = async (answer: string) => {
@@ -56,9 +58,7 @@ const Questionnaire = () => {
         };
 
         localStorage.setItem('userContext', JSON.stringify(userContext));
-        
-        toast.success("Thank you for sharing! Your AI companion is ready.");
-        navigate("/chat");
+        setShowAuth(true);
       } else {
         setCurrentQuestion(currentQuestion + 1);
       }
@@ -106,8 +106,7 @@ const Questionnaire = () => {
         current_goals: []
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
-      toast.success("Thank you for sharing! Your AI companion is ready.");
-      navigate("/chat");
+      setShowAuth(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -115,30 +114,34 @@ const Questionnaire = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        <div className="text-center mb-16">
-          <div className="w-full bg-gray-100 rounded-full h-1 mb-4">
-            <div
-              className="bg-[#D91F3A] rounded-full h-1 transition-all duration-300"
-              style={{
-                width: `${((currentQuestion + 1) / questions.length) * 100}%`
-              }}
-            />
+      {!showAuth ? (
+        <div className="w-full max-w-4xl">
+          <div className="text-center mb-16">
+            <div className="w-full bg-gray-100 rounded-full h-1 mb-4">
+              <div
+                className="bg-[#D91F3A] rounded-full h-1 transition-all duration-300"
+                style={{
+                  width: `${((currentQuestion + 1) / questions.length) * 100}%`
+                }}
+              />
+            </div>
+            <p className="text-sm text-gray-400">
+              Question {currentQuestion + 1} of {questions.length}
+            </p>
           </div>
-          <p className="text-sm text-gray-400">
-            Question {currentQuestion + 1} of {questions.length}
-          </p>
+          
+          <Question
+            question={questions[currentQuestion]}
+            onAnswer={handleAnswer}
+            onBack={handleBack}
+            onSkip={handleSkip}
+            isFirstQuestion={currentQuestion === 0}
+            isLastQuestion={currentQuestion === questions.length - 1}
+          />
         </div>
-        
-        <Question
-          question={questions[currentQuestion]}
-          onAnswer={handleAnswer}
-          onBack={handleBack}
-          onSkip={handleSkip}
-          isFirstQuestion={currentQuestion === 0}
-          isLastQuestion={currentQuestion === questions.length - 1}
-        />
-      </div>
+      ) : (
+        <AuthModal isSignUp={true} />
+      )}
     </div>
   );
 };
