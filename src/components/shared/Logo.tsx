@@ -1,9 +1,9 @@
-import { Heart } from "lucide-react";
+import { Infinity } from "lucide-react";
 
 const Logo = () => {
   return (
     <div className="flex items-center gap-2">
-      <Heart className="w-6 h-6 text-primary" />
+      <Infinity className="w-6 h-6 text-primary" />
       <span className="font-display text-2xl">Soulmate.ai</span>
     </div>
   );
