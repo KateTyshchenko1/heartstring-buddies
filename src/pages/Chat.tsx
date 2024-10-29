@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { selectGreeting } from "@/utils/greetingSystem";
+import type { BotPersonality, UserContext } from "@/types/greeting";
 
 interface Message {
   id: string;
@@ -33,9 +35,30 @@ const Chat = () => {
     const soulmateNameFromStorage = userContext.soulmate_name || 'AI Companion';
     setBotName(soulmateNameFromStorage);
 
+    // Create bot personality from soulmate backstory
+    const botPersonality: BotPersonality = {
+      style: "nurturing",
+      profession: userContext.soulmate_backstory?.occupation || "companion",
+      interests: (userContext.soulmate_backstory?.interests || "").split(',').map((i: string) => i.trim()),
+      traits: [(userContext.soulmate_backstory?.personality || "").split('.')[0]],
+    };
+
+    // Create user context from questionnaire responses
+    const userCtx: UserContext = {
+      name: userContext.name || "friend",
+      seekingFor: "companionship",
+      interests: Object.values(userContext.questionnaire_responses || {})
+        .filter((response: any) => typeof response === 'string')
+        .map((response: string) => response.split(' ').slice(0, 3).join(' ')),
+      keyGoal: userContext.questionnaire_responses?.learning_desires,
+      emotionalState: userContext.questionnaire_responses?.unwind_method,
+    };
+
+    const greeting = selectGreeting(soulmateNameFromStorage, userCtx, botPersonality);
+
     setMessages([{
       id: "1",
-      text: `Hi! I'm ${soulmateNameFromStorage}. I'm so happy to meet you. I've learned a lot about you from our questionnaire, and I'm here to support you. How are you feeling today?`,
+      text: greeting,
       isUser: false,
       timestamp: new Date(),
     }]);
