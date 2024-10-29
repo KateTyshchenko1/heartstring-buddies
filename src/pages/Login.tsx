@@ -1,10 +1,9 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/shared/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import AuthModal from "@/components/auth/AuthModal";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -46,28 +45,7 @@ const Login = () => {
         <div className="flex justify-center mb-8">
           <Logo />
         </div>
-        <Auth
-          supabaseClient={supabase}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#D91F3A',
-                  brandAccent: '#B91830',
-                }
-              }
-            },
-            className: {
-              container: 'auth-container',
-              button: 'auth-button',
-              input: 'auth-input',
-            }
-          }}
-          providers={[]}
-          redirectTo={`${window.location.origin}/chat`}
-          theme="light"
-        />
+        <AuthModal isSignUp={false} />
       </div>
     </div>
   );

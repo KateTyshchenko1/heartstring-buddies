@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
-import { toast } from "sonner";
 import AuthModal from "@/components/auth/AuthModal";
+import { toast } from "sonner";
 
 const questions = [
   "What's your name?",
