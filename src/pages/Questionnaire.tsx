@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 
 interface QuestionType {
   id: string;
@@ -261,3 +263,5 @@ const Questionnaire = () => {
     </div>
   );
 };
+
+export default Questionnaire;
