@@ -19,7 +19,6 @@ export const xaiService = {
 
       if (!profile) throw new Error('Profile not found');
 
-      // Use userName instead of bot's name in the greeting
       const prompt = `Create a warm, engaging first greeting for ${userName}. Use their name naturally in the greeting. The greeting should reflect your personality as: ${profile.personality}. Keep it under 100 words and make it feel personal and welcoming.`;
 
       const response = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -32,6 +31,7 @@ export const xaiService = {
           messages: [{ role: 'system', content: prompt }],
           model: 'grok-beta',
           temperature: 0.7,
+          stream: false
         }),
       });
 
@@ -82,6 +82,7 @@ export const xaiService = {
           messages: [{ role: 'system', content: prompt }],
           model: 'grok-beta',
           temperature: 0.8,
+          stream: false
         }),
       });
 
@@ -121,6 +122,7 @@ export const xaiService = {
           messages: [{ role: 'system', content: prompt }],
           model: 'grok-beta',
           temperature: 0.3,
+          stream: false
         }),
       });
 
