@@ -71,7 +71,7 @@ const Questionnaire = () => {
           resonant_media: newAnswers[6],
           childhood_memory: newAnswers[7],
           impactful_gesture: newAnswers[8],
-          bot_name: answer // This is the bot's name from the last question
+          bot_name: answer
         };
 
         setQuestionnaireData(mappedData);
@@ -79,8 +79,6 @@ const Questionnaire = () => {
 
         const persona = await generateMatchingPersona(mappedData);
         const backstoryFields: BackstoryFields = {
-          bot_name: mappedData.bot_name || '',
-          user_name: mappedData.name,
           age: persona.age,
           occupation: persona.occupation,
           location: persona.location,
