@@ -154,7 +154,7 @@ const Questionnaire = () => {
     setShowAuth(true);
   };
 
-  const handleAnswer = async (answer: string) => {
+  const handleAnswer = (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
