@@ -45,10 +45,11 @@ Guidelines:
 2. Develop interests and characteristics that could lead to engaging conversations
 3. Balance playful charm with intellectual depth
 4. Make the profile feel authentic and relatable
+5. Generate an appropriate age between 28-38 years old
 
 Respond ONLY with a JSON object in this exact format:
 {
-  "age": "A number between 28-38",
+  "age": "A specific age (just the number) between 28-38",
   "occupation": "A sophisticated and intriguing profession",
   "location": "A specific location with an interesting detail",
   "personality": "3-4 key personality traits and characteristics",
@@ -115,15 +116,22 @@ export const generateMatchingPersona = async (
     // Validate all required fields
     const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
     for (const field of requiredFields) {
-      if (!generatedPersona[field] || typeof generatedPersona[field] !== 'string') {
-        console.error(`Missing or invalid field in response: ${field}`);
+      if (!generatedPersona[field]) {
+        console.error(`Missing field in response: ${field}`);
         throw new Error(`Invalid or missing field: ${field}`);
       }
     }
 
+    // Ensure age is a number between 28-38
+    const age = generatedPersona.age.toString().match(/\d+/)?.[0];
+    if (!age || parseInt(age) < 28 || parseInt(age) > 38) {
+      console.error('Invalid age:', generatedPersona.age);
+      throw new Error('Invalid age generated');
+    }
+
     return {
       name: questionnaire.name,
-      age: generatedPersona.age,
+      age: age.toString(),
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,
       personality: generatedPersona.personality,
