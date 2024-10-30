@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import Logo from "@/components/shared/Logo";
-import { generateResponse } from "@/services/xai";
+import { handleChatInteraction } from "@/services/chat";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { selectGreeting } from "@/utils/greetingSystem";
 import type { BotPersonality, UserContext } from "@/types/greeting";
+import type { InteractionMetrics } from "@/types/metrics";
 
 interface Message {
   id: string;
@@ -32,12 +33,6 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [botName, setBotName] = useState("");
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast.success("Successfully logged out!");
-    navigate("/login");
-  };
 
   useEffect(() => {
     const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
@@ -94,6 +89,7 @@ const Chat = () => {
       },
       conversationStyle: 'playful'
     };
+    
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
@@ -101,39 +97,7 @@ const Chat = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
-      // Save user message to conversations
-      const { error: userMsgError } = await supabase
-        .from('conversations')
-        .insert({
-          profile_id: user.id,
-          message: text,
-          is_user: true,
-          emotional_context: userMessage.emotionalContext,
-          conversation_style: userMessage.conversationStyle
-        });
-
-      if (userMsgError) throw userMsgError;
-
-      const response = await generateResponse(text);
-      
-      // Save AI response to conversations
-      const { error: aiMsgError } = await supabase
-        .from('conversations')
-        .insert({
-          profile_id: user.id,
-          message: response,
-          is_user: false,
-          emotional_context: {
-            conversationVibe: 'light',
-            energyLevel: 'upbeat',
-            flirtFactor: 1,
-            wittyExchanges: true,
-            followUpNeeded: false
-          },
-          conversation_style: 'playful'
-        });
-
-      if (aiMsgError) throw aiMsgError;
+      const { response, metrics } = await handleChatInteraction(text, user.id);
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -141,20 +105,37 @@ const Chat = () => {
         isUser: false,
         timestamp: new Date(),
         emotionalContext: {
-          conversationVibe: 'light',
-          energyLevel: 'upbeat',
-          flirtFactor: 1,
-          wittyExchanges: true,
+          conversationVibe: metrics.energyLevel,
+          energyLevel: metrics.energyLevel,
+          flirtFactor: metrics.flirtLevel,
+          wittyExchanges: metrics.wittyExchanges > 0,
           followUpNeeded: false
         },
-        conversationStyle: 'playful'
+        conversationStyle: metrics.connectionStyle as Message['conversationStyle']
       };
+
       setMessages((prev) => [...prev, aiMessage]);
+      updateChatUI(metrics);
     } catch (error: any) {
       toast.error(error.message || "Failed to save conversation");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const updateChatUI = (metrics: InteractionMetrics) => {
+    // Add subtle UI updates based on metrics
+    if (metrics.flirtLevel > 7) {
+      document.body.classList.add('high-chemistry');
+    } else {
+      document.body.classList.remove('high-chemistry');
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Successfully logged out!");
+    navigate("/login");
   };
 
   return (

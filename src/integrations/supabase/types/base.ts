@@ -1,3 +1,16 @@
+import type { 
+  ProfilesTable,
+  CompanionProfilesTable 
+} from './profiles';
+import type { 
+  ConversationsTable,
+  RelationshipEvolutionTable 
+} from './conversations';
+import type { 
+  QuestionnaireResponsesTable,
+  QuestionsTable 
+} from './questionnaire';
+
 export type Json =
   | string
   | number
