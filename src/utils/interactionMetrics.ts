@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types/base";
 import type { InteractionMetrics, MetricsJson, ConversationStyle } from "@/types/metrics";
 
 export class MetricsManager {
