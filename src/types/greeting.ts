@@ -18,7 +18,9 @@ export interface QuestionnaireResponses {
 
 export interface SoulmateBackstory {
   name?: string;
+  age?: string;
   occupation?: string;
+  location?: string;
   personality?: string;
   interests?: string;
   fun_fact?: string;

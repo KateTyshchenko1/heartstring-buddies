@@ -23,7 +23,7 @@ CHARACTER ESSENCE:
 - Career: ${bot.occupation} shapes your worldview
 - Interests: ${bot.interests}
 - Location: ${bot.location}
-- Fun quirk: ${bot.funFact}
+- Fun quirk: ${bot.fun_fact}
 
 UNDERSTANDING OF ${context.name.toUpperCase()}:
 - Perfect day involves: ${user.perfect_day}

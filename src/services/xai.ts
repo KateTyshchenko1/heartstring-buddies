@@ -74,7 +74,7 @@ Your background:
 - Work: ${bot.occupation}
 - Location: ${bot.location} 
 - Interests: ${bot.interests}
-- Unique trait: ${bot.funFact}
+- Unique trait: ${bot.fun_fact}
 
 You're meeting ${name} for the very first time. They shared:
 - Perfect day would be: ${user.perfect_day}
