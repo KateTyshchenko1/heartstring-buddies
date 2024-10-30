@@ -41,15 +41,10 @@ const Chat = () => {
         if (!user) throw new Error('No user found');
 
         // Fetch companion profile and questionnaire data
-        const [companionResponse, questionnaireResponse, conversationsResponse] = await Promise.all([
-          supabase
-            .from('companion_profiles')
-            .select('*')
-            .eq('profile_id', user.id)
-            .single(),
+        const [questionnaireResponse, conversationsResponse] = await Promise.all([
           supabase
             .from('questionnaire_responses')
-            .select('*')
+            .select('bot_name')
             .eq('profile_id', user.id)
             .single(),
           supabase
@@ -59,12 +54,11 @@ const Chat = () => {
             .order('timestamp', { ascending: true })
         ]);
 
-        if (companionResponse.error) throw companionResponse.error;
         if (questionnaireResponse.error) throw questionnaireResponse.error;
         if (conversationsResponse.error) throw conversationsResponse.error;
 
-        // Set bot name
-        setBotName(companionResponse.data.name);
+        // Set bot name from questionnaire responses
+        setBotName(questionnaireResponse.data.bot_name || "");
 
         // Load existing messages
         if (conversationsResponse.data.length > 0) {
