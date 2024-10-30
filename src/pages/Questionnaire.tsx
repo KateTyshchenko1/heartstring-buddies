@@ -30,9 +30,10 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      // Last question is the user's name
+      // First question (index 0) is user's name, last question is bot's name
       const questionnaireData = {
-        name: newAnswers[0], // First question is user's name
+        name: newAnswers[0], // User's name goes to name field
+        bot_name: answer, // Bot's name goes to bot_name field
         perfect_day: newAnswers[1],
         meaningful_compliment: newAnswers[2],
         unwind_method: newAnswers[3],
@@ -40,8 +41,7 @@ const Questionnaire = () => {
         dinner_guest: newAnswers[5],
         resonant_media: newAnswers[6],
         childhood_memory: newAnswers[7],
-        impactful_gesture: newAnswers[8],
-        bot_name: answer // Last question is bot's name
+        impactful_gesture: newAnswers[8]
       };
 
       setTemporaryData(prev => ({
@@ -104,7 +104,7 @@ const Questionnaire = () => {
         .insert({
           profile_id: userId,
           name: temporaryData.questionnaire.name, // User's name
-          bot_name: temporaryData.questionnaire.bot_name, // Bot's name
+          bot_name: temporaryData.questionnaire.bot_name, // Bot's name in correct field
           perfect_day: temporaryData.questionnaire.perfect_day,
           meaningful_compliment: temporaryData.questionnaire.meaningful_compliment,
           unwind_method: temporaryData.questionnaire.unwind_method,
@@ -122,7 +122,7 @@ const Questionnaire = () => {
         .from('companion_profiles')
         .insert({
           profile_id: userId,
-          name: temporaryData.questionnaire.bot_name, // Bot's name
+          name: temporaryData.questionnaire.bot_name, // Use bot_name here
           ...temporaryData.companion
         });
 
@@ -130,9 +130,9 @@ const Questionnaire = () => {
 
       // Update user context with correct names
       const userContext = {
-        name: temporaryData.questionnaire.name,
+        name: temporaryData.questionnaire.name, // User's name
         questionnaire_responses: temporaryData.questionnaire,
-        soulmate_name: temporaryData.questionnaire.bot_name,
+        soulmate_name: temporaryData.questionnaire.bot_name, // Bot's name
         soulmate_backstory: temporaryData.companion
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
