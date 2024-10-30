@@ -30,17 +30,18 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      // Prepare questionnaire data
+      // Last question is the user's name
       const questionnaireData = {
-        name: answer, // Last question is the name
-        perfect_day: newAnswers[0],
-        meaningful_compliment: newAnswers[1],
-        unwind_method: newAnswers[2],
-        learning_desires: newAnswers[3],
-        dinner_guest: newAnswers[4],
-        resonant_media: newAnswers[5],
-        childhood_memory: newAnswers[6],
-        impactful_gesture: newAnswers[7]
+        name: newAnswers[0], // First question is user's name
+        perfect_day: newAnswers[1],
+        meaningful_compliment: newAnswers[2],
+        unwind_method: newAnswers[3],
+        learning_desires: newAnswers[4],
+        dinner_guest: newAnswers[5],
+        resonant_media: newAnswers[6],
+        childhood_memory: newAnswers[7],
+        impactful_gesture: newAnswers[8],
+        bot_name: answer // Last question is bot's name
       };
 
       setTemporaryData(prev => ({
@@ -97,31 +98,41 @@ const Questionnaire = () => {
     if (!temporaryData) return;
 
     try {
-      // Save questionnaire responses
+      // Save questionnaire responses with correct name fields
       const { error: questionnaireError } = await supabase
         .from('questionnaire_responses')
         .insert({
           profile_id: userId,
-          ...temporaryData.questionnaire
+          name: temporaryData.questionnaire.name, // User's name
+          bot_name: temporaryData.questionnaire.bot_name, // Bot's name
+          perfect_day: temporaryData.questionnaire.perfect_day,
+          meaningful_compliment: temporaryData.questionnaire.meaningful_compliment,
+          unwind_method: temporaryData.questionnaire.unwind_method,
+          learning_desires: temporaryData.questionnaire.learning_desires,
+          dinner_guest: temporaryData.questionnaire.dinner_guest,
+          resonant_media: temporaryData.questionnaire.resonant_media,
+          childhood_memory: temporaryData.questionnaire.childhood_memory,
+          impactful_gesture: temporaryData.questionnaire.impactful_gesture
         });
 
       if (questionnaireError) throw questionnaireError;
 
-      // Save companion profile
+      // Save companion profile with bot's name
       const { error: companionError } = await supabase
         .from('companion_profiles')
         .insert({
           profile_id: userId,
+          name: temporaryData.questionnaire.bot_name, // Bot's name
           ...temporaryData.companion
         });
 
       if (companionError) throw companionError;
 
-      // Update user context
+      // Update user context with correct names
       const userContext = {
         name: temporaryData.questionnaire.name,
         questionnaire_responses: temporaryData.questionnaire,
-        soulmate_name: temporaryData.companion.name,
+        soulmate_name: temporaryData.questionnaire.bot_name,
         soulmate_backstory: temporaryData.companion
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
