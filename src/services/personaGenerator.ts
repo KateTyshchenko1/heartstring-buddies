@@ -55,7 +55,7 @@ export const generateMatchingPersona = async (
   try {
     const prompt = createPersonaPrompt(questionnaire);
     
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    const response = await fetch('https://api.xai-api.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${import.meta.env.VITE_XAI_API_KEY}`,
