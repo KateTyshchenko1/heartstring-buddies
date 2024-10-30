@@ -14,32 +14,44 @@ const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
+  // Ensure we have required fields
+  if (!questionnaire.name) {
+    throw new Error('Name is required for persona generation');
+  }
+
+  // Handle optional fields with default values
   const responses = {
-    perfect_day: questionnaire.perfect_day || "Not provided",
-    meaningful_compliment: questionnaire.meaningful_compliment || "Not provided",
-    unwind_method: questionnaire.unwind_method || "Not provided",
-    learning_desires: questionnaire.learning_desires || "Not provided",
-    dinner_guest: questionnaire.dinner_guest || "Not provided",
-    resonant_media: questionnaire.resonant_media || "Not provided",
-    childhood_memory: questionnaire.childhood_memory || "Not provided",
-    impactful_gesture: questionnaire.impactful_gesture || "Not provided"
+    perfect_day: questionnaire.perfect_day || "Not specified",
+    meaningful_compliment: questionnaire.meaningful_compliment || "Not specified",
+    unwind_method: questionnaire.unwind_method || "Not specified",
+    learning_desires: questionnaire.learning_desires || "Not specified",
+    dinner_guest: questionnaire.dinner_guest || "Not specified",
+    resonant_media: questionnaire.resonant_media || "Not specified",
+    childhood_memory: questionnaire.childhood_memory || "Not specified",
+    impactful_gesture: questionnaire.impactful_gesture || "Not specified"
   };
 
-  return `You are tasked with creating an engaging and compatible companion profile for a user based on their questionnaire responses. The goal is to craft a personality that will spark curiosity and interest while maintaining depth and sophistication.
+  // Count how many responses are actually provided
+  const providedResponses = Object.values(responses).filter(v => v !== "Not specified").length;
 
-Here are the user's questionnaire responses:
-${Object.entries(responses)
-  .map(([key, value]) => `${key}: "${value}"`)
-  .join('\n')}
+  let promptBase = `Create an engaging and compatible companion profile for someone named ${questionnaire.name}. `;
 
-Your task is to create a fictional companion profile that would be appealing and intriguing to this user. The profile should not directly mimic the user's interests, but rather present a unique and captivating personality that complements the user's preferences.
+  if (providedResponses > 0) {
+    promptBase += `Based on their responses:\n${Object.entries(responses)
+      .filter(([_, value]) => value !== "Not specified")
+      .map(([key, value]) => `${key}: "${value}"`)
+      .join('\n')}`;
+  } else {
+    promptBase += `Create a sophisticated and intriguing personality that would appeal to a broad range of interests and personalities.`;
+  }
+
+  return `${promptBase}
 
 Guidelines:
-1. Develop a distinct personality with unique interests, experiences, and qualities
-2. Ensure the profile is flirty and fun while also demonstrating depth and sophistication
-3. Create interests and experiences that would intrigue the user based on their responses
-4. Incorporate elements that could lead to engaging conversations
-5. Balance the profile with both lighthearted and profound characteristics
+1. Develop a distinct personality with unique interests and experiences
+2. Ensure the profile is flirty and fun while maintaining sophistication
+3. Create interests that could lead to engaging conversations
+4. Balance lighthearted and profound characteristics
 
 Respond ONLY with a JSON object in this exact format:
 {
@@ -51,7 +63,7 @@ Respond ONLY with a JSON object in this exact format:
   "funFact": "An intriguing detail that could spark conversation"
 }
 
-Keep all content appropriate and professional. No references to drugs, illegal activities, or inappropriate content.`;
+Keep all content appropriate and professional.`;
 };
 
 export const generateMatchingPersona = async (
@@ -61,8 +73,14 @@ export const generateMatchingPersona = async (
     throw new Error('API configuration error: Missing XAI_API_KEY');
   }
 
+  if (!questionnaire.name) {
+    throw new Error('Name is required for persona generation');
+  }
+
   try {
     const prompt = createPersonaPrompt(questionnaire);
+    console.log('Sending prompt to X.AI:', prompt);
+
     const response = await fetch(XAI_API_URL, {
       method: 'POST',
       headers: {
@@ -80,10 +98,12 @@ export const generateMatchingPersona = async (
     });
 
     if (!response.ok) {
+      console.error('X.AI API error:', response.statusText);
       throw new Error(`API error: ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('X.AI response:', data);
     
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid API response format');
@@ -93,6 +113,7 @@ export const generateMatchingPersona = async (
     const jsonMatch = contentStr.match(/\{[\s\S]*\}/);
     
     if (!jsonMatch) {
+      console.error('No JSON found in response:', contentStr);
       throw new Error('No valid JSON found in response');
     }
 
@@ -101,17 +122,23 @@ export const generateMatchingPersona = async (
     // Validate all required fields
     const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
     for (const field of requiredFields) {
-      if (typeof generatedPersona[field] !== 'string' || !generatedPersona[field].trim()) {
+      if (!generatedPersona[field] || typeof generatedPersona[field] !== 'string') {
+        console.error(`Missing or invalid field in response: ${field}`);
         throw new Error(`Invalid or missing field: ${field}`);
       }
     }
 
     return {
-      name: questionnaire.name || '',
-      ...generatedPersona
+      name: questionnaire.name,
+      age: generatedPersona.age,
+      occupation: generatedPersona.occupation,
+      location: generatedPersona.location,
+      personality: generatedPersona.personality,
+      interests: generatedPersona.interests,
+      fun_fact: generatedPersona.funFact
     };
   } catch (error) {
     console.error('Error generating persona:', error);
-    throw error; // Re-throw the error to be handled by the component
+    throw error;
   }
 };
