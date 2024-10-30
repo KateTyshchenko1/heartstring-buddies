@@ -24,6 +24,37 @@ const Questionnaire = () => {
   
   const navigate = useNavigate();
 
+  // Restore the questions loading functionality
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const { data: questionsData, error: fetchError } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('is_active', true)
+          .order('order_index');
+
+        if (fetchError) throw fetchError;
+        if (!questionsData?.length) {
+          throw new Error('No questions found');
+        }
+
+        setQuestions(questionsData);
+      } catch (err: any) {
+        console.error('Error:', err);
+        setError(err.message || 'An unexpected error occurred');
+        toast.error("Failed to load questions. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
