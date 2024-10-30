@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { InteractionMetrics } from "@/types/metrics";
+import type { InteractionMetrics, MetricsJson, ConversationStyle } from "@/types/metrics";
 
 export class MetricsManager {
   static async updateMetrics(
@@ -19,14 +19,22 @@ export class MetricsManager {
       if (!profile) throw new Error('Profile not found');
 
       const updatedMetrics = this.calculateNewMetrics(
-        profile.interaction_metrics,
+        profile.interaction_metrics as MetricsJson,
         metrics
       );
+
+      const metricsJson: MetricsJson = {
+        flirtLevel: updatedMetrics.flirtLevel,
+        charmFactor: updatedMetrics.charmFactor,
+        wittyExchanges: updatedMetrics.wittyExchanges,
+        energyLevel: updatedMetrics.energyLevel,
+        connectionStyle: updatedMetrics.connectionStyle
+      };
 
       await supabase
         .from('companion_profiles')
         .update({ 
-          interaction_metrics: updatedMetrics,
+          interaction_metrics: metricsJson,
           updated_at: new Date().toISOString()
         })
         .eq('profile_id', userId);
@@ -96,17 +104,17 @@ export class MetricsManager {
   private static determineConnectionStyle(
     userMessage: string,
     botResponse: string
-  ): string {
+  ): ConversationStyle {
     const combinedText = `${userMessage.toLowerCase()} ${botResponse.toLowerCase()}`;
-    if (/[💕💗🥰]/.test(combinedText)) return 'romantic';
+    if (/[💕💗🥰]/.test(combinedText)) return 'charming';
     if (/\?|think|why|how/.test(combinedText)) return 'intellectual';
     if (/haha|lol|😂/.test(combinedText)) return 'playful';
     if (/😊|😉/.test(combinedText)) return 'flirty';
-    return 'friendly';
+    return 'supportive';
   }
 
   private static calculateNewMetrics(
-    currentMetrics: any,
+    currentMetrics: MetricsJson | null,
     newMetrics: InteractionMetrics
   ): InteractionMetrics {
     if (!currentMetrics) return newMetrics;
@@ -116,7 +124,7 @@ export class MetricsManager {
       charmFactor: Math.round((currentMetrics.charmFactor + newMetrics.charmFactor) / 2),
       wittyExchanges: currentMetrics.wittyExchanges + newMetrics.wittyExchanges,
       energyLevel: newMetrics.energyLevel,
-      connectionStyle: newMetrics.connectionStyle
+      connectionStyle: newMetrics.connectionStyle as ConversationStyle
     };
   }
 }

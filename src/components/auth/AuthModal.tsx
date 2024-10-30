@@ -41,12 +41,8 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             navigate('/questionnaire');
           }
         }
-      } else if (event === 'AUTH_ERROR') {
-        if (session?.error?.message?.includes('User already registered')) {
-          toast.error("This email is already registered. Please sign in instead.");
-        } else {
-          toast.error(session?.error?.message || "An error occurred");
-        }
+      } else if (event === 'SIGNED_OUT') {
+        navigate('/login');
       }
     });
 
@@ -88,7 +84,7 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             email_label: 'Email',
             password_label: 'Password',
             button_label: 'Sign in',
-            link_text: 'Don\'t have an account? Sign up',
+            link_text: "Don't have an account? Sign up",
             email_input_placeholder: 'Your email address',
             password_input_placeholder: 'Your password'
           },

@@ -1,4 +1,5 @@
 import { Json } from './base';
+import type { Database } from '../types';
 
 export interface ConversationsTable {
   Row: {

@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { MetricsManager } from "@/utils/interactionMetrics";
 import { generateResponse } from "./xai";
-import type { InteractionMetrics, ChatResponse } from "@/types/metrics";
+import type { InteractionMetrics, ChatResponse, ConversationStyle } from "@/types/metrics";
 
 export const handleChatInteraction = async (
   message: string,
@@ -35,7 +35,7 @@ export const handleChatInteraction = async (
           flirtFactor: updatedMetrics.flirtLevel,
           wittyExchanges: updatedMetrics.wittyExchanges > 0
         },
-        conversation_style: updatedMetrics.connectionStyle
+        conversation_style: updatedMetrics.connectionStyle as ConversationStyle
       });
 
     return {
