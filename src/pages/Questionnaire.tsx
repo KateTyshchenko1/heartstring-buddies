@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { generateMatchingPersona } from "@/services/personaGenerator";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
-import type { QuestionnaireResponses, SoulmateBackstory } from "@/types/greeting";
+import type { QuestionnaireResponses } from "@/types/greeting";
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -60,23 +60,23 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      const mappedData: QuestionnaireResponses = {
-        name: newAnswers[0],
-        perfect_day: newAnswers[1],
-        meaningful_compliment: newAnswers[2],
-        unwind_method: newAnswers[3],
-        learning_desires: newAnswers[4],
-        dinner_guest: newAnswers[5],
-        resonant_media: newAnswers[6],
-        childhood_memory: newAnswers[7],
-        impactful_gesture: newAnswers[8],
-        bot_name: answer
-      };
-
-      setQuestionnaireData(mappedData);
-
       try {
+        const mappedData: QuestionnaireResponses = {
+          name: newAnswers[0],
+          perfect_day: newAnswers[1],
+          meaningful_compliment: newAnswers[2],
+          unwind_method: newAnswers[3],
+          learning_desires: newAnswers[4],
+          dinner_guest: newAnswers[5],
+          resonant_media: newAnswers[6],
+          childhood_memory: newAnswers[7],
+          impactful_gesture: newAnswers[8],
+          bot_name: answer // This is the bot's name from the last question
+        };
+
+        setQuestionnaireData(mappedData);
         setIsLoading(true);
+
         const persona = await generateMatchingPersona(mappedData);
         const backstoryFields: BackstoryFields = {
           bot_name: mappedData.bot_name || '',
@@ -88,6 +88,7 @@ const Questionnaire = () => {
           interests: persona.interests,
           fun_fact: persona.fun_fact
         };
+
         setGeneratedPersona(backstoryFields);
         setShowPersonaGen(true);
       } catch (error: any) {

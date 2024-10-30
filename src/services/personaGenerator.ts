@@ -4,11 +4,11 @@ import type { QuestionnaireResponses } from "@/types/greeting";
 import { supabase } from "@/integrations/supabase/client";
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
-  if (!questionnaire.name) {
-    throw new Error('Name is required for persona generation');
+  if (!questionnaire.name || !questionnaire.bot_name) {
+    throw new Error('Both user name and bot name are required for persona generation');
   }
 
-  return `Create a compatible companion profile for ${questionnaire.name}.
+  return `Create a compatible companion profile for ${questionnaire.name}, with the AI companion named ${questionnaire.bot_name}.
 Based on their responses:
 - Perfect day: ${questionnaire.perfect_day || 'Not specified'}
 - How they unwind: ${questionnaire.unwind_method || 'Not specified'}
