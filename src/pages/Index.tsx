@@ -27,18 +27,43 @@ const Index = () => {
       if (!session?.user) return;
 
       try {
+        // First check if profile exists
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('questionnaire_completed')
           .eq('id', session.user.id)
-          .maybeSingle(); // Use maybeSingle() instead of single()
+          .maybeSingle();
 
-        // If profile exists and questionnaire is completed, redirect to chat
-        if (profile?.questionnaire_completed) {
-          navigate('/chat');
-        } else if (error) {
+        if (error) {
           console.error('Error fetching profile:', error);
           toast.error('Error checking profile status');
+          return;
+        }
+
+        // If no profile exists, create one
+        if (!profile) {
+          const { error: createError } = await supabase
+            .from('profiles')
+            .insert([{ 
+              id: session.user.id,
+              email: session.user.email,
+              questionnaire_completed: false
+            }]);
+
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            toast.error('Error setting up your profile');
+            return;
+          }
+
+          // Redirect to questionnaire for new users
+          navigate('/questionnaire');
+          return;
+        }
+
+        // If profile exists and questionnaire is completed, redirect to chat
+        if (profile.questionnaire_completed) {
+          navigate('/chat');
         }
       } catch (error) {
         console.error('Error in checkUserStatus:', error);
