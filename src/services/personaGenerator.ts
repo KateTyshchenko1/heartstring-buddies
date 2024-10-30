@@ -1,9 +1,7 @@
 import { toast } from "sonner";
 import type { SoulmateBackstory } from "@/types/greeting";
-import type { QuestionnaireResponsesTable } from "@/integrations/supabase/types/questionnaire";
+import type { QuestionnaireResponses } from "@/types/greeting";
 import { supabase } from "@/integrations/supabase/client";
-
-type QuestionnaireResponses = QuestionnaireResponsesTable['Row'];
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
   if (!questionnaire.name) {
@@ -85,62 +83,16 @@ export const generateMatchingPersona = async (
     }
 
     const data = await response.json();
-    console.log('API Response:', data);
-
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid API response format');
-    }
-
-    let generatedPersona;
-    try {
-      generatedPersona = JSON.parse(data.choices[0].message.content);
-    } catch (parseError) {
-      console.error('JSON Parse Error:', parseError);
-      throw new Error('Failed to parse persona data');
-    }
+    const generatedPersona = JSON.parse(data.choices[0].message.content);
 
     if (!validatePersonaResponse(generatedPersona)) {
       throw new Error('Generated persona is missing required fields');
     }
 
-    // Save the generated persona to companion_profiles
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not found');
-
-    const companionProfile = {
-      profile_id: user.id,
-      age: generatedPersona.age,
-      occupation: generatedPersona.occupation,
-      location: generatedPersona.location,
-      personality: generatedPersona.personality,
-      interests: generatedPersona.interests,
-      fun_fact: generatedPersona.funFact,
-      personality_insights: {
-        emotionalDepth: 'dynamic',
-        vulnerabilityStyle: 'playful',
-        attachmentStyle: 'confident',
-        conversationStyle: 'witty',
-        humorStyle: 'flirty-playful',
-        intimacyPace: 'natural',
-        romanticStyle: 'charming',
-        primaryNeed: 'connection',
-        loveLanguage: 'banter',
-        personalGrowthFocus: 'adventure'
-      }
-    };
-
-    const { error: companionError } = await supabase
-      .from('companion_profiles')
-      .upsert(companionProfile);
-
-    if (companionError) {
-      console.error('Error saving companion profile:', companionError);
-      throw new Error('Failed to save companion profile');
-    }
-
     return {
-      name: questionnaire.name,
-      ...companionProfile
+      bot_name: questionnaire.bot_name || '',
+      user_name: questionnaire.name,
+      ...generatedPersona
     };
   } catch (error: any) {
     console.error('Error generating persona:', error);

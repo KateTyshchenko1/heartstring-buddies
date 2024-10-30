@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { generateMatchingPersona } from "@/services/personaGenerator";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
+import type { QuestionnaireResponses, SoulmateBackstory } from "@/types/greeting";
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -19,7 +20,7 @@ const Questionnaire = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [generatedPersona, setGeneratedPersona] = useState<BackstoryFields | null>(null);
-  const [questionnaireData, setQuestionnaireData] = useState<any>(null);
+  const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireResponses | null>(null);
   
   const navigate = useNavigate();
 
@@ -59,8 +60,7 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      // Map answers to the correct fields based on question order
-      const mappedData = {
+      const mappedData: QuestionnaireResponses = {
         name: newAnswers[0],
         perfect_day: newAnswers[1],
         meaningful_compliment: newAnswers[2],
@@ -78,7 +78,17 @@ const Questionnaire = () => {
       try {
         setIsLoading(true);
         const persona = await generateMatchingPersona(mappedData);
-        setGeneratedPersona(persona);
+        const backstoryFields: BackstoryFields = {
+          bot_name: mappedData.bot_name || '',
+          user_name: mappedData.name,
+          age: persona.age,
+          occupation: persona.occupation,
+          location: persona.location,
+          personality: persona.personality,
+          interests: persona.interests,
+          fun_fact: persona.fun_fact
+        };
+        setGeneratedPersona(backstoryFields);
         setShowPersonaGen(true);
       } catch (error: any) {
         console.error('Error generating persona:', error);
