@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -11,6 +11,7 @@ interface AuthModalProps {
 
 const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   const navigate = useNavigate();
+  const [view, setView] = useState(isSignUp ? "sign_up" : "sign_in");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -39,34 +40,60 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             navigate('/questionnaire');
           }
         }
+      } else if (event === 'USER_UPDATED') {
+        toast.success("Sign in successful!");
+        navigate('/chat');
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate, isSignUp]);
 
+  const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
+    setView(newView);
+  };
+
   return (
-    <Auth
-      supabaseClient={supabase}
-      appearance={{
-        theme: ThemeSupa,
-        variables: {
-          default: {
-            colors: {
-              brand: '#D91F3A',
-              brandAccent: '#B91830',
+    <>
+      <Auth
+        supabaseClient={supabase}
+        appearance={{
+          theme: ThemeSupa,
+          variables: {
+            default: {
+              colors: {
+                brand: '#D91F3A',
+                brandAccent: '#B91830',
+              }
             }
+          },
+          className: {
+            container: 'auth-container',
+            button: 'auth-button',
+            input: 'auth-input',
           }
-        },
-        className: {
-          container: 'auth-container',
-          button: 'auth-button',
-          input: 'auth-input',
-        }
-      }}
-      providers={[]}
-      view={isSignUp ? "sign_up" : "sign_in"}
-    />
+        }}
+        providers={[]}
+        view={view}
+        localization={{
+          variables: {
+            sign_up: {
+              email_label: 'Email',
+              password_label: 'Password',
+              button_label: 'Sign up',
+              link_text: 'Already have an account? Sign in',
+            },
+            sign_in: {
+              email_label: 'Email',
+              password_label: 'Password',
+              button_label: 'Sign in',
+              link_text: 'Don\'t have an account? Sign up',
+            },
+          },
+        }}
+        onViewChange={handleViewChange}
+      />
+    </>
   );
 };
 
