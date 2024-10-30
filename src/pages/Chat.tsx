@@ -172,7 +172,7 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/5">
-      <div className="container mx-auto max-w-4xl h-screen flex flex-col px-4 sm:px-6">
+      <div className="container mx-auto max-w-4xl h-screen flex flex-col">
         <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo />
@@ -210,7 +210,9 @@ const Chat = () => {
         </div>
         
         <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
-          <ChatInput onSendMessage={handleSendMessage} />
+          <div className="max-w-4xl mx-auto w-full px-2">
+            <ChatInput onSendMessage={handleSendMessage} />
+          </div>
         </div>
       </div>
     </div>
