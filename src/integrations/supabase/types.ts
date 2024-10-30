@@ -141,6 +141,7 @@ export type Database = {
       }
       questionnaire_responses: {
         Row: {
+          bot_name: string | null
           childhood_memory: string | null
           created_at: string | null
           dinner_guest: string | null
@@ -155,6 +156,7 @@ export type Database = {
           unwind_method: string | null
         }
         Insert: {
+          bot_name?: string | null
           childhood_memory?: string | null
           created_at?: string | null
           dinner_guest?: string | null
@@ -169,6 +171,7 @@ export type Database = {
           unwind_method?: string | null
         }
         Update: {
+          bot_name?: string | null
           childhood_memory?: string | null
           created_at?: string | null
           dinner_guest?: string | null
