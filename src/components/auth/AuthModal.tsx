@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -40,6 +40,12 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
           } else {
             navigate('/questionnaire');
           }
+        }
+      } else if (event === 'AUTH_ERROR') {
+        if (session?.error?.message?.includes('User already registered')) {
+          toast.error("This email is already registered. Please sign in instead.");
+        } else {
+          toast.error(session?.error?.message || "An error occurred");
         }
       }
     });
@@ -87,13 +93,6 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             password_input_placeholder: 'Your password'
           },
         },
-      }}
-      onError={(error) => {
-        if (error.message.includes('User already registered')) {
-          toast.error("This email is already registered. Please sign in instead.");
-        } else {
-          toast.error(error.message);
-        }
       }}
     />
   );
