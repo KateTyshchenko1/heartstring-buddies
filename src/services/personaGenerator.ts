@@ -14,44 +14,37 @@ const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
-  // Ensure we have required fields
+  // Only name is required
   if (!questionnaire.name) {
     throw new Error('Name is required for persona generation');
   }
 
-  // Handle optional fields with default values
-  const responses = {
-    perfect_day: questionnaire.perfect_day || "Not specified",
-    meaningful_compliment: questionnaire.meaningful_compliment || "Not specified",
-    unwind_method: questionnaire.unwind_method || "Not specified",
-    learning_desires: questionnaire.learning_desires || "Not specified",
-    dinner_guest: questionnaire.dinner_guest || "Not specified",
-    resonant_media: questionnaire.resonant_media || "Not specified",
-    childhood_memory: questionnaire.childhood_memory || "Not specified",
-    impactful_gesture: questionnaire.impactful_gesture || "Not specified"
-  };
+  // Filter out undefined or null values
+  const providedAnswers = Object.entries(questionnaire)
+    .filter(([key, value]) => 
+      value && 
+      typeof value === 'string' && 
+      key !== 'id' && 
+      key !== 'profile_id' && 
+      key !== 'created_at' &&
+      key !== 'bot_name'
+    );
 
-  // Count how many responses are actually provided
-  const providedResponses = Object.values(responses).filter(v => v !== "Not specified").length;
+  let promptBase = `Create an engaging and compatible companion profile for someone named ${questionnaire.name}.`;
 
-  let promptBase = `Create an engaging and compatible companion profile for someone named ${questionnaire.name}. `;
-
-  if (providedResponses > 0) {
-    promptBase += `Based on their responses:\n${Object.entries(responses)
-      .filter(([_, value]) => value !== "Not specified")
+  if (providedAnswers.length > 1) { // More than just the name
+    promptBase += `\n\nBased on what we know about them:\n${providedAnswers
       .map(([key, value]) => `${key}: "${value}"`)
       .join('\n')}`;
-  } else {
-    promptBase += `Create a sophisticated and intriguing personality that would appeal to a broad range of interests and personalities.`;
   }
 
   return `${promptBase}
 
 Guidelines:
-1. Develop a distinct personality with unique interests and experiences
-2. Ensure the profile is flirty and fun while maintaining sophistication
-3. Create interests that could lead to engaging conversations
-4. Balance lighthearted and profound characteristics
+1. Create a unique and intriguing personality that would be compatible with what we know about ${questionnaire.name}
+2. Develop interests and characteristics that could lead to engaging conversations
+3. Balance playful charm with intellectual depth
+4. Make the profile feel authentic and relatable
 
 Respond ONLY with a JSON object in this exact format:
 {
@@ -92,7 +85,7 @@ export const generateMatchingPersona = async (
           { role: 'system', content: prompt }
         ],
         model: 'grok-beta',
-        temperature: 0.7,
+        temperature: 0.8,
         max_tokens: 500,
       }),
     });
