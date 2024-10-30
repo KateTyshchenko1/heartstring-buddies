@@ -1,0 +1,29 @@
+import type { Database } from "@/integrations/supabase/types";
+
+export type ConversationStyle = Database['public']['Enums']['conversation_style'];
+
+export interface EmotionalContext {
+  conversationVibe: string;
+  energyLevel: string;
+  flirtFactor: number;
+  wittyExchanges: boolean;
+  followUpNeeded: boolean;
+}
+
+export interface Message {
+  id: string;
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
+  emotionalContext?: EmotionalContext;
+  conversationStyle?: ConversationStyle;
+}
+
+export interface ConversationData {
+  id: string;
+  message: string;
+  is_user: boolean;
+  timestamp: string | null;
+  emotional_context: EmotionalContext | null;
+  conversation_style: ConversationStyle | null;
+}

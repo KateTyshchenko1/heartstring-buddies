@@ -9,24 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { xaiService } from "@/services/xai";
-import type { BotPersonality, UserContext } from "@/types/greeting";
-import type { InteractionMetrics } from "@/types/metrics";
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-  emotionalContext?: {
-    userMood?: string | null;
-    conversationVibe: string;
-    energyLevel: string;
-    flirtFactor: number;
-    wittyExchanges: boolean;
-    followUpNeeded: boolean;
-  };
-  conversationStyle?: 'flirty' | 'witty' | 'playful' | 'charming' | 'mysterious' | 'intellectual' | 'supportive';
-}
+import type { Message, ConversationData } from "@/types/chat";
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -42,7 +25,7 @@ const Chat = () => {
         if (!user) throw new Error('No user found');
 
         // Fetch companion profile and questionnaire data
-        const [companionResponse, questionnairResponse] = await Promise.all([
+        const [companionResponse, questionnairResponse, conversationsResponse] = await Promise.all([
           supabase
             .from('companion_profiles')
             .select('*')
@@ -52,7 +35,12 @@ const Chat = () => {
             .from('questionnaire_responses')
             .select('*')
             .eq('profile_id', user.id)
-            .single()
+            .single(),
+          supabase
+            .from('conversations')
+            .select('*')
+            .eq('profile_id', user.id)
+            .order('timestamp', { ascending: true })
         ]);
 
         if (companionResponse.error) throw companionResponse.error;
@@ -63,18 +51,18 @@ const Chat = () => {
         setUserName(questionnairResponse.data.name || "");
 
         // Load existing messages
-        if (questionnairResponse.data.length > 0) {
-          setMessages(questionnairResponse.data.map((msg: any) => ({
+        if (conversationsResponse.data?.length > 0) {
+          setMessages(conversationsResponse.data.map((msg: ConversationData) => ({
             id: msg.id,
             text: msg.message,
             isUser: msg.is_user,
-            timestamp: new Date(msg.timestamp),
+            timestamp: new Date(msg.timestamp || Date.now()),
             emotionalContext: msg.emotional_context,
             conversationStyle: msg.conversation_style
           })));
         } else {
           // Generate initial greeting using the user's name
-          const greeting = await xaiService.generateGreeting(user.id, questionnairResponse.data.user_name);
+          const greeting = await xaiService.generateGreeting(user.id, questionnairResponse.data.name);
           const newMessage = {
             id: "1",
             text: greeting,
@@ -127,7 +115,7 @@ const Chat = () => {
       },
       conversationStyle: 'playful'
     };
-    
+
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
@@ -136,7 +124,7 @@ const Chat = () => {
       if (!user) throw new Error('No user found');
 
       const { response, metrics } = await handleChatInteraction(text, user.id);
-      
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: response,

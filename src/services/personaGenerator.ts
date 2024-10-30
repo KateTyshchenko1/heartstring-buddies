@@ -60,7 +60,7 @@ Keep all content appropriate and professional.`;
 };
 
 export const generateMatchingPersona = async (
-  questionnaire: QuestionnaireResponses
+  questionnaire: Partial<QuestionnaireResponsesTable['Row']>
 ): Promise<SoulmateBackstory> => {
   if (!XAI_API_KEY) {
     throw new Error('API configuration error: Missing XAI_API_KEY');
@@ -123,7 +123,7 @@ export const generateMatchingPersona = async (
 
     // Return the persona with the correct field structure
     return {
-      name: questionnaire.bot_name || '',  // Use bot_name from questionnaire
+      name: questionnaire.bot_name || '',
       age: age.toString(),
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,
