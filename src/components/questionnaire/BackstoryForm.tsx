@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { generateMatchingPersona } from "@/services/personaGenerator";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 interface BackstoryFormProps {
   soulmateName: string;
@@ -23,13 +25,37 @@ export interface BackstoryFields {
 const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
   const [fields, setFields] = useState<BackstoryFields>({
     name: soulmateName,
-    age: "34",
-    occupation: "Child psychologist working with art therapy",
-    location: "Lives in Seattle, but loves traveling to small towns on weekends",
-    personality: "Empathetic and attentive, with a calm presence. Known for asking thoughtful questions and remembering the small details",
-    interests: "Reading psychology books, cooking Mediterranean food, practicing mindfulness, and collecting vinyl records of ambient music",
-    fun_fact: "Started a small community garden that donates fresh produce to local shelters"
+    age: "",
+    occupation: "",
+    location: "",
+    personality: "",
+    interests: "",
+    fun_fact: ""
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [regenerate, setRegenerate] = useState(false);
+
+  useEffect(() => {
+    const generatePersona = async () => {
+      try {
+        setIsLoading(true);
+        const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+        if (userContext.questionnaire_responses) {
+          const persona = await generateMatchingPersona(userContext.questionnaire_responses);
+          setFields(prev => ({
+            ...persona,
+            name: soulmateName
+          }));
+        }
+      } catch (error) {
+        toast.error("Error generating profile. Using default values.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    generatePersona();
+  }, [soulmateName, regenerate]);
 
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
     setFields(prev => ({
@@ -46,6 +72,26 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     }
   };
 
+  const handleRegenerate = () => {
+    setRegenerate(prev => !prev);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-3xl text-center">
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
+            Creating {soulmateName}'s Profile
+          </h1>
+          <p className="text-lg text-gray-600">
+            Crafting the perfect personality based on your responses ✨
+          </p>
+        </div>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-3xl">
       <div className="text-center mb-12">
@@ -61,25 +107,36 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
         {Object.entries(fields).filter(([key]) => key !== 'name').map(([field, value]) => (
           <div key={field} className="space-y-2">
             <Label htmlFor={field} className="text-lg capitalize text-gray-700">
-              {field === 'funFact' ? 'Fun Fact' : field}
+              {field === 'fun_fact' ? 'Fun Fact' : field}
             </Label>
             <Textarea
               id={field}
               value={value}
               onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
               className="min-h-[100px] text-base resize-none bg-white/90"
-              placeholder={`Enter ${field}`}
+              placeholder={`Enter ${field === 'fun_fact' ? 'Fun Fact' : field}`}
             />
           </div>
         ))}
 
-        <Button
-          onClick={handleSubmit}
-          className="w-full max-w-xs mx-auto mt-8 bg-primary hover:bg-primary/90 text-white py-6 text-lg flex items-center justify-center gap-2"
-        >
-          Start Your Story
-          <ArrowRight className="w-5 h-5" />
-        </Button>
+        <div className="flex gap-4 justify-center pt-4">
+          <Button
+            onClick={handleRegenerate}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Generate Another
+          </Button>
+          
+          <Button
+            onClick={handleSubmit}
+            className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2"
+          >
+            Start Your Story
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
