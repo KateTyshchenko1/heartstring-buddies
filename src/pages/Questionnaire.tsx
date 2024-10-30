@@ -69,17 +69,22 @@ const Questionnaire = () => {
     const fetchQuestions = async () => {
       try {
         setIsLoading(true);
-        
-        // Add headers to fix CORS and content type issues
+        setError(null);
+
         const { data: questionsData, error: fetchError } = await supabase
           .from('questions')
           .select('*')
           .eq('is_active', true)
-          .order('order_index')
-          .throwOnError();
+          .order('order_index');
 
-        if (fetchError) throw fetchError;
-        if (!questionsData?.length) throw new Error('No questions found');
+        if (fetchError) {
+          console.error('Supabase error:', fetchError);
+          throw new Error('Failed to fetch questions');
+        }
+
+        if (!questionsData?.length) {
+          throw new Error('No questions found');
+        }
 
         setQuestions(questionsData);
       } catch (err: any) {
@@ -91,6 +96,7 @@ const Questionnaire = () => {
       }
     };
 
+    // Fetch questions when component mounts
     fetchQuestions();
   }, []);
 
