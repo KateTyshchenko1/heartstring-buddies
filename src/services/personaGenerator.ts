@@ -2,6 +2,16 @@ import { toast } from "sonner";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 import type { QuestionnaireResponsesTable } from "@/integrations/supabase/types/questionnaire";
 
+// Declare environment variables
+declare global {
+  interface ImportMetaEnv {
+    VITE_XAI_API_KEY: string;
+  }
+}
+
+const XAI_API_KEY = import.meta.env.VITE_XAI_API_KEY;
+const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
+
 type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
