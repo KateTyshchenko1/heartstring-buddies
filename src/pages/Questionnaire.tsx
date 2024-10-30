@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
-import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -37,7 +36,6 @@ const Questionnaire = () => {
   });
   
   const navigate = useNavigate();
-  const { session } = useAuth();
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -61,6 +59,7 @@ const Questionnaire = () => {
           return;
         }
 
+        console.log('Fetched questions:', questionsData);
         setQuestions(questionsData);
         setIsLoading(false);
       } catch (err) {
@@ -73,7 +72,7 @@ const Questionnaire = () => {
     fetchQuestions();
   }, []);
 
-  const handleAnswer = async (answer: string) => {
+  const handleAnswer = (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
@@ -81,7 +80,23 @@ const Questionnaire = () => {
     if (currentQuestion === questions.length - 2) {
       setCurrentQuestion(currentQuestion + 1);
     } else if (currentQuestion === questions.length - 1) {
-      // Only show auth modal at the end of questionnaire
+      // Store answers in localStorage before showing auth
+      const userContext = {
+        name: newAnswers[0],
+        questionnaire_responses: {
+          perfect_day: newAnswers[1],
+          meaningful_compliment: newAnswers[2],
+          unwind_method: newAnswers[3],
+          learning_desires: newAnswers[4],
+          dinner_guest: newAnswers[5],
+          resonant_media: newAnswers[6],
+          childhood_memory: newAnswers[7],
+          impactful_gesture: newAnswers[8]
+        },
+        soulmate_name: newAnswers[9],
+        soulmate_backstory: soulmateData
+      };
+      localStorage.setItem('userContext', JSON.stringify(userContext));
       setShowAuth(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
