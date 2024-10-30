@@ -1,78 +1,16 @@
-import { useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import FeatureCards from "@/components/home/FeatureCards";
-import { useAuth } from "@/components/auth/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
 import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } from "lucide-react";
-import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { session } = useAuth();
-
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
 
   const handleCreateClick = () => {
     navigate("/questionnaire");
   };
-
-  useEffect(() => {
-    const checkUserStatus = async () => {
-      if (!session?.user) return;
-
-      try {
-        // First check if profile exists
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('questionnaire_completed')
-          .eq('id', session.user.id)
-          .maybeSingle();
-
-        if (error) {
-          console.error('Error fetching profile:', error);
-          toast.error('Error checking profile status');
-          return;
-        }
-
-        // If no profile exists, create one
-        if (!profile) {
-          const { error: createError } = await supabase
-            .from('profiles')
-            .insert([{ 
-              id: session.user.id,
-              email: session.user.email,
-              questionnaire_completed: false
-            }]);
-
-          if (createError) {
-            console.error('Error creating profile:', createError);
-            toast.error('Error setting up your profile');
-            return;
-          }
-
-          // Redirect to questionnaire for new users
-          navigate('/questionnaire');
-          return;
-        }
-
-        // If profile exists and questionnaire is completed, redirect to chat
-        if (profile.questionnaire_completed) {
-          navigate('/chat');
-        }
-      } catch (error) {
-        console.error('Error in checkUserStatus:', error);
-        toast.error('Something went wrong');
-      }
-    };
-    
-    checkUserStatus();
-  }, [session, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
@@ -85,21 +23,6 @@ const Index = () => {
           <Badge variant="secondary" className="bg-[#FFD7D0] text-[#D91F3A] font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm">
             <Star className="w-3 h-3 mr-1 fill-[#D91F3A]" /> Beta
           </Badge>
-        </div>
-        <div className="flex gap-3">
-          <Button 
-            variant="ghost" 
-            onClick={handleLoginClick}
-            className="hover:bg-[#FFE5E5] text-gray-700"
-          >
-            Login
-          </Button>
-          <Button 
-            onClick={handleCreateClick}
-            className="bg-[#D91F3A] hover:bg-[#B91830] text-white"
-          >
-            Sign up
-          </Button>
         </div>
       </header>
 
@@ -142,8 +65,12 @@ const Index = () => {
 
       {/* Experience Cards */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 bg-gradient-to-br from-white/80 to-[#FFD7D0]/20">
-        <h2 className="text-2xl sm:text-3xl font-display text-center mb-2 text-[#D91F3A]">Ready to Be Swept Off Your Feet?</h2>
-        <p className="text-lg text-gray-600 text-center mb-8 sm:mb-12">Here is how it all works:</p>
+        <h2 className="text-2xl sm:text-3xl font-display text-center mb-2 text-[#D91F3A]">
+          Ready to Be Swept Off Your Feet?
+        </h2>
+        <p className="text-lg text-gray-600 text-center mb-8 sm:mb-12">
+          Here is how it all works:
+        </p>
         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {[
             {
@@ -165,7 +92,9 @@ const Index = () => {
           ].map((card, index) => (
             <Card key={index} className="border-none shadow-md bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all transform hover:scale-105 group">
               <CardHeader>
-                <CardTitle className="text-lg text-gray-800 group-hover:text-[#D91F3A] transition-colors">{card.title}</CardTitle>
+                <CardTitle className="text-lg text-gray-800 group-hover:text-[#D91F3A] transition-colors">
+                  {card.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 text-sm leading-relaxed">{card.description}</p>
@@ -178,8 +107,12 @@ const Index = () => {
       {/* Final CTA */}
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-          <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">Ready to Start Your Story?</h2>
-          <p className="text-base sm:text-lg text-gray-600 mb-6">Let's create someone who truly gets you.</p>
+          <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">
+            Ready to Start Your Story?
+          </h2>
+          <p className="text-base sm:text-lg text-gray-600 mb-6">
+            Let's create someone who truly gets you.
+          </p>
           <Button 
             size="lg" 
             onClick={handleCreateClick}
