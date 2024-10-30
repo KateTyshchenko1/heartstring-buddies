@@ -41,9 +41,6 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             navigate('/questionnaire');
           }
         }
-      } else if (event === 'USER_UPDATED') {
-        toast.success("Sign in successful!");
-        navigate('/chat');
       }
     });
 
@@ -90,6 +87,13 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             password_input_placeholder: 'Your password'
           },
         },
+      }}
+      onError={(error) => {
+        if (error.message.includes('User already registered')) {
+          toast.error("This email is already registered. Please sign in instead.");
+        } else {
+          toast.error(error.message);
+        }
       }}
     />
   );
