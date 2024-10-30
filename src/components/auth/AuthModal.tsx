@@ -4,7 +4,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { ViewType } from "@supabase/auth-ui-shared";
 
 interface AuthModalProps {
   isSignUp?: boolean;
@@ -12,7 +11,6 @@ interface AuthModalProps {
 
 const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
   const navigate = useNavigate();
-  const [view, setView] = useState<ViewType>(isSignUp ? "sign_up" : "sign_in");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -52,55 +50,48 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
     return () => subscription.unsubscribe();
   }, [navigate, isSignUp]);
 
-  const handleViewChange = (newView: ViewType) => {
-    setView(newView);
-  };
-
   return (
-    <>
-      <Auth
-        supabaseClient={supabase}
-        appearance={{
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: '#D91F3A',
-                brandAccent: '#B91830',
-              }
+    <Auth
+      supabaseClient={supabase}
+      appearance={{
+        theme: ThemeSupa,
+        variables: {
+          default: {
+            colors: {
+              brand: '#D91F3A',
+              brandAccent: '#B91830',
             }
-          },
-          className: {
-            container: 'auth-container',
-            button: 'auth-button',
-            input: 'auth-input',
           }
-        }}
-        providers={[]}
-        view={view}
-        localization={{
-          variables: {
-            sign_up: {
-              email_label: 'Email',
-              password_label: 'Password',
-              button_label: 'Sign up',
-              link_text: 'Already have an account? Sign in',
-              email_input_placeholder: 'Your email address',
-              password_input_placeholder: 'Your password'
-            },
-            sign_in: {
-              email_label: 'Email',
-              password_label: 'Password',
-              button_label: 'Sign in',
-              link_text: 'Don\'t have an account? Sign up',
-              email_input_placeholder: 'Your email address',
-              password_input_placeholder: 'Your password'
-            },
+        },
+        className: {
+          container: 'auth-container',
+          button: 'auth-button',
+          input: 'auth-input',
+        }
+      }}
+      providers={[]}
+      view={isSignUp ? "sign_up" : "sign_in"}
+      localization={{
+        variables: {
+          sign_up: {
+            email_label: 'Email',
+            password_label: 'Password',
+            button_label: 'Sign up',
+            link_text: 'Already have an account? Sign in',
+            email_input_placeholder: 'Your email address',
+            password_input_placeholder: 'Your password'
           },
-        }}
-        onViewChange={handleViewChange}
-      />
-    </>
+          sign_in: {
+            email_label: 'Email',
+            password_label: 'Password',
+            button_label: 'Sign in',
+            link_text: 'Don\'t have an account? Sign up',
+            email_input_placeholder: 'Your email address',
+            password_input_placeholder: 'Your password'
+          },
+        },
+      }}
+    />
   );
 };
 
