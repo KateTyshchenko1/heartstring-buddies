@@ -6,6 +6,7 @@ export interface BotPersonality {
 }
 
 export interface QuestionnaireResponses {
+  name: string;
   perfect_day?: string;
   meaningful_compliment?: string;
   unwind_method?: string;
@@ -14,16 +15,18 @@ export interface QuestionnaireResponses {
   resonant_media?: string;
   childhood_memory?: string;
   impactful_gesture?: string;
+  bot_name?: string;
 }
 
 export interface SoulmateBackstory {
-  name?: string;
-  age?: string;
-  occupation?: string;
-  location?: string;
-  personality?: string;
-  interests?: string;
-  fun_fact?: string;
+  bot_name: string;
+  user_name: string;
+  age: string;
+  occupation: string;
+  location: string;
+  personality: string;
+  interests: string;
+  fun_fact: string;
 }
 
 export interface UserContext {

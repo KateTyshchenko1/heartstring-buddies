@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
+import type { SoulmateBackstory } from "@/types/greeting";
 import type { QuestionnaireResponsesTable } from "@/integrations/supabase/types/questionnaire";
 
 declare global {
@@ -14,12 +14,10 @@ const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
-  // Only name is required
   if (!questionnaire.name) {
     throw new Error('Name is required for persona generation');
   }
 
-  // Filter out undefined or null values
   const providedAnswers = Object.entries(questionnaire)
     .filter(([key, value]) => 
       value && 
@@ -32,7 +30,7 @@ const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
 
   let promptBase = `Create an engaging and compatible companion profile for someone named ${questionnaire.name}.`;
 
-  if (providedAnswers.length > 1) { // More than just the name
+  if (providedAnswers.length > 1) {
     promptBase += `\n\nBased on what we know about them:\n${providedAnswers
       .map(([key, value]) => `${key}: "${value}"`)
       .join('\n')}`;
@@ -62,7 +60,7 @@ Keep all content appropriate and professional.`;
 
 export const generateMatchingPersona = async (
   questionnaire: QuestionnaireResponses
-): Promise<BackstoryFields> => {
+): Promise<SoulmateBackstory> => {
   if (!XAI_API_KEY) {
     throw new Error('API configuration error: Missing XAI_API_KEY');
   }
@@ -73,8 +71,6 @@ export const generateMatchingPersona = async (
 
   try {
     const prompt = createPersonaPrompt(questionnaire);
-    console.log('Sending prompt to X.AI:', prompt);
-
     const response = await fetch(XAI_API_URL, {
       method: 'POST',
       headers: {
@@ -92,12 +88,10 @@ export const generateMatchingPersona = async (
     });
 
     if (!response.ok) {
-      console.error('X.AI API error:', response.statusText);
       throw new Error(`API error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('X.AI response:', data);
     
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid API response format');
@@ -107,7 +101,6 @@ export const generateMatchingPersona = async (
     const jsonMatch = contentStr.match(/\{[\s\S]*\}/);
     
     if (!jsonMatch) {
-      console.error('No JSON found in response:', contentStr);
       throw new Error('No valid JSON found in response');
     }
 
@@ -117,7 +110,6 @@ export const generateMatchingPersona = async (
     const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
     for (const field of requiredFields) {
       if (!generatedPersona[field]) {
-        console.error(`Missing field in response: ${field}`);
         throw new Error(`Invalid or missing field: ${field}`);
       }
     }
@@ -125,14 +117,13 @@ export const generateMatchingPersona = async (
     // Ensure age is a number between 28-38
     const age = generatedPersona.age.toString().match(/\d+/)?.[0];
     if (!age || parseInt(age) < 28 || parseInt(age) > 38) {
-      console.error('Invalid age:', generatedPersona.age);
       throw new Error('Invalid age generated');
     }
 
     // Return the persona with the correct field structure
     return {
       bot_name: questionnaire.bot_name || '',
-      user_name: questionnaire.name || '',
+      user_name: questionnaire.name,
       age: age.toString(),
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,
