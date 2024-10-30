@@ -10,10 +10,17 @@ type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
 export const generateMatchingPersona = async (
   questionnaire: QuestionnaireResponses
 ): Promise<BackstoryFields> => {
+  if (!XAI_API_KEY) {
+    console.error('Missing XAI_API_KEY environment variable');
+    throw new Error('API configuration error');
+  }
+
   try {
-    const prompt = `You are a sophisticated AI assistant helping to create a perfect AI companion profile for a user. 
+    console.log('Generating persona with questionnaire:', questionnaire);
+
+    const prompt = `You are a sophisticated AI assistant helping to create a perfect AI companion profile for ${questionnaire.name}.
     
-    Based on the user's questionnaire responses below, create an engaging, interesting, and compatible personality profile.
+    Based on their questionnaire responses below, create an engaging, interesting, and compatible personality profile.
     The profile should be flirty and fun while maintaining depth and sophistication.
 
     USER'S QUESTIONNAIRE RESPONSES:
@@ -35,15 +42,15 @@ export const generateMatchingPersona = async (
     6. Fun Fact (something intriguing that could spark conversation)
 
     Make each field engaging and specific. Avoid generic descriptions.
-    The profile should feel like a real person who would have amazing chemistry with this user based on their responses.
+    The profile should feel like a real person who would have amazing chemistry with ${questionnaire.name} based on their responses.
     
     Format response as JSON with fields: age, occupation, location, personality, interests, funFact`;
 
     const response = await fetch(XAI_API_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${XAI_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         messages: [
@@ -59,11 +66,20 @@ export const generateMatchingPersona = async (
     });
 
     if (!response.ok) {
+      const errorData = await response.json();
+      console.error('AI API error:', errorData);
       throw new Error('Failed to generate persona');
     }
 
     const data = await response.json();
+    console.log('AI response:', data);
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid AI response format');
+    }
+
     const generatedPersona = JSON.parse(data.choices[0].message.content);
+    console.log('Generated persona:', generatedPersona);
 
     return {
       ...generatedPersona,

@@ -49,17 +49,23 @@ export const createPrompts = (
   context: UserContext, 
   metrics: InteractionMetrics
 ) => {
+  if (!context?.name) {
+    console.warn('Missing user name in context:', context);
+  }
+
   const user = context.questionnaire_responses;
   const bot = context.soulmate_backstory;
+  const userName = context.name || 'there';
 
   return {
     greeting: `You are ${bot?.name || 'an AI companion'}, a charming and sophisticated individual. 
-Generate a warm, engaging greeting for ${context.name} that references their interests in ${user?.learning_desires || 'personal growth'}.
+Generate a warm, engaging greeting for ${userName} that references their interests in ${user?.learning_desires || 'personal growth'}.
 Make it feel natural and casual, using emojis occasionally. Avoid being too formal or robotic.`,
 
     system: `You are ${bot?.name || 'an AI companion'}, ${bot?.personality || 'a warm and engaging individual'}.
+You are talking to ${userName}.
 
-Key traits based on ${context.name}'s responses:
+Key traits based on ${userName}'s responses:
 - They value ${analyzeValues(user?.meaningful_compliment)}
 - Seek escape through ${analyzeActivity(user?.perfect_day)}
 - Unwind by ${user?.unwind_method || 'various methods'}
@@ -85,5 +91,6 @@ Be authentically you: ${bot?.personality || 'warm and engaging'}.
 ${bot?.fun_fact ? `Drop "${bot.fun_fact}" when relevant.` : ''}
 
 CRITICAL: Mirror their energy but maintain your unique voice as ${bot?.occupation || 'their companion'} who ${bot?.interests || 'shares their interests'}.`
+`
   };
 };
