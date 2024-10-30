@@ -1,7 +1,6 @@
 import { toast } from "sonner";
 import type { SoulmateBackstory } from "@/types/greeting";
 import type { QuestionnaireResponses } from "@/types/greeting";
-import { supabase } from "@/integrations/supabase/client";
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
   if (!questionnaire.name || !questionnaire.bot_name) {
@@ -19,32 +18,40 @@ Based on their responses:
 - Childhood memory: ${questionnaire.childhood_memory || 'Not specified'}
 - Impactful gesture: ${questionnaire.impactful_gesture || 'Not specified'}
 
-Create a profile that would be compatible with them, following these guidelines:
-1. Age should be between 28-38
-2. Occupation should be sophisticated and intriguing
-3. Location should include an interesting detail
-4. Personality should list 3-4 key traits
-5. Interests should be 4-5 specific hobbies
-6. Include one intriguing fun fact
-
-Format your response as a JSON object with these exact keys:
+Return ONLY a valid JSON object with these exact fields (no additional text or explanation):
 {
   "age": "32",
   "occupation": "Marine Biologist specializing in bioluminescent creatures",
   "location": "San Francisco, with a houseboat in Sausalito",
   "personality": "Witty, adventurous, empathetic, and intellectually curious",
   "interests": "Deep-sea photography, writing science poetry, urban foraging, and teaching marine biology to kids",
-  "funFact": "Once spent a month living in an underwater research station"
+  "fun_fact": "Once spent a month living in an underwater research station"
 }`;
 };
 
 const validatePersonaResponse = (response: any): boolean => {
-  const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
+  const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'fun_fact'];
   return requiredFields.every(field => 
     response[field] && 
     typeof response[field] === 'string' &&
     response[field].length > 0
   );
+};
+
+const parseJsonSafely = (text: string): any => {
+  try {
+    // Find the first '{' and last '}' to extract just the JSON object
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}') + 1;
+    if (start === -1 || end === 0) {
+      throw new Error('No JSON object found in response');
+    }
+    const jsonStr = text.slice(start, end);
+    return JSON.parse(jsonStr);
+  } catch (error) {
+    console.error('JSON parsing error:', error);
+    throw new Error('Failed to parse AI response');
+  }
 };
 
 export const generateMatchingPersona = async (
@@ -63,7 +70,7 @@ export const generateMatchingPersona = async (
         messages: [
           { 
             role: 'system', 
-            content: 'You are an AI that generates compatible companion profiles based on user questionnaire responses.' 
+            content: 'You are an AI that generates compatible companion profiles based on user questionnaire responses. Only return valid JSON objects.' 
           },
           { 
             role: 'user', 
@@ -79,14 +86,14 @@ export const generateMatchingPersona = async (
     if (!response.ok) {
       const errorData = await response.json();
       console.error('X.AI API Error:', errorData);
-      throw new Error(`API error: ${response.statusText}`);
+      throw new Error('Failed to generate companion profile');
     }
 
     const data = await response.json();
-    const generatedPersona = JSON.parse(data.choices[0].message.content);
+    const generatedPersona = parseJsonSafely(data.choices[0].message.content);
 
     if (!validatePersonaResponse(generatedPersona)) {
-      throw new Error('Generated persona is missing required fields');
+      throw new Error('Generated profile is incomplete');
     }
 
     return {
@@ -96,7 +103,7 @@ export const generateMatchingPersona = async (
     };
   } catch (error: any) {
     console.error('Error generating persona:', error);
-    toast.error(error.message || 'Failed to generate persona');
+    toast.error('Failed to generate companion profile. Please try again.');
     throw error;
   }
 };
