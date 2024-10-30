@@ -17,7 +17,7 @@ export interface Message {
   text: string;
   isUser: boolean;
   timestamp: Date;
-  emotionalContext?: EmotionalContext;
+  emotionalContext: EmotionalContext;
   conversationStyle?: ConversationStyle;
 }
 
@@ -26,6 +26,8 @@ export interface ConversationData {
   message: string;
   is_user: boolean;
   timestamp: string | null;
-  emotional_context: Json;
+  emotional_context: EmotionalContext;
   conversation_style: ConversationStyle | null;
+  context_type?: string | null;
+  metadata?: Json | null;
 }
