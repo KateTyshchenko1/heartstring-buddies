@@ -25,16 +25,6 @@ const Questionnaire = () => {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const [soulmateData, setSoulmateData] = useState({
-    age: "34",
-    occupation: "Child psychologist working with art therapy",
-    location: "Lives in Seattle, but loves traveling to small towns on weekends",
-    personality: "Empathetic and attentive, with a calm presence. Known for asking thoughtful questions and remembering the small details",
-    interests: "Reading psychology books, cooking Mediterranean food, practicing mindfulness, and collecting vinyl records of ambient music",
-    funFact: "Started a small community garden that donates fresh produce to local shelters"
-  });
-  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,7 +44,7 @@ const Questionnaire = () => {
         }
 
         if (!questionsData || questionsData.length === 0) {
-          setError('No questions found in the database.');
+          setError('No questions found. Please try again later.');
           setIsLoading(false);
           return;
         }
@@ -71,7 +61,7 @@ const Questionnaire = () => {
     fetchQuestions();
   }, []);
 
-  const handleAnswer = (answer: string) => {
+  const handleAnswer = async (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
@@ -91,21 +81,14 @@ const Questionnaire = () => {
           childhood_memory: newAnswers[7],
           impactful_gesture: newAnswers[8]
         },
-        soulmate_name: newAnswers[9],
-        soulmate_backstory: soulmateData
+        soulmate_name: newAnswers[9]
       };
+      
       localStorage.setItem('userContext', JSON.stringify(userContext));
       setShowAuth(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
-  };
-
-  const handleFieldChange = (field: keyof typeof soulmateData, value: string) => {
-    setSoulmateData(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   const handleBack = () => {
@@ -134,22 +117,6 @@ const Questionnaire = () => {
     return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
   }
 
-  if (!questions || questions.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">No questions available. Please try again later.</p>
-          <Button 
-            onClick={() => window.location.reload()} 
-            className="mt-4"
-          >
-            Retry
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
       {!showAuth ? (
@@ -168,53 +135,15 @@ const Questionnaire = () => {
             </p>
           </div>
           
-          {currentQuestion < questions.length - 1 ? (
-            <Question
-              question={questions[currentQuestion]?.question_text || ""}
-              onAnswer={handleAnswer}
-              onBack={handleBack}
-              onSkip={handleSkip}
-              isFirstQuestion={currentQuestion === 0}
-              isLastQuestion={currentQuestion === questions.length - 1}
-              hideSkip={currentQuestion === 9}
-            />
-          ) : (
-            <div className="w-full max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-                  Let's bring {answers[9]} to life together!
-                </h1>
-                <p className="text-lg text-gray-600">
-                  Help shape {answers[9]}'s world – after all, you two might have chemistry ✨
-                </p>
-              </div>
-
-              <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-                {Object.entries(soulmateData).map(([field, value]) => (
-                  <div key={field} className="space-y-2">
-                    <Label htmlFor={field} className="text-lg capitalize text-gray-700">
-                      {field === 'funFact' ? 'Fun Fact' : field}
-                    </Label>
-                    <Textarea
-                      id={field}
-                      value={value}
-                      onChange={(e) => handleFieldChange(field as keyof typeof soulmateData, e.target.value)}
-                      className="min-h-[100px] text-base resize-none bg-white/90"
-                      placeholder={`Enter ${field}`}
-                    />
-                  </div>
-                ))}
-
-                <Button
-                  onClick={() => handleAnswer("backstory_completed")}
-                  className="w-full max-w-xs mx-auto mt-8 bg-primary hover:bg-primary/90 text-white py-6 text-lg flex items-center justify-center gap-2"
-                >
-                  Start Your Story
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          )}
+          <Question
+            question={questions[currentQuestion]?.question_text || ""}
+            onAnswer={handleAnswer}
+            onBack={handleBack}
+            onSkip={handleSkip}
+            isFirstQuestion={currentQuestion === 0}
+            isLastQuestion={currentQuestion === questions.length - 1}
+            hideSkip={currentQuestion === 9}
+          />
         </div>
       ) : (
         <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
