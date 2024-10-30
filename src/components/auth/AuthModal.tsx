@@ -40,9 +40,7 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
                 location: userContext.soulmate_backstory.location,
                 personality: userContext.soulmate_backstory.personality,
                 interests: userContext.soulmate_backstory.interests,
-                fun_fact: userContext.soulmate_backstory.fun_fact,
-                bot_name: userContext.questionnaire_responses.bot_name,
-                user_name: userContext.questionnaire_responses.name
+                fun_fact: userContext.soulmate_backstory.fun_fact
               });
 
             if (companionError) throw companionError;
