@@ -44,10 +44,10 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
 
             if (companionError) throw companionError;
 
-            // Initialize relationship evolution
+            // Initialize relationship evolution with explicit profile_id
             const { error: relationshipError } = await supabase
               .from('relationship_evolution')
-              .insert({
+              .upsert({
                 profile_id: session.user.id,
                 stage: 'flirty_intro',
                 connection_style: 'playful',
