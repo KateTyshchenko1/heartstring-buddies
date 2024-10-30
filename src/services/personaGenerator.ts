@@ -3,9 +3,6 @@ import type { SoulmateBackstory } from "@/types/greeting";
 import type { QuestionnaireResponsesTable } from "@/integrations/supabase/types/questionnaire";
 import { supabase } from "@/integrations/supabase/client";
 
-const XAI_API_KEY = import.meta.env.VITE_XAI_API_KEY;
-const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
-
 type QuestionnaireResponses = QuestionnaireResponsesTable['Row'];
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
@@ -13,41 +10,43 @@ const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
     throw new Error('Name is required for persona generation');
   }
 
-  const providedAnswers = Object.entries(questionnaire)
-    .filter(([key, value]) => 
-      value && 
-      typeof value === 'string' && 
-      key !== 'id' && 
-      key !== 'profile_id' && 
-      key !== 'created_at'
-    );
+  return `Create a compatible companion profile for ${questionnaire.name}.
+Based on their responses:
+- Perfect day: ${questionnaire.perfect_day || 'Not specified'}
+- How they unwind: ${questionnaire.unwind_method || 'Not specified'}
+- Learning interests: ${questionnaire.learning_desires || 'Not specified'}
+- Meaningful compliment: ${questionnaire.meaningful_compliment || 'Not specified'}
+- Dinner guest choice: ${questionnaire.dinner_guest || 'Not specified'}
+- Media that resonates: ${questionnaire.resonant_media || 'Not specified'}
+- Childhood memory: ${questionnaire.childhood_memory || 'Not specified'}
+- Impactful gesture: ${questionnaire.impactful_gesture || 'Not specified'}
 
-  let promptBase = `Create an engaging and compatible companion profile for someone named ${questionnaire.name}.`;
+Create a profile that would be compatible with them, following these guidelines:
+1. Age should be between 28-38
+2. Occupation should be sophisticated and intriguing
+3. Location should include an interesting detail
+4. Personality should list 3-4 key traits
+5. Interests should be 4-5 specific hobbies
+6. Include one intriguing fun fact
 
-  if (providedAnswers.length > 1) {
-    promptBase += `\n\nBased on what we know about them:\n${providedAnswers
-      .map(([key, value]) => `${key}: "${value}"`)
-      .join('\n')}`;
-  }
-
-  return `${promptBase}
-
-Guidelines:
-1. Create a unique and intriguing personality that would be compatible with what we know about ${questionnaire.name}
-2. Develop interests and characteristics that could lead to engaging conversations
-3. Balance playful charm with intellectual depth
-4. Make the profile feel authentic and relatable
-5. Generate an appropriate age between 28-38 years old
-
-Respond ONLY with a JSON object in this exact format:
+Respond with ONLY a JSON object in this format:
 {
-  "age": "A specific age (just the number) between 28-38",
-  "occupation": "A sophisticated and intriguing profession",
-  "location": "A specific location with an interesting detail",
-  "personality": "3-4 key personality traits and characteristics",
-  "interests": "4-5 specific interests or hobbies",
-  "funFact": "An intriguing detail that could spark conversation"
+  "age": "32",
+  "occupation": "Marine Biologist specializing in bioluminescent creatures",
+  "location": "San Francisco, with a houseboat in Sausalito",
+  "personality": "Witty, adventurous, empathetic, and intellectually curious",
+  "interests": "Deep-sea photography, writing science poetry, urban foraging, and teaching marine biology to kids",
+  "funFact": "Once spent a month living in an underwater research station"
 }`;
+};
+
+const validatePersonaResponse = (response: any): boolean => {
+  const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
+  return requiredFields.every(field => 
+    response[field] && 
+    typeof response[field] === 'string' &&
+    response[field].length > 0
+  );
 };
 
 export const generateMatchingPersona = async (
@@ -55,16 +54,27 @@ export const generateMatchingPersona = async (
 ): Promise<SoulmateBackstory> => {
   try {
     const prompt = createPersonaPrompt(questionnaire);
-    const response = await fetch(XAI_API_URL, {
+    
+    const response = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${XAI_API_KEY}`,
+        'Authorization': `Bearer ${import.meta.env.VITE_XAI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: [{ role: 'system', content: prompt }],
-        model: 'grok-beta',
+        messages: [
+          { 
+            role: 'system', 
+            content: 'You are an AI that generates compatible companion profiles based on user questionnaire responses.' 
+          },
+          { 
+            role: 'user', 
+            content: prompt 
+          }
+        ],
+        model: 'gpt-4o-mini',
         temperature: 0.8,
+        response_format: { type: "json_object" }
       }),
     });
 
@@ -73,12 +83,22 @@ export const generateMatchingPersona = async (
     }
 
     const data = await response.json();
-    const generatedPersona = JSON.parse(data.choices[0].message.content);
+    console.log('API Response:', data); // For debugging
 
-    // Validate and process the generated persona
-    const age = generatedPersona.age.toString().match(/\d+/)?.[0];
-    if (!age || parseInt(age) < 28 || parseInt(age) > 38) {
-      throw new Error('Invalid age generated');
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid API response format');
+    }
+
+    let generatedPersona;
+    try {
+      generatedPersona = JSON.parse(data.choices[0].message.content);
+    } catch (parseError) {
+      console.error('JSON Parse Error:', parseError);
+      throw new Error('Failed to parse persona data');
+    }
+
+    if (!validatePersonaResponse(generatedPersona)) {
+      throw new Error('Generated persona is missing required fields');
     }
 
     // Save the generated persona to companion_profiles
@@ -87,7 +107,7 @@ export const generateMatchingPersona = async (
 
     const companionProfile = {
       profile_id: user.id,
-      age: age.toString(),
+      age: generatedPersona.age,
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,
       personality: generatedPersona.personality,
@@ -117,11 +137,12 @@ export const generateMatchingPersona = async (
     }
 
     return {
-      name: questionnaire.name,
+      name: questionnaire.bot_name || '',
       ...companionProfile
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating persona:', error);
+    toast.error(error.message || 'Failed to generate persona');
     throw error;
   }
 };
