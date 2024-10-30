@@ -52,16 +52,17 @@ const Chat = () => {
 
         // Load existing messages
         if (conversationsResponse.data?.length > 0) {
-          setMessages(conversationsResponse.data.map((msg: ConversationData) => ({
+          const mappedMessages = conversationsResponse.data.map((msg: ConversationData) => ({
             id: msg.id,
             text: msg.message,
             isUser: msg.is_user,
             timestamp: new Date(msg.timestamp || Date.now()),
-            emotionalContext: msg.emotional_context as EmotionalContext,
+            emotionalContext: msg.emotional_context,
             conversationStyle: msg.conversation_style
-          })));
+          }));
+          setMessages(mappedMessages);
         } else {
-          // Generate initial greeting using the user's name
+          // Generate initial greeting
           const greeting = await xaiService.generateGreeting(user.id, questionnairResponse.data.name);
           const newMessage = {
             id: "1",

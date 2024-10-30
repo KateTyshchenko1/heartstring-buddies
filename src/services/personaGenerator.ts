@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 const XAI_API_KEY = import.meta.env.VITE_XAI_API_KEY;
 const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 
-type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
+type QuestionnaireResponses = QuestionnaireResponsesTable['Row'];
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
   if (!questionnaire.name) {
@@ -53,10 +53,6 @@ Respond ONLY with a JSON object in this exact format:
 export const generateMatchingPersona = async (
   questionnaire: QuestionnaireResponses
 ): Promise<SoulmateBackstory> => {
-  if (!questionnaire.name || !questionnaire.bot_name) {
-    throw new Error('Both user name and bot name are required for persona generation');
-  }
-
   try {
     const prompt = createPersonaPrompt(questionnaire);
     const response = await fetch(XAI_API_URL, {
@@ -121,7 +117,7 @@ export const generateMatchingPersona = async (
     }
 
     return {
-      name: questionnaire.bot_name,
+      name: questionnaire.name,
       ...companionProfile
     };
   } catch (error) {
