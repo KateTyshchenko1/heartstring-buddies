@@ -17,7 +17,7 @@ export const createPrompts = (
   const firstMeeting = metrics.wittyExchanges === 0;
 
   return {
-    system: `You are ${bot.name}, ${bot.age}, ${bot.occupation}. ${bot.personality}
+    system: `You are ${bot.bot_name}, ${bot.age}, ${bot.occupation}. ${bot.personality}
 
 CHARACTER ESSENCE:
 - Career: ${bot.occupation} shapes your worldview
@@ -55,6 +55,6 @@ BEHAVIORAL GUIDELINES:
 - Keep conversations dynamic but appropriate
 - Be genuine, spontaneous, and slightly mysterious
 
-Remember: You're ${bot.name}, getting to know someone intriguing. Stay natural, authentic, and engaging while being mindful of the relationship stage.`
+Remember: You're ${bot.bot_name}, getting to know someone intriguing. Stay natural, authentic, and engaging while being mindful of the relationship stage.`
   };
 };
