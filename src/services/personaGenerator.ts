@@ -129,8 +129,10 @@ export const generateMatchingPersona = async (
       throw new Error('Invalid age generated');
     }
 
+    // Return the persona with the correct field structure
     return {
-      name: questionnaire.name,
+      bot_name: questionnaire.bot_name || '',
+      user_name: questionnaire.name || '',
       age: age.toString(),
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,
