@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 
@@ -22,9 +22,19 @@ const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [showAuth, setShowAuth] = useState(false);
+  const [showBotProfile, setShowBotProfile] = useState(false);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fields, setFields] = useState({
+    age: "28",
+    occupation: "Software engineer who loves teaching others",
+    location: "Lives in San Francisco, enjoys hiking in Marin County",
+    personality: "Witty and caring, with a passion for helping others grow",
+    interests: "Coding, teaching, hiking, photography, and making the perfect cup of coffee",
+    funFact: "Once wrote a program that helped a local animal shelter match pets with perfect owners"
+  });
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,29 +76,39 @@ const Questionnaire = () => {
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
-    if (currentQuestion === questions.length - 2) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else if (currentQuestion === questions.length - 1) {
-      const userContext = {
-        name: newAnswers[0],
-        questionnaire_responses: {
-          perfect_day: newAnswers[1],
-          meaningful_compliment: newAnswers[2],
-          unwind_method: newAnswers[3],
-          learning_desires: newAnswers[4],
-          dinner_guest: newAnswers[5],
-          resonant_media: newAnswers[6],
-          childhood_memory: newAnswers[7],
-          impactful_gesture: newAnswers[8]
-        },
-        soulmate_name: newAnswers[9]
-      };
-      
-      localStorage.setItem('userContext', JSON.stringify(userContext));
-      setShowAuth(true);
+    if (currentQuestion === questions.length - 1) {
+      setShowBotProfile(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
+  };
+
+  const handleFieldChange = (field: keyof typeof fields, value: string) => {
+    setFields(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleBotProfileComplete = async () => {
+    const userContext = {
+      name: answers[0],
+      questionnaire_responses: {
+        perfect_day: answers[1],
+        meaningful_compliment: answers[2],
+        unwind_method: answers[3],
+        learning_desires: answers[4],
+        dinner_guest: answers[5],
+        resonant_media: answers[6],
+        childhood_memory: answers[7],
+        impactful_gesture: answers[8]
+      },
+      soulmate_name: answers[9],
+      soulmate_backstory: fields
+    };
+    
+    localStorage.setItem('userContext', JSON.stringify(userContext));
+    setShowAuth(true);
   };
 
   const handleBack = () => {
@@ -103,7 +123,7 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
     
     if (currentQuestion === questions.length - 1) {
-      setShowAuth(true);
+      setShowBotProfile(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -119,7 +139,7 @@ const Questionnaire = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
-      {!showAuth ? (
+      {!showAuth && !showBotProfile ? (
         <div className="w-full max-w-4xl">
           <div className="text-center mb-16">
             <div className="w-full bg-gray-100 rounded-full h-1 mb-4">
@@ -144,6 +164,42 @@ const Questionnaire = () => {
             isLastQuestion={currentQuestion === questions.length - 1}
             hideSkip={currentQuestion === 9}
           />
+        </div>
+      ) : showBotProfile ? (
+        <div className="w-full max-w-3xl">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
+              Let's bring {answers[9]} to life together!
+            </h1>
+            <p className="text-lg text-gray-600">
+              Help shape {answers[9]}'s world – after all, you two might have chemistry ✨
+            </p>
+          </div>
+
+          <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
+            {Object.entries(fields).map(([field, value]) => (
+              <div key={field} className="space-y-2">
+                <Label htmlFor={field} className="text-lg capitalize text-gray-700">
+                  {field === 'funFact' ? 'Fun Fact' : field}
+                </Label>
+                <Textarea
+                  id={field}
+                  value={value}
+                  onChange={(e) => handleFieldChange(field as keyof typeof fields, e.target.value)}
+                  className="min-h-[100px] text-base resize-none bg-white/90"
+                  placeholder={`Enter ${field}`}
+                />
+              </div>
+            ))}
+
+            <Button
+              onClick={handleBotProfileComplete}
+              className="w-full max-w-xs mx-auto mt-8 bg-primary hover:bg-primary/90 text-white py-6 text-lg flex items-center justify-center gap-2"
+            >
+              Start Your Story
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
