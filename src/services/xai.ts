@@ -47,15 +47,19 @@ const callXAI = async (systemPrompt: string, conversationContext?: string, userM
 
 export const xaiService: XAIService = {
   async generateGreeting(context) {
-    const metrics: InteractionMetrics = {
+    if (!context.name) {
+      console.warn('User context missing name property');
+      return "Hello! I'm excited to chat with you!";
+    }
+
+    const prompts = createPrompts(context, {
       flirtLevel: 5,
       charmFactor: 5,
       wittyExchanges: 0,
       energyLevel: 'playful',
       connectionStyle: 'charming'
-    };
+    });
     
-    const prompts = createPrompts(context, metrics);
     return callXAI(prompts.greeting);
   },
 
