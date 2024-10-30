@@ -33,13 +33,15 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     fun_fact: ""
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [regenerate, setRegenerate] = useState(false);
+  const [userResponses, setUserResponses] = useState<any>(null);
 
   useEffect(() => {
     const generatePersona = async () => {
       try {
         setIsLoading(true);
         const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+        setUserResponses(userContext.questionnaire_responses || null);
+        
         if (userContext.questionnaire_responses) {
           const persona = await generateMatchingPersona(userContext.questionnaire_responses);
           setFields(prev => ({
@@ -55,7 +57,7 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     };
 
     generatePersona();
-  }, [soulmateName, regenerate]);
+  }, [soulmateName]);
 
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
     setFields(prev => ({
@@ -72,8 +74,24 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     }
   };
 
-  const handleRegenerate = () => {
-    setRegenerate(prev => !prev);
+  const handleRegenerate = async () => {
+    if (!userResponses) {
+      toast.error("Cannot regenerate without questionnaire responses");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const persona = await generateMatchingPersona(userResponses);
+      setFields(prev => ({
+        ...persona,
+        name: soulmateName
+      }));
+    } catch (error) {
+      toast.error("Error regenerating profile. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isLoading) {
