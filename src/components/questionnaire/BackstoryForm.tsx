@@ -46,7 +46,6 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not found');
 
-        // Fetch questionnaire responses
         const { data: responses, error: responsesError } = await supabase
           .from('questionnaire_responses')
           .select('*')
@@ -65,12 +64,6 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
           bot_name: botName,
           user_name: userName
         }));
-
-        // Update bot_name in questionnaire_responses
-        await supabase
-          .from('questionnaire_responses')
-          .update({ bot_name: botName })
-          .eq('profile_id', user.id);
 
       } catch (error: any) {
         toast.error("Error loading profile data");
@@ -100,7 +93,12 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
         .from('companion_profiles')
         .insert({
           profile_id: user.id,
-          ...fields,
+          age: fields.age,
+          occupation: fields.occupation,
+          location: fields.location,
+          personality: fields.personality,
+          interests: fields.interests,
+          fun_fact: fields.fun_fact,
           personality_insights: {
             emotionalDepth: 'dynamic',
             vulnerabilityStyle: 'playful',
@@ -131,6 +129,7 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
 
       onComplete(fields);
     } catch (error: any) {
+      console.error('Error saving profile:', error);
       toast.error(error.message || 'Failed to save companion profile');
     }
   };
