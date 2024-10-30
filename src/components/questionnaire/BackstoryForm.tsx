@@ -15,8 +15,6 @@ interface BackstoryFormProps {
 }
 
 export interface BackstoryFields {
-  bot_name: string;
-  user_name: string;
   age: string;
   occupation: string;
   location: string;
@@ -27,8 +25,6 @@ export interface BackstoryFields {
 
 const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) => {
   const [fields, setFields] = useState<BackstoryFields>({
-    bot_name: botName,
-    user_name: userName,
     age: "",
     occupation: "",
     location: "",
@@ -59,22 +55,25 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
         
         // Generate persona based on responses
         const persona = await generateMatchingPersona(responses);
-        setFields(prev => ({
-          ...persona,
-          bot_name: botName,
-          user_name: userName
-        }));
+        setFields({
+          age: persona.age,
+          occupation: persona.occupation,
+          location: persona.location,
+          personality: persona.personality,
+          interests: persona.interests,
+          fun_fact: persona.fun_fact
+        });
 
       } catch (error: any) {
+        console.error('Error loading profile data:', error);
         toast.error("Error loading profile data");
-        console.error('Error:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchUserResponses();
-  }, [botName, userName]);
+  }, []);
 
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
     setFields(prev => ({
@@ -88,44 +87,56 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not found');
 
-      // Create companion profile
-      const { error: companionError } = await supabase
+      // First check if a companion profile already exists
+      const { data: existingProfile } = await supabase
         .from('companion_profiles')
-        .insert({
-          profile_id: user.id,
-          age: fields.age,
-          occupation: fields.occupation,
-          location: fields.location,
-          personality: fields.personality,
-          interests: fields.interests,
-          fun_fact: fields.fun_fact,
-          personality_insights: {
-            emotionalDepth: 'dynamic',
-            vulnerabilityStyle: 'playful',
-            attachmentStyle: 'confident',
-            conversationStyle: 'witty',
-            humorStyle: 'flirty-playful',
-            intimacyPace: 'natural',
-            romanticStyle: 'charming',
-            primaryNeed: 'connection',
-            loveLanguage: 'banter',
-            personalGrowthFocus: 'adventure'
-          }
-        });
+        .select('id')
+        .eq('profile_id', user.id)
+        .single();
 
-      if (companionError) throw companionError;
+      if (existingProfile) {
+        // Update existing profile
+        const { error: updateError } = await supabase
+          .from('companion_profiles')
+          .update({
+            age: fields.age,
+            occupation: fields.occupation,
+            location: fields.location,
+            personality: fields.personality,
+            interests: fields.interests,
+            fun_fact: fields.fun_fact,
+            updated_at: new Date().toISOString()
+          })
+          .eq('profile_id', user.id);
 
-      // Create initial relationship evolution entry
-      const { error: relationshipError } = await supabase
-        .from('relationship_evolution')
-        .insert({
-          profile_id: user.id,
-          stage: 'flirty_intro',
-          connection_style: 'playful',
-          chemistry_level: 1
-        });
+        if (updateError) throw updateError;
+      } else {
+        // Create new companion profile
+        const { error: insertError } = await supabase
+          .from('companion_profiles')
+          .insert({
+            profile_id: user.id,
+            age: fields.age,
+            occupation: fields.occupation,
+            location: fields.location,
+            personality: fields.personality,
+            interests: fields.interests,
+            fun_fact: fields.fun_fact
+          });
 
-      if (relationshipError) throw relationshipError;
+        if (insertError) throw insertError;
+
+        // Create initial relationship evolution entry
+        await supabase
+          .from('relationship_evolution')
+          .insert({
+            profile_id: user.id,
+            stage: 'flirty_intro',
+            connection_style: 'playful',
+            chemistry_level: 1,
+            last_interaction: new Date().toISOString()
+          });
+      }
 
       onComplete(fields);
     } catch (error: any) {
@@ -143,11 +154,14 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
     try {
       setIsLoading(true);
       const persona = await generateMatchingPersona(userResponses);
-      setFields(prev => ({
-        ...persona,
-        bot_name: botName,
-        user_name: userName
-      }));
+      setFields({
+        age: persona.age,
+        occupation: persona.occupation,
+        location: persona.location,
+        personality: persona.personality,
+        interests: persona.interests,
+        fun_fact: persona.fun_fact
+      });
     } catch (error) {
       toast.error("Error regenerating profile. Please try again.");
     } finally {
@@ -175,30 +189,28 @@ const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) =>
     <div className="w-full max-w-3xl">
       <div className="text-center mb-12">
         <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-          Let's bring {fields.bot_name} to life together!
+          Let's bring {botName} to life together!
         </h1>
         <p className="text-lg text-gray-600">
-          Help shape {fields.bot_name}'s world – after all, you two might have chemistry ✨
+          Help shape {botName}'s world – after all, you two might have chemistry ✨
         </p>
       </div>
 
       <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-        {Object.entries(fields)
-          .filter(([key]) => !['bot_name', 'user_name'].includes(key))
-          .map(([field, value]) => (
-            <div key={field} className="space-y-2">
-              <Label htmlFor={field} className="text-lg capitalize text-gray-700">
-                {field === 'fun_fact' ? 'Fun Fact' : field}
-              </Label>
-              <Textarea
-                id={field}
-                value={value}
-                onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
-                className="min-h-[100px] text-base resize-none bg-white/90"
-                placeholder={`Enter ${field}`}
-              />
-            </div>
-          ))}
+        {Object.entries(fields).map(([field, value]) => (
+          <div key={field} className="space-y-2">
+            <Label htmlFor={field} className="text-lg capitalize text-gray-700">
+              {field === 'fun_fact' ? 'Fun Fact' : field}
+            </Label>
+            <Textarea
+              id={field}
+              value={value}
+              onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
+              className="min-h-[100px] text-base resize-none bg-white/90"
+              placeholder={`Enter ${field}`}
+            />
+          </div>
+        ))}
 
         <div className="flex gap-4 justify-center pt-4">
           <Button
