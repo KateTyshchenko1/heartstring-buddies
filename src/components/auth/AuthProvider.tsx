@@ -16,20 +16,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsLoading(false);
-    }).catch(error => {
-      console.error('Error fetching session:', error);
-      toast.error('Error loading authentication session');
-      setIsLoading(false);
-    });
+    // Initialize session
+    const initSession = async () => {
+      try {
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        setSession(initialSession);
+      } catch (error) {
+        console.error('Error initializing session:', error);
+        toast.error('Error loading authentication session');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initSession();
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setIsLoading(false);
     });
