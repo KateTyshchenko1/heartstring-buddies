@@ -7,6 +7,7 @@ import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { generateMatchingPersona } from "@/services/personaGenerator";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 
 const Questionnaire = () => {
@@ -17,14 +18,11 @@ const Questionnaire = () => {
   const [questions, setQuestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [temporaryData, setTemporaryData] = useState<{
-    questionnaire: any;
-    companion: any;
-  } | null>(null);
+  const [generatedPersona, setGeneratedPersona] = useState<BackstoryFields | null>(null);
+  const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   
   const navigate = useNavigate();
 
-  // Restore the questions loading functionality
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -55,100 +53,55 @@ const Questionnaire = () => {
     fetchQuestions();
   }, []);
 
-  const handleAnswer = (answer: string) => {
+  const handleAnswer = async (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
       // Map answers to the correct fields based on question order
-      const questionnaireData = {
-        name: newAnswers[0],                    // "What's your name?"
-        perfect_day: newAnswers[1],             // "If you could spend a perfect day doing anything you want, what would that look like?"
-        meaningful_compliment: newAnswers[2],    // "What's the most meaningful compliment you've ever received?"
-        unwind_method: newAnswers[3],           // "How do you like to unwind after a long day?"
-        learning_desires: newAnswers[4],         // "What's something you've always wanted to learn?"
-        dinner_guest: newAnswers[5],            // "If you could have dinner with anyone from history, who would it be and why?"
-        resonant_media: newAnswers[6],          // "What book, movie, or song has deeply resonated with you lately?"
-        childhood_memory: newAnswers[7],         // "What's your favorite childhood memory?"
-        impactful_gesture: newAnswers[8],       // "What's the most impactful gesture someone has made for you?"
-        bot_name: answer                        // "Give your companion a name:"
+      const mappedData = {
+        name: newAnswers[0],
+        perfect_day: newAnswers[1],
+        meaningful_compliment: newAnswers[2],
+        unwind_method: newAnswers[3],
+        learning_desires: newAnswers[4],
+        dinner_guest: newAnswers[5],
+        resonant_media: newAnswers[6],
+        childhood_memory: newAnswers[7],
+        impactful_gesture: newAnswers[8],
+        bot_name: answer
       };
 
-      setTemporaryData(prev => ({
-        ...prev,
-        questionnaire: questionnaireData
-      }));
-      
-      setShowPersonaGen(true);
+      setQuestionnaireData(mappedData);
+
+      try {
+        setIsLoading(true);
+        const persona = await generateMatchingPersona(mappedData);
+        setGeneratedPersona(persona);
+        setShowPersonaGen(true);
+      } catch (error: any) {
+        console.error('Error generating persona:', error);
+        toast.error("Failed to generate companion profile. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
 
-  const handlePersonaComplete = async (companionData: BackstoryFields) => {
-    setTemporaryData(prev => ({
-      ...prev,
-      companion: companionData
-    }));
+  const handlePersonaComplete = (updatedPersona: BackstoryFields) => {
+    setGeneratedPersona(updatedPersona);
+    
+    // Store data in localStorage before auth
+    const userContext = {
+      questionnaire_responses: questionnaireData,
+      soulmate_backstory: updatedPersona
+    };
+    localStorage.setItem('userContext', JSON.stringify(userContext));
+    
     setShowAuth(true);
-  };
-
-  const handleAuthSuccess = async (userId: string) => {
-    if (!temporaryData) return;
-
-    try {
-      // Save questionnaire responses with correct field mapping
-      const { error: questionnaireError } = await supabase
-        .from('questionnaire_responses')
-        .insert({
-          profile_id: userId,
-          name: temporaryData.questionnaire.name,           // User's name
-          bot_name: temporaryData.questionnaire.bot_name,   // Bot's name
-          perfect_day: temporaryData.questionnaire.perfect_day,
-          meaningful_compliment: temporaryData.questionnaire.meaningful_compliment,
-          unwind_method: temporaryData.questionnaire.unwind_method,
-          learning_desires: temporaryData.questionnaire.learning_desires,
-          dinner_guest: temporaryData.questionnaire.dinner_guest,
-          resonant_media: temporaryData.questionnaire.resonant_media,
-          childhood_memory: temporaryData.questionnaire.childhood_memory,
-          impactful_gesture: temporaryData.questionnaire.impactful_gesture
-        });
-
-      if (questionnaireError) throw questionnaireError;
-
-      // Save companion profile with bot's name
-      const { error: companionError } = await supabase
-        .from('companion_profiles')
-        .insert({
-          profile_id: userId,
-          name: temporaryData.questionnaire.bot_name,  // Bot's name
-          ...temporaryData.companion
-        });
-
-      if (companionError) throw companionError;
-
-      // Update user context with correct field mapping
-      const userContext = {
-        name: temporaryData.questionnaire.name,
-        questionnaire_responses: temporaryData.questionnaire,
-        soulmate_name: temporaryData.questionnaire.bot_name,
-        soulmate_backstory: temporaryData.companion
-      };
-      localStorage.setItem('userContext', JSON.stringify(userContext));
-
-      // Update profile completion status
-      await supabase
-        .from('profiles')
-        .update({ questionnaire_completed: true })
-        .eq('id', userId);
-
-      toast.success("Profile created successfully!");
-      navigate('/chat');
-    } catch (error: any) {
-      console.error('Error saving data:', error);
-      toast.error(error.message || "Failed to save profile data");
-    }
   };
 
   const handleBack = () => {
@@ -183,11 +136,12 @@ const Questionnaire = () => {
     );
   }
 
-  if (showPersonaGen && temporaryData?.questionnaire) {
+  if (showPersonaGen && questionnaireData && generatedPersona) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
         <PersonaGeneration 
-          questionnaireData={temporaryData.questionnaire}
+          questionnaireData={questionnaireData}
+          initialPersona={generatedPersona}
           onComplete={handlePersonaComplete}
         />
       </div>

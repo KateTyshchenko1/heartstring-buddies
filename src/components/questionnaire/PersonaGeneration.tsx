@@ -10,12 +10,13 @@ import type { BackstoryFields } from "./BackstoryForm";
 
 interface PersonaGenerationProps {
   questionnaireData: any;
+  initialPersona: BackstoryFields;
   onComplete: (data: BackstoryFields) => void;
 }
 
-const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationProps) => {
-  const [soulmateData, setSoulmateData] = useState<BackstoryFields | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+const PersonaGeneration = ({ questionnaireData, initialPersona, onComplete }: PersonaGenerationProps) => {
+  const [soulmateData, setSoulmateData] = useState<BackstoryFields>(initialPersona);
+  const [isLoading, setIsLoading] = useState(false);
 
   const generatePersona = async () => {
     try {
@@ -24,7 +25,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
       setSoulmateData(prev => ({
         ...prev,
         ...persona,
-        name: questionnaireData.bot_name // Use bot's name from questionnaire data
+        name: questionnaireData.bot_name
       }));
     } catch (error) {
       console.error('Error generating persona:', error);
@@ -34,23 +35,15 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
     }
   };
 
-  useEffect(() => {
-    generatePersona();
-  }, [questionnaireData]);
-
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
-    if (soulmateData) {
-      setSoulmateData(prev => ({
-        ...prev!,
-        [field]: value
-      }));
-    }
+    setSoulmateData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleSubmit = () => {
-    if (soulmateData) {
-      onComplete(soulmateData);
-    }
+    onComplete(soulmateData);
   };
 
   if (isLoading) {
@@ -69,15 +62,6 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
     );
   }
 
-  if (!soulmateData) {
-    return (
-      <div className="text-center">
-        <p className="text-red-500">Something went wrong. Please try again.</p>
-        <Button onClick={generatePersona}>Retry</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full max-w-3xl">
       <div className="text-center mb-12">
@@ -90,20 +74,22 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
       </div>
 
       <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-        {Object.entries(soulmateData).filter(([key]) => key !== 'name').map(([field, value]) => (
-          <div key={field} className="space-y-2">
-            <Label htmlFor={field} className="text-lg capitalize text-gray-700">
-              {field === 'fun_fact' ? 'Fun Fact' : field}
-            </Label>
-            <Textarea
-              id={field}
-              value={value}
-              onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
-              className="min-h-[100px] text-base resize-none bg-white/90"
-              placeholder={`Enter ${field}`}
-            />
-          </div>
-        ))}
+        {Object.entries(soulmateData)
+          .filter(([key]) => !['name', 'bot_name', 'user_name'].includes(key))
+          .map(([field, value]) => (
+            <div key={field} className="space-y-2">
+              <Label htmlFor={field} className="text-lg capitalize text-gray-700">
+                {field === 'fun_fact' ? 'Fun Fact' : field}
+              </Label>
+              <Textarea
+                id={field}
+                value={value}
+                onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
+                className="min-h-[100px] text-base resize-none bg-white/90"
+                placeholder={`Enter ${field}`}
+              />
+            </div>
+          ))}
 
         <div className="flex gap-4 justify-center pt-4">
           <Button
