@@ -34,8 +34,6 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
               .from('companion_profiles')
               .insert({
                 profile_id: session.user.id,
-                bot_name: userContext.questionnaire_responses?.bot_name,
-                user_name: userContext.questionnaire_responses?.name,
                 age: userContext.soulmate_backstory.age,
                 occupation: userContext.soulmate_backstory.occupation,
                 location: userContext.soulmate_backstory.location,
@@ -46,7 +44,7 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
 
             if (companionError) throw companionError;
 
-            // Initialize relationship evolution with explicit profile_id
+            // Initialize relationship evolution
             const { error: relationshipError } = await supabase
               .from('relationship_evolution')
               .insert({
