@@ -70,7 +70,7 @@ const Chat = () => {
         wittyExchanges: false,
         followUpNeeded: false
       },
-      conversationStyle: 'playful'
+      conversationStyle: botPersonality.style === 'playful' ? 'playful' : 'charming'
     }]);
   }, []);
 
