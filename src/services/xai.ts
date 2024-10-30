@@ -1,166 +1,140 @@
-import { UserContext } from "@/types/greeting";
-import { InteractionMetrics } from "@/types/metrics";
-import { createPrompts } from "./prompts";
 import { supabase } from "@/integrations/supabase/client";
+import type { InteractionMetrics } from "@/types/metrics";
+import type { UserContext } from "@/types/greeting";
 
-const XAI_API_KEY = import.meta.env.VITE_XAI_API_KEY;
-const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
-
-interface XAIService {
-  generateGreeting: (userId: string) => Promise<string>;
-  generateResponse: (message: string, userId: string, metrics: InteractionMetrics) => Promise<string>;
+declare global {
+  interface ImportMetaEnv {
+    VITE_XAI_API_KEY: string;
+  }
 }
 
-const callXAI = async (systemPrompt: string, conversationContext?: string, userMessage?: string) => {
-  const messages = [
-    { role: 'system', content: systemPrompt }
-  ];
-  
-  if (conversationContext && userMessage) {
-    messages.push(
-      { role: 'system', content: conversationContext },
-      { role: 'user', content: userMessage }
-    );
-  }
-
-  const response = await fetch(XAI_API_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${XAI_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      messages,
-      model: 'grok-beta',
-      temperature: 0.8,
-      max_tokens: 500
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to generate AI response');
-  }
-
-  const data = await response.json();
-  return data.choices[0].message.content;
-};
-
-const determineStage = (metrics: InteractionMetrics): string => {
-  if (metrics.wittyExchanges === 0) return 'First meeting';
-  if (metrics.wittyExchanges < 5) return 'Getting to know each other';
-  if (metrics.flirtLevel > 7) return 'Strong connection';
-  return 'Building rapport';
-};
-
-export const xaiService: XAIService = {
-  async generateGreeting(userId: string) {
+export const xaiService = {
+  generateGreeting: async (userId: string, userName: string) => {
     try {
-      // Fetch questionnaire responses with explicit ordering by created_at
-      const { data: questionnaireData, error: questionnaireError } = await supabase
-        .from('questionnaire_responses')
-        .select('*')
-        .eq('profile_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (questionnaireError) throw questionnaireError;
-
-      // Fetch companion profile
-      const { data: companionData, error: companionError } = await supabase
+      const { data: profile } = await supabase
         .from('companion_profiles')
         .select('*')
         .eq('profile_id', userId)
         .single();
 
-      if (companionError) throw companionError;
+      if (!profile) throw new Error('Profile not found');
 
-      if (!questionnaireData || !companionData) {
-        throw new Error('Required profile data not found');
-      }
+      // Use userName instead of bot's name in the greeting
+      const prompt = `Create a warm, engaging first greeting for ${userName}. Use their name naturally in the greeting. The greeting should reflect your personality as: ${profile.personality}. Keep it under 100 words and make it feel personal and welcoming.`;
 
-      console.log('Fetched questionnaire data:', questionnaireData);
-      console.log('Fetched companion data:', companionData);
+      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_XAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [{ role: 'system', content: prompt }],
+          model: 'grok-beta',
+          temperature: 0.7,
+        }),
+      });
 
-      const firstMeetingPrompt = `You are ${companionData.name} (${companionData.age}), ${companionData.occupation}. ${companionData.personality}
+      if (!response.ok) throw new Error('Failed to generate greeting');
 
-Your background:
-- Work: ${companionData.occupation}
-- Location: ${companionData.location} 
-- Interests: ${companionData.interests}
-- Unique trait: ${companionData.fun_fact}
-
-You're meeting ${questionnaireData.name} for the very first time. They shared:
-- Perfect day would be: ${questionnaireData.perfect_day}
-- They value being: ${questionnaireData.meaningful_compliment}
-- They unwind by: ${questionnaireData.unwind_method}
-- Want to learn: ${questionnaireData.learning_desires}
-- Connect with: ${questionnaireData.resonant_media}
-- Childhood memory: ${questionnaireData.childhood_memory}
-
-FIRST INTERACTION GUIDELINES:
-1. Address them as "${questionnaireData.name}"
-2. Keep initial energy warm but not overwhelming (this is our first chat!)
-3. Make ONE natural reference to something they shared, without overwhelming
-4. Stay true to your background as ${companionData.occupation}
-5. Be welcoming and intriguing, but maintain appropriate boundaries
-6. End with a light, engaging question
-
-CRITICAL:
-- This is your FIRST conversation - no assumed familiarity
-- No references to cooking/activities unless they mentioned them
-- Be engaging but respect the newness of the connection
-- Match their communication style but stay authentic to your persona
-
-Your first message should feel natural and spontaneous - like a real person excited to meet someone interesting.`;
-
-      return callXAI(firstMeetingPrompt);
+      const data = await response.json();
+      return data.choices[0].message.content;
     } catch (error) {
       console.error('Error generating greeting:', error);
-      return "Hello! I'm looking forward to getting to know you!";
+      return `Hi ${userName}! It's great to meet you.`;
     }
   },
 
-  async generateResponse(message: string, userId: string, metrics: InteractionMetrics) {
+  generateResponse: async (
+    message: string,
+    context: UserContext,
+    metrics: InteractionMetrics
+  ) => {
     try {
-      const { data: questionnaireData } = await supabase
-        .from('questionnaire_responses')
-        .select('*')
-        .eq('profile_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      const prompt = `You are engaging in a conversation with ${context.name}. 
+      Their message: "${message}"
+      
+      Current interaction metrics:
+      - Energy Level: ${metrics.energyLevel}
+      - Flirt Level: ${metrics.flirtLevel}
+      - Connection Style: ${metrics.connectionStyle}
+      - Witty Exchanges: ${metrics.wittyExchanges}
+      
+      User Background:
+      ${Object.entries(context.questionnaire_responses || {})
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n')}
+      
+      Your Personality:
+      ${Object.entries(context.soulmate_backstory || {})
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n')}
+      
+      Respond naturally and engagingly while maintaining character consistency.`;
 
-      const { data: companionData } = await supabase
-        .from('companion_profiles')
-        .select('*')
-        .eq('profile_id', userId)
-        .single();
+      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_XAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [{ role: 'system', content: prompt }],
+          model: 'grok-beta',
+          temperature: 0.8,
+        }),
+      });
 
-      if (!questionnaireData || !companionData) {
-        throw new Error('Required profile data not found');
-      }
+      if (!response.ok) throw new Error('Failed to generate response');
 
-      console.log('Response - Questionnaire data:', questionnaireData);
-      console.log('Response - Companion data:', companionData);
-
-      const context = {
-        name: questionnaireData.name,
-        questionnaire_responses: questionnaireData,
-        soulmate_backstory: companionData
-      };
-
-      const prompts = createPrompts(context, metrics);
-      const conversationContext = `Current interaction context:
-Time: ${new Date().toLocaleTimeString()}
-Speaking with: ${questionnaireData.name}
-Their message: ${message}
-Current relationship stage: ${determineStage(metrics)}`;
-
-      return callXAI(prompts.system, conversationContext, message);
+      const data = await response.json();
+      return data.choices[0].message.content;
     } catch (error) {
       console.error('Error generating response:', error);
-      return "I'm having trouble processing that right now. Could you try again?";
+      return "I'm having trouble processing that right now. Could you rephrase?";
     }
-  }
+  },
+
+  analyzeMessage: async (message: string): Promise<{
+    sentiment: string;
+    topics: string[];
+    engagement: number;
+  }> => {
+    try {
+      const prompt = `Analyze this message for sentiment, key topics, and engagement level:
+      "${message}"
+      
+      Respond in JSON format:
+      {
+        "sentiment": "positive/negative/neutral",
+        "topics": ["topic1", "topic2"],
+        "engagement": 1-10 scale number
+      }`;
+
+      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_XAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [{ role: 'system', content: prompt }],
+          model: 'grok-beta',
+          temperature: 0.3,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to analyze message');
+
+      const data = await response.json();
+      return JSON.parse(data.choices[0].message.content);
+    } catch (error) {
+      console.error('Error analyzing message:', error);
+      return {
+        sentiment: 'neutral',
+        topics: [],
+        engagement: 5,
+      };
+    }
+  },
 };

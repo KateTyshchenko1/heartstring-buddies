@@ -28,7 +28,8 @@ export interface CompanionProfilesTable {
   Row: {
     id: string
     profile_id: string | null
-    name: string
+    bot_name: string | null
+    user_name: string | null
     age: string | null
     occupation: string | null
     location: string | null
@@ -43,7 +44,8 @@ export interface CompanionProfilesTable {
   Insert: {
     id?: string
     profile_id?: string | null
-    name: string
+    bot_name?: string | null
+    user_name?: string | null
     age?: string | null
     occupation?: string | null
     location?: string | null
@@ -58,7 +60,8 @@ export interface CompanionProfilesTable {
   Update: {
     id?: string
     profile_id?: string | null
-    name?: string
+    bot_name?: string | null
+    user_name?: string | null
     age?: string | null
     occupation?: string | null
     location?: string | null

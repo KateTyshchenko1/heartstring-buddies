@@ -12,48 +12,51 @@ export type Database = {
       companion_profiles: {
         Row: {
           age: string | null
+          bot_name: string | null
           created_at: string | null
           fun_fact: string | null
           id: string
           interaction_metrics: Json | null
           interests: string | null
           location: string | null
-          name: string
           occupation: string | null
           personality: string | null
           personality_insights: Json | null
           profile_id: string | null
           updated_at: string | null
+          user_name: string | null
         }
         Insert: {
           age?: string | null
+          bot_name?: string | null
           created_at?: string | null
           fun_fact?: string | null
           id?: string
           interaction_metrics?: Json | null
           interests?: string | null
           location?: string | null
-          name: string
           occupation?: string | null
           personality?: string | null
           personality_insights?: Json | null
           profile_id?: string | null
           updated_at?: string | null
+          user_name?: string | null
         }
         Update: {
           age?: string | null
+          bot_name?: string | null
           created_at?: string | null
           fun_fact?: string | null
           id?: string
           interaction_metrics?: Json | null
           interests?: string | null
           location?: string | null
-          name?: string
           occupation?: string | null
           personality?: string | null
           personality_insights?: Json | null
           profile_id?: string | null
           updated_at?: string | null
+          user_name?: string | null
         }
         Relationships: [
           {

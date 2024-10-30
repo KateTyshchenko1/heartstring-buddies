@@ -9,12 +9,14 @@ import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface BackstoryFormProps {
-  soulmateName: string;
+  userName: string;
+  botName: string;
   onComplete: (data: BackstoryFields) => void;
 }
 
 export interface BackstoryFields {
-  name: string;
+  bot_name: string;
+  user_name: string;
   age: string;
   occupation: string;
   location: string;
@@ -23,9 +25,10 @@ export interface BackstoryFields {
   fun_fact: string;
 }
 
-const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
+const BackstoryForm = ({ userName, botName, onComplete }: BackstoryFormProps) => {
   const [fields, setFields] = useState<BackstoryFields>({
-    name: soulmateName,
+    bot_name: botName,
+    user_name: userName,
     age: "",
     occupation: "",
     location: "",
@@ -59,13 +62,14 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
         const persona = await generateMatchingPersona(responses);
         setFields(prev => ({
           ...persona,
-          name: soulmateName
+          bot_name: botName,
+          user_name: userName
         }));
 
         // Update bot_name in questionnaire_responses
         await supabase
           .from('questionnaire_responses')
-          .update({ bot_name: soulmateName })
+          .update({ bot_name: botName })
           .eq('profile_id', user.id);
 
       } catch (error: any) {
@@ -77,7 +81,7 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     };
 
     fetchUserResponses();
-  }, [soulmateName]);
+  }, [botName, userName]);
 
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
     setFields(prev => ({
@@ -142,7 +146,8 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
       const persona = await generateMatchingPersona(userResponses);
       setFields(prev => ({
         ...persona,
-        name: soulmateName
+        bot_name: botName,
+        user_name: userName
       }));
     } catch (error) {
       toast.error("Error regenerating profile. Please try again.");
@@ -156,7 +161,7 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
       <div className="w-full max-w-3xl text-center">
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-            Creating {soulmateName}'s Profile
+            Creating {botName}'s Profile
           </h1>
           <p className="text-lg text-gray-600">
             Crafting the perfect personality based on your responses ✨
@@ -171,28 +176,30 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     <div className="w-full max-w-3xl">
       <div className="text-center mb-12">
         <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-          Let's bring {soulmateName} to life together!
+          Let's bring {fields.bot_name} to life together!
         </h1>
         <p className="text-lg text-gray-600">
-          Help shape {soulmateName}'s world – after all, you two might have chemistry ✨
+          Help shape {fields.bot_name}'s world – after all, you two might have chemistry ✨
         </p>
       </div>
 
       <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-        {Object.entries(fields).filter(([key]) => key !== 'name').map(([field, value]) => (
-          <div key={field} className="space-y-2">
-            <Label htmlFor={field} className="text-lg capitalize text-gray-700">
-              {field === 'fun_fact' ? 'Fun Fact' : field}
-            </Label>
-            <Textarea
-              id={field}
-              value={value}
-              onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
-              className="min-h-[100px] text-base resize-none bg-white/90"
-              placeholder={`Enter ${field === 'fun_fact' ? 'Fun Fact' : field}`}
-            />
-          </div>
-        ))}
+        {Object.entries(fields)
+          .filter(([key]) => !['bot_name', 'user_name'].includes(key))
+          .map(([field, value]) => (
+            <div key={field} className="space-y-2">
+              <Label htmlFor={field} className="text-lg capitalize text-gray-700">
+                {field === 'fun_fact' ? 'Fun Fact' : field}
+              </Label>
+              <Textarea
+                id={field}
+                value={value}
+                onChange={(e) => handleFieldChange(field as keyof BackstoryFields, e.target.value)}
+                className="min-h-[100px] text-base resize-none bg-white/90"
+                placeholder={`Enter ${field}`}
+              />
+            </div>
+          ))}
 
         <div className="flex gap-4 justify-center pt-4">
           <Button

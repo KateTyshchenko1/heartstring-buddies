@@ -32,6 +32,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [botName, setBotName] = useState("");
+  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,10 +42,10 @@ const Chat = () => {
         if (!user) throw new Error('No user found');
 
         // Fetch companion profile and questionnaire data
-        const [questionnaireResponse, conversationsResponse] = await Promise.all([
+        const [companionResponse, conversationsResponse] = await Promise.all([
           supabase
-            .from('questionnaire_responses')
-            .select('bot_name')
+            .from('companion_profiles')
+            .select('bot_name, user_name')
             .eq('profile_id', user.id)
             .single(),
           supabase
@@ -54,11 +55,12 @@ const Chat = () => {
             .order('timestamp', { ascending: true })
         ]);
 
-        if (questionnaireResponse.error) throw questionnaireResponse.error;
+        if (companionResponse.error) throw companionResponse.error;
         if (conversationsResponse.error) throw conversationsResponse.error;
 
-        // Set bot name from questionnaire responses
-        setBotName(questionnaireResponse.data.bot_name || "");
+        // Set bot and user names from companion profile
+        setBotName(companionResponse.data.bot_name || "");
+        setUserName(companionResponse.data.user_name || "");
 
         // Load existing messages
         if (conversationsResponse.data.length > 0) {
@@ -71,8 +73,8 @@ const Chat = () => {
             conversationStyle: msg.conversation_style
           })));
         } else {
-          // Generate initial greeting if no messages exist
-          const greeting = await xaiService.generateGreeting(user.id);
+          // Generate initial greeting using the user's name
+          const greeting = await xaiService.generateGreeting(user.id, companionResponse.data.user_name);
           const newMessage = {
             id: "1",
             text: greeting,
@@ -180,7 +182,9 @@ const Chat = () => {
         <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo />
-            <span className="text-base sm:text-lg font-display text-primary hidden sm:inline">{botName}</span>
+            <span className="text-base sm:text-lg font-display text-primary hidden sm:inline">
+              {botName}
+            </span>
           </div>
           <Button 
             variant="ghost" 
