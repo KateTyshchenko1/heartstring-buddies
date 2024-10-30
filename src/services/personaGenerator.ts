@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import type { SoulmateBackstory } from "@/types/greeting";
 import type { QuestionnaireResponsesTable } from "@/integrations/supabase/types/questionnaire";
+import { supabase } from "@/integrations/supabase/client";
 
 declare global {
   interface ImportMetaEnv {
@@ -62,10 +63,6 @@ Keep all content appropriate and professional.`;
 export const generateMatchingPersona = async (
   questionnaire: Partial<QuestionnaireResponsesTable['Row']>
 ): Promise<SoulmateBackstory> => {
-  if (!XAI_API_KEY) {
-    throw new Error('API configuration error: Missing XAI_API_KEY');
-  }
-
   if (!questionnaire.name) {
     throw new Error('Name is required for persona generation');
   }
@@ -79,12 +76,9 @@ export const generateMatchingPersona = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: [
-          { role: 'system', content: prompt }
-        ],
+        messages: [{ role: 'system', content: prompt }],
         model: 'grok-beta',
         temperature: 0.8,
-        max_tokens: 500,
       }),
     });
 
@@ -93,37 +87,16 @@ export const generateMatchingPersona = async (
     }
 
     const data = await response.json();
-    
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid API response format');
-    }
+    const generatedPersona = JSON.parse(data.choices[0].message.content);
 
-    const contentStr = data.choices[0].message.content;
-    const jsonMatch = contentStr.match(/\{[\s\S]*\}/);
-    
-    if (!jsonMatch) {
-      throw new Error('No valid JSON found in response');
-    }
-
-    const generatedPersona = JSON.parse(jsonMatch[0]);
-
-    // Validate all required fields
-    const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
-    for (const field of requiredFields) {
-      if (!generatedPersona[field]) {
-        throw new Error(`Invalid or missing field: ${field}`);
-      }
-    }
-
-    // Ensure age is a number between 28-38
+    // Validate and process the generated persona
     const age = generatedPersona.age.toString().match(/\d+/)?.[0];
     if (!age || parseInt(age) < 28 || parseInt(age) > 38) {
       throw new Error('Invalid age generated');
     }
 
-    // Return the persona with the correct field structure
-    return {
-      name: questionnaire.bot_name || '',
+    const persona = {
+      name: questionnaire.name,
       age: age.toString(),
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,
@@ -131,6 +104,20 @@ export const generateMatchingPersona = async (
       interests: generatedPersona.interests,
       fun_fact: generatedPersona.funFact
     };
+
+    // Save the generated persona to companion_profiles
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from('companion_profiles')
+        .upsert({
+          profile_id: user.id,
+          ...persona
+        })
+        .select();
+    }
+
+    return persona;
   } catch (error) {
     console.error('Error generating persona:', error);
     throw error;

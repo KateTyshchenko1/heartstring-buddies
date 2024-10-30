@@ -9,7 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { xaiService } from "@/services/xai";
-import type { Message, ConversationData } from "@/types/chat";
+import type { Message, ConversationData, EmotionalContext } from "@/types/chat";
+import type { InteractionMetrics } from "@/types/metrics";
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -46,7 +47,6 @@ const Chat = () => {
         if (companionResponse.error) throw companionResponse.error;
         if (questionnairResponse.error) throw questionnairResponse.error;
 
-        // Set bot and user names from questionnaire responses
         setBotName(questionnairResponse.data.bot_name || "");
         setUserName(questionnairResponse.data.name || "");
 
@@ -57,7 +57,7 @@ const Chat = () => {
             text: msg.message,
             isUser: msg.is_user,
             timestamp: new Date(msg.timestamp || Date.now()),
-            emotionalContext: msg.emotional_context,
+            emotionalContext: msg.emotional_context as EmotionalContext,
             conversationStyle: msg.conversation_style
           })));
         } else {

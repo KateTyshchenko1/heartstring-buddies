@@ -1,8 +1,10 @@
 import type { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types/base";
 
 export type ConversationStyle = Database['public']['Enums']['conversation_style'];
 
 export interface EmotionalContext {
+  userMood?: string | null;
   conversationVibe: string;
   energyLevel: string;
   flirtFactor: number;
@@ -24,6 +26,6 @@ export interface ConversationData {
   message: string;
   is_user: boolean;
   timestamp: string | null;
-  emotional_context: EmotionalContext | null;
+  emotional_context: Json;
   conversation_style: ConversationStyle | null;
 }
