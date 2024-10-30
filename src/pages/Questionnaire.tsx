@@ -91,24 +91,78 @@ const Questionnaire = () => {
   };
 
   const handleBotProfileComplete = async () => {
-    const userContext = {
-      name: answers[0],
-      questionnaire_responses: {
-        perfect_day: answers[1],
-        meaningful_compliment: answers[2],
-        unwind_method: answers[3],
-        learning_desires: answers[4],
-        dinner_guest: answers[5],
-        resonant_media: answers[6],
-        childhood_memory: answers[7],
-        impactful_gesture: answers[8]
-      },
-      soulmate_name: answers[9],
-      soulmate_backstory: fields
-    };
-    
-    localStorage.setItem('userContext', JSON.stringify(userContext));
-    setShowAuth(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("User not found. Please try again.");
+        return;
+      }
+
+      // Save companion profile to Supabase
+      const { error: companionError } = await supabase
+        .from('companion_profiles')
+        .insert({
+          profile_id: user.id,
+          name: answers[9], // soulmate_name from questionnaire
+          age: fields.age,
+          occupation: fields.occupation,
+          location: fields.location,
+          personality: fields.personality,
+          interests: fields.interests,
+          fun_fact: fields.funFact
+        });
+
+      if (companionError) {
+        console.error('Error saving companion profile:', companionError);
+        toast.error("Failed to save companion profile. Please try again.");
+        return;
+      }
+
+      // Save questionnaire responses
+      const { error: questionnaireError } = await supabase
+        .from('questionnaire_responses')
+        .insert({
+          profile_id: user.id,
+          name: answers[0],
+          perfect_day: answers[1],
+          meaningful_compliment: answers[2],
+          unwind_method: answers[3],
+          learning_desires: answers[4],
+          dinner_guest: answers[5],
+          resonant_media: answers[6],
+          childhood_memory: answers[7],
+          impactful_gesture: answers[8]
+        });
+
+      if (questionnaireError) {
+        console.error('Error saving questionnaire responses:', questionnaireError);
+        toast.error("Failed to save questionnaire responses. Please try again.");
+        return;
+      }
+
+      const userContext = {
+        name: answers[0],
+        questionnaire_responses: {
+          perfect_day: answers[1],
+          meaningful_compliment: answers[2],
+          unwind_method: answers[3],
+          learning_desires: answers[4],
+          dinner_guest: answers[5],
+          resonant_media: answers[6],
+          childhood_memory: answers[7],
+          impactful_gesture: answers[8]
+        },
+        soulmate_name: answers[9],
+        soulmate_backstory: fields
+      };
+      
+      localStorage.setItem('userContext', JSON.stringify(userContext));
+      setShowAuth(true);
+      toast.success("Profile saved successfully!");
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   const handleBack = () => {
