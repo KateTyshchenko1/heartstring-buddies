@@ -2,30 +2,64 @@ import { toast } from "sonner";
 import type { SoulmateBackstory } from "@/types/greeting";
 import type { QuestionnaireResponses } from "@/types/greeting";
 
+const analyzeEmotionalPatterns = (responses: QuestionnaireResponses) => {
+  const patterns = {
+    emotionalDepth: responses.meaningful_compliment?.includes('deep') || responses.impactful_gesture?.includes('emotional') ? 'deep' : 'balanced',
+    socialStyle: responses.perfect_day?.includes('people') || responses.dinner_guest ? 'extroverted' : 'introverted',
+    learningStyle: responses.learning_desires?.includes('read') ? 'analytical' : 'experiential',
+    comfortZone: responses.unwind_method?.includes('alone') ? 'introspective' : 'social'
+  };
+  return patterns;
+};
+
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
   if (!questionnaire.name || !questionnaire.bot_name) {
     throw new Error('Both user name and bot name are required for persona generation');
   }
 
-  return `Create a compatible companion profile for ${questionnaire.name}, with the AI companion named ${questionnaire.bot_name}.
-Based on their responses:
-- Perfect day: ${questionnaire.perfect_day || 'Not specified'}
-- How they unwind: ${questionnaire.unwind_method || 'Not specified'}
-- Learning interests: ${questionnaire.learning_desires || 'Not specified'}
-- Meaningful compliment: ${questionnaire.meaningful_compliment || 'Not specified'}
-- Dinner guest choice: ${questionnaire.dinner_guest || 'Not specified'}
-- Media that resonates: ${questionnaire.resonant_media || 'Not specified'}
-- Childhood memory: ${questionnaire.childhood_memory || 'Not specified'}
-- Impactful gesture: ${questionnaire.impactful_gesture || 'Not specified'}
+  const emotionalPatterns = analyzeEmotionalPatterns(questionnaire);
+  
+  return `Create a unique and emotionally compatible companion profile for ${questionnaire.name}, who will interact with an AI named ${questionnaire.bot_name}.
 
-Return ONLY a valid JSON object with these exact fields (no additional text or explanation):
+Deep Analysis of ${questionnaire.name}'s Responses:
+1. Perfect Day: "${questionnaire.perfect_day}"
+   - This reveals their ideal pace of life and what brings them joy
+2. Meaningful Compliment: "${questionnaire.meaningful_compliment}"
+   - Shows how they want to be seen and valued
+3. Unwinding Method: "${questionnaire.unwind_method}"
+   - Indicates their stress management and comfort needs
+4. Learning Desires: "${questionnaire.learning_desires}"
+   - Reveals intellectual interests and growth mindset
+5. Chosen Dinner Guest: "${questionnaire.dinner_guest}"
+   - Shows their values and who they admire
+6. Resonant Media: "${questionnaire.resonant_media}"
+   - Indicates their emotional and cultural touchpoints
+7. Childhood Memory: "${questionnaire.childhood_memory}"
+   - Reveals core emotional experiences
+8. Impactful Gesture: "${questionnaire.impactful_gesture}"
+   - Shows what they value in relationships
+
+Emotional Patterns Detected:
+- Emotional Depth: ${emotionalPatterns.emotionalDepth}
+- Social Orientation: ${emotionalPatterns.socialStyle}
+- Learning Preference: ${emotionalPatterns.learningStyle}
+- Comfort Zone: ${emotionalPatterns.comfortZone}
+
+Based on this analysis, create a companion profile that will:
+1. Complement their emotional needs
+2. Share some interests but also bring new perspectives
+3. Have a personality that naturally resonates with their communication style
+4. Possess expertise that aligns with their learning desires
+5. Have life experiences that create natural conversation bridges
+
+Return ONLY a valid JSON object with these exact fields (no additional text):
 {
-  "age": "32",
-  "occupation": "Marine Biologist specializing in bioluminescent creatures",
-  "location": "San Francisco, with a houseboat in Sausalito",
-  "personality": "Witty, adventurous, empathetic, and intellectually curious",
-  "interests": "Deep-sea photography, writing science poetry, urban foraging, and teaching marine biology to kids",
-  "fun_fact": "Once spent a month living in an underwater research station"
+  "age": "age that would resonate with their life experience",
+  "occupation": "profession that connects with their interests and values",
+  "location": "place that reflects their lifestyle preferences",
+  "personality": "detailed personality traits that complement their emotional patterns",
+  "interests": "mix of shared and complementary interests",
+  "fun_fact": "something unique that creates conversation opportunities"
 }`;
 };
 
@@ -40,7 +74,6 @@ const validatePersonaResponse = (response: any): boolean => {
 
 const parseJsonSafely = (text: string): any => {
   try {
-    // Find the first '{' and last '}' to extract just the JSON object
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}') + 1;
     if (start === -1 || end === 0) {
@@ -70,7 +103,7 @@ export const generateMatchingPersona = async (
         messages: [
           { 
             role: 'system', 
-            content: 'You are an AI that generates compatible companion profiles based on user questionnaire responses. Only return valid JSON objects.' 
+            content: 'You are an expert in analyzing human psychology and creating deeply compatible companion profiles. Focus on emotional intelligence and authentic connections.' 
           },
           { 
             role: 'user', 
