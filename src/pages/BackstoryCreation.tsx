@@ -26,10 +26,12 @@ const BackstoryCreation = () => {
     interests: "Reading psychology books, cooking Mediterranean food, practicing mindfulness, and collecting vinyl records of ambient music",
     funFact: "Started a small community garden that donates fresh produce to local shelters"
   });
+  const [userName, setUserName] = useState("");
   const [soulmateName, setSoulmateName] = useState("");
 
   useEffect(() => {
     const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+    setUserName(userContext.name || '');
     setSoulmateName(userContext.soulmate_name || '');
   }, []);
 
@@ -68,7 +70,7 @@ const BackstoryCreation = () => {
       <div className="w-full max-w-3xl">
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-            Let's bring {soulmateName} to life together!
+            Hi {userName}, let's bring {soulmateName} to life together!
           </h1>
           <p className="text-lg text-gray-600">
             Help shape {soulmateName}'s world – after all, you two might have chemistry ✨
