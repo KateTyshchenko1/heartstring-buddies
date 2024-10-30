@@ -8,10 +8,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import { selectGreeting } from "@/utils/greetingSystem";
+import { xaiService } from "@/services/xai";
 import type { BotPersonality, UserContext } from "@/types/greeting";
 import type { InteractionMetrics } from "@/types/metrics";
-import { xaiService } from "@/services/xai";
 
 interface Message {
   id: string;
@@ -36,43 +35,34 @@ const Chat = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
-    const soulmateNameFromStorage = userContext.soulmate_name || 'AI Companion';
-    setBotName(soulmateNameFromStorage);
+    const initializeChat = async () => {
+      const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+      const soulmateNameFromStorage = userContext.soulmate_name || 'AI Companion';
+      setBotName(soulmateNameFromStorage);
 
-    const botPersonality: BotPersonality = {
-      style: "nurturing",
-      profession: userContext.soulmate_backstory?.occupation || "companion",
-      interests: (userContext.soulmate_backstory?.interests || "").split(',').map((i: string) => i.trim()),
-      traits: [(userContext.soulmate_backstory?.personality || "").split('.')[0]],
+      try {
+        const greeting = await xaiService.generateGreeting(userContext);
+        setMessages([{
+          id: "1",
+          text: greeting,
+          isUser: false,
+          timestamp: new Date(),
+          emotionalContext: {
+            conversationVibe: 'light',
+            energyLevel: 'upbeat',
+            flirtFactor: 0,
+            wittyExchanges: false,
+            followUpNeeded: false
+          },
+          conversationStyle: 'playful'
+        }]);
+      } catch (error) {
+        console.error('Failed to generate greeting:', error);
+        toast.error('Failed to initialize chat');
+      }
     };
 
-    const userCtx: UserContext = {
-      name: userContext.name || "friend",
-      seekingFor: "companionship",
-      interests: Object.values(userContext.questionnaire_responses || {})
-        .filter((response: any) => typeof response === 'string')
-        .map((response: string) => response.split(' ').slice(0, 3).join(' ')),
-      keyGoal: userContext.questionnaire_responses?.learning_desires,
-      emotionalState: userContext.questionnaire_responses?.unwind_method,
-    };
-
-    const greeting = selectGreeting(soulmateNameFromStorage, userCtx, botPersonality);
-
-    setMessages([{
-      id: "1",
-      text: greeting,
-      isUser: false,
-      timestamp: new Date(),
-      emotionalContext: {
-        conversationVibe: 'light',
-        energyLevel: 'upbeat',
-        flirtFactor: 0,
-        wittyExchanges: false,
-        followUpNeeded: false
-      },
-      conversationStyle: botPersonality.style === 'playful' ? 'playful' : 'charming'
-    }]);
+    initializeChat();
   }, []);
 
   const handleSendMessage = async (text: string) => {

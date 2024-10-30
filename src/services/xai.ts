@@ -10,7 +10,7 @@ interface XAIService {
   generateResponse: (message: string, context: UserContext, metrics: InteractionMetrics) => Promise<string>;
 }
 
-// Helper function since we can't use private methods in object literals
+// Helper function for API calls
 const callXAI = async (systemPrompt: string, conversationContext?: string, userMessage?: string) => {
   const messages = [
     { role: 'system', content: systemPrompt }
@@ -69,5 +69,3 @@ Recent Message: ${message}`;
     return callXAI(prompts.system, conversationContext, message);
   }
 };
-
-export const generateResponse = xaiService.generateResponse;
