@@ -16,6 +16,10 @@ const Questionnaire = () => {
   const [questions, setQuestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [temporaryData, setTemporaryData] = useState<{
+    questionnaire: any;
+    companion: any;
+  } | null>(null);
   
   const navigate = useNavigate();
 
@@ -41,39 +45,83 @@ const Questionnaire = () => {
     };
 
     fetchQuestions();
-  }, []);
 
-  const handleAnswer = async (answer: string) => {
+    // Listen for auth state changes to save data after signup
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session && temporaryData) {
+        try {
+          // Save questionnaire responses
+          const { error: questionnaireError } = await supabase
+            .from('questionnaire_responses')
+            .insert({
+              profile_id: session.user.id,
+              ...temporaryData.questionnaire
+            });
+
+          if (questionnaireError) throw questionnaireError;
+
+          // Save companion profile
+          const { error: companionError } = await supabase
+            .from('companion_profiles')
+            .insert({
+              profile_id: session.user.id,
+              ...temporaryData.companion
+            });
+
+          if (companionError) throw companionError;
+
+          // Update user context in localStorage
+          const userContext = {
+            name: temporaryData.questionnaire.name,
+            questionnaire_responses: temporaryData.questionnaire,
+            soulmate_name: temporaryData.companion.name,
+            soulmate_backstory: temporaryData.companion
+          };
+          localStorage.setItem('userContext', JSON.stringify(userContext));
+
+          // Update profile completion status
+          await supabase
+            .from('profiles')
+            .update({ questionnaire_completed: true })
+            .eq('id', session.user.id);
+
+          toast.success("Profile created successfully!");
+          navigate('/chat');
+        } catch (error: any) {
+          toast.error(error.message || "Failed to save profile data");
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate, temporaryData]);
+
+  const handleAnswer = (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('No user found');
+      // Prepare questionnaire data
+      const questionnaireData = {
+        name: answer, // Last question is the name
+        perfect_day: newAnswers[0],
+        meaningful_compliment: newAnswers[1],
+        unwind_method: newAnswers[2],
+        learning_desires: newAnswers[3],
+        dinner_guest: newAnswers[4],
+        resonant_media: newAnswers[5],
+        childhood_memory: newAnswers[6],
+        impactful_gesture: newAnswers[7]
+      };
 
-        // Save questionnaire responses
-        const { error: responseError } = await supabase
-          .from('questionnaire_responses')
-          .insert({
-            profile_id: user.id,
-            name: newAnswers[9], // Assuming this is the name question
-            perfect_day: newAnswers[0],
-            meaningful_compliment: newAnswers[1],
-            unwind_method: newAnswers[2],
-            learning_desires: newAnswers[3],
-            dinner_guest: newAnswers[4],
-            resonant_media: newAnswers[5],
-            childhood_memory: newAnswers[6],
-            impactful_gesture: newAnswers[7]
-          });
-
-        if (responseError) throw responseError;
-        setShowBotProfile(true);
-      } catch (error: any) {
-        toast.error(error.message || 'Failed to save questionnaire responses');
-      }
+      // Store questionnaire data temporarily
+      setTemporaryData(prev => ({
+        ...prev,
+        questionnaire: questionnaireData
+      }));
+      
+      setShowBotProfile(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -97,6 +145,14 @@ const Questionnaire = () => {
     }
   };
 
+  const handleBotProfileComplete = (companionData: any) => {
+    setTemporaryData(prev => ({
+      ...prev,
+      companion: companionData
+    }));
+    setShowAuth(true);
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
   if (showAuth) {
@@ -114,8 +170,8 @@ const Questionnaire = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
         <BackstoryForm 
-          soulmateName={answers[9]} 
-          onComplete={() => setShowAuth(true)} 
+          soulmateName={answers[answers.length - 1]} 
+          onComplete={handleBotProfileComplete}
         />
       </div>
     );
@@ -145,7 +201,7 @@ const Questionnaire = () => {
           onSkip={handleSkip}
           isFirstQuestion={currentQuestion === 0}
           isLastQuestion={currentQuestion === questions.length - 1}
-          hideSkip={currentQuestion === 9}
+          hideSkip={currentQuestion === questions.length - 1}
         />
       </div>
     </div>

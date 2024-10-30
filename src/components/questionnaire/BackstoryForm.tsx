@@ -3,31 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface BackstoryFormProps {
   soulmateName: string;
-  onComplete: () => void;
+  onComplete: (data: BackstoryFields) => void;
 }
 
 export interface BackstoryFields {
+  name: string;
   age: string;
   occupation: string;
   location: string;
   personality: string;
   interests: string;
-  funFact: string;
+  fun_fact: string;
 }
 
 const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
   const [fields, setFields] = useState<BackstoryFields>({
+    name: soulmateName,
     age: "34",
     occupation: "Child psychologist working with art therapy",
     location: "Lives in Seattle, but loves traveling to small towns on weekends",
     personality: "Empathetic and attentive, with a calm presence. Known for asking thoughtful questions and remembering the small details",
     interests: "Reading psychology books, cooking Mediterranean food, practicing mindfulness, and collecting vinyl records of ambient music",
-    funFact: "Started a small community garden that donates fresh produce to local shelters"
+    fun_fact: "Started a small community garden that donates fresh produce to local shelters"
   });
 
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
@@ -37,31 +38,9 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No user found');
-
-      // Save companion profile
-      const { error: companionError } = await supabase
-        .from('companion_profiles')
-        .insert({
-          profile_id: user.id,
-          name: soulmateName,
-          ...fields
-        });
-
-      if (companionError) throw companionError;
-
-      // Store backstory data in localStorage
-      const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
-      const updatedContext = {
-        ...userContext,
-        soulmate_backstory: fields
-      };
-      localStorage.setItem('userContext', JSON.stringify(updatedContext));
-      
-      onComplete();
+      onComplete(fields);
     } catch (error: any) {
       toast.error(error.message || 'Failed to save companion profile');
     }
@@ -79,7 +58,7 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
       </div>
 
       <div className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-        {Object.entries(fields).map(([field, value]) => (
+        {Object.entries(fields).filter(([key]) => key !== 'name').map(([field, value]) => (
           <div key={field} className="space-y-2">
             <Label htmlFor={field} className="text-lg capitalize text-gray-700">
               {field === 'funFact' ? 'Fun Fact' : field}
