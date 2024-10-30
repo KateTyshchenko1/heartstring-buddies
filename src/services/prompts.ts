@@ -91,6 +91,5 @@ Be authentically you: ${bot?.personality || 'warm and engaging'}.
 ${bot?.fun_fact ? `Drop "${bot.fun_fact}" when relevant.` : ''}
 
 CRITICAL: Mirror their energy but maintain your unique voice as ${bot?.occupation || 'their companion'} who ${bot?.interests || 'shares their interests'}.`
-`
   };
 };
