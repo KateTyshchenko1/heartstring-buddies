@@ -8,7 +8,6 @@ import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
-import { useAuth } from "@/components/auth/AuthProvider";
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -24,7 +23,6 @@ const Questionnaire = () => {
   } | null>(null);
   
   const navigate = useNavigate();
-  const { session } = useAuth();
 
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers];
@@ -45,7 +43,6 @@ const Questionnaire = () => {
         impactful_gesture: newAnswers[7]
       };
 
-      // Store questionnaire data temporarily
       setTemporaryData(prev => ({
         ...prev,
         questionnaire: questionnaireData
@@ -57,7 +54,7 @@ const Questionnaire = () => {
     }
   };
 
-  const handlePersonaComplete = (companionData: BackstoryFields) => {
+  const handlePersonaComplete = async (companionData: BackstoryFields) => {
     setTemporaryData(prev => ({
       ...prev,
       companion: companionData
@@ -77,19 +74,14 @@ const Questionnaire = () => {
           .eq('is_active', true)
           .order('order_index');
 
-        if (fetchError) {
-          console.error('Error details:', fetchError);
-          throw new Error(`Failed to fetch questions: ${fetchError.message}`);
-        }
-
+        if (fetchError) throw fetchError;
         if (!questionsData?.length) {
-          throw new Error('No questions found in the database');
+          throw new Error('No questions found');
         }
 
-        console.log('Fetched questions:', questionsData);
         setQuestions(questionsData);
       } catch (err: any) {
-        console.error('Detailed error:', err);
+        console.error('Error:', err);
         setError(err.message || 'An unexpected error occurred');
         toast.error("Failed to load questions. Please try again.");
       } finally {
@@ -100,66 +92,53 @@ const Questionnaire = () => {
     fetchQuestions();
   }, []);
 
-  // Handle auth state changes
-  useEffect(() => {
-    if (!session?.user) return;
+  // Handle successful authentication
+  const handleAuthSuccess = async (userId: string) => {
+    if (!temporaryData) return;
 
-    const saveData = async () => {
-      if (!temporaryData) return;
+    try {
+      // Save questionnaire responses
+      const { error: questionnaireError } = await supabase
+        .from('questionnaire_responses')
+        .insert({
+          profile_id: userId,
+          ...temporaryData.questionnaire
+        });
 
-      try {
-        // Save questionnaire responses
-        const { error: questionnaireError } = await supabase
-          .from('questionnaire_responses')
-          .insert({
-            profile_id: session.user.id,
-            ...temporaryData.questionnaire
-          })
-          .single();
+      if (questionnaireError) throw questionnaireError;
 
-        if (questionnaireError) throw questionnaireError;
+      // Save companion profile
+      const { error: companionError } = await supabase
+        .from('companion_profiles')
+        .insert({
+          profile_id: userId,
+          ...temporaryData.companion
+        });
 
-        // Save companion profile
-        const { error: companionError } = await supabase
-          .from('companion_profiles')
-          .insert({
-            profile_id: session.user.id,
-            ...temporaryData.companion
-          })
-          .single();
+      if (companionError) throw companionError;
 
-        if (companionError) throw companionError;
+      // Update user context
+      const userContext = {
+        name: temporaryData.questionnaire.name,
+        questionnaire_responses: temporaryData.questionnaire,
+        soulmate_name: temporaryData.companion.name,
+        soulmate_backstory: temporaryData.companion
+      };
+      localStorage.setItem('userContext', JSON.stringify(userContext));
 
-        // Update user context in localStorage
-        const userContext = {
-          name: temporaryData.questionnaire.name,
-          questionnaire_responses: temporaryData.questionnaire,
-          soulmate_name: temporaryData.companion.name,
-          soulmate_backstory: temporaryData.companion
-        };
-        localStorage.setItem('userContext', JSON.stringify(userContext));
+      // Update profile completion status
+      await supabase
+        .from('profiles')
+        .update({ questionnaire_completed: true })
+        .eq('id', userId);
 
-        // Update profile completion status
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ questionnaire_completed: true })
-          .eq('id', session.user.id)
-          .single();
-
-        if (updateError) throw updateError;
-
-        toast.success("Profile created successfully!");
-        navigate('/chat');
-      } catch (error: any) {
-        console.error('Error saving data:', error);
-        toast.error(error.message || "Failed to save profile data");
-      }
-    };
-
-    if (temporaryData) {
-      saveData();
+      toast.success("Profile created successfully!");
+      navigate('/chat');
+    } catch (error: any) {
+      console.error('Error saving data:', error);
+      toast.error(error.message || "Failed to save profile data");
     }
-  }, [session, temporaryData, navigate]);
+  };
 
   const handleBack = () => {
     if (currentQuestion > 0) {
@@ -181,6 +160,7 @@ const Questionnaire = () => {
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+
   if (showAuth) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">

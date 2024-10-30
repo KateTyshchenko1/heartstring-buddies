@@ -10,7 +10,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   const handleCreateClick = () => {
-    navigate("/questionnaire");
+    navigate("/questionnaire"); // Direct to questionnaire without auth check
   };
 
   return (

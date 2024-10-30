@@ -17,11 +17,30 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
       if (event === 'SIGNED_IN' && session) {
         if (isSignUp) {
           try {
+            const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+            
+            // Save questionnaire responses
+            await supabase
+              .from('questionnaire_responses')
+              .insert({
+                profile_id: session.user.id,
+                ...userContext.questionnaire_responses
+              });
+
+            // Save companion profile
+            await supabase
+              .from('companion_profiles')
+              .insert({
+                profile_id: session.user.id,
+                ...userContext.soulmate_backstory
+              });
+
+            // Update profile completion
             await supabase
               .from('profiles')
               .update({ questionnaire_completed: true })
               .eq('id', session.user.id);
-          
+
             toast.success("Account created successfully!");
             navigate('/chat');
           } catch (error: any) {
@@ -35,14 +54,11 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             .single();
 
           if (profile?.questionnaire_completed) {
-            toast.success("Welcome back!");
             navigate('/chat');
           } else {
             navigate('/questionnaire');
           }
         }
-      } else if (event === 'SIGNED_OUT') {
-        navigate('/login');
       }
     });
 
