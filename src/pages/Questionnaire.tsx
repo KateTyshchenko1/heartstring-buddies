@@ -47,7 +47,7 @@ const Questionnaire = () => {
           .order('order_index');
 
         if (fetchError) {
-          console.error('Supabase error:', fetchError);
+          console.error('Error fetching questions:', fetchError);
           setError('Failed to load questions. Please try again.');
           setIsLoading(false);
           return;
@@ -59,12 +59,11 @@ const Questionnaire = () => {
           return;
         }
 
-        console.log('Fetched questions:', questionsData);
         setQuestions(questionsData);
         setIsLoading(false);
       } catch (err) {
-        console.error('Error fetching questions:', err);
-        setError('Failed to load questions. Please try again.');
+        console.error('Error:', err);
+        setError('An unexpected error occurred. Please try again.');
         setIsLoading(false);
       }
     };
@@ -80,7 +79,6 @@ const Questionnaire = () => {
     if (currentQuestion === questions.length - 2) {
       setCurrentQuestion(currentQuestion + 1);
     } else if (currentQuestion === questions.length - 1) {
-      // Store answers in localStorage before showing auth
       const userContext = {
         name: newAnswers[0],
         questionnaire_responses: {
