@@ -36,12 +36,21 @@ const Chat = () => {
 
   useEffect(() => {
     const initializeChat = async () => {
-      const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
-      const soulmateNameFromStorage = userContext.soulmate_name || 'AI Companion';
-      setBotName(soulmateNameFromStorage);
-
       try {
-        const greeting = await xaiService.generateGreeting(userContext);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('No user found');
+
+        const { data: companionData } = await supabase
+          .from('companion_profiles')
+          .select('name')
+          .eq('profile_id', user.id)
+          .single();
+        
+        if (companionData) {
+          setBotName(companionData.name);
+        }
+
+        const greeting = await xaiService.generateGreeting(user.id);
         setMessages([{
           id: "1",
           text: greeting,
