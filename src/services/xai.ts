@@ -55,11 +55,13 @@ const determineStage = (metrics: InteractionMetrics): string => {
 export const xaiService: XAIService = {
   async generateGreeting(userId: string) {
     try {
-      // Fetch questionnaire responses
+      // Fetch questionnaire responses with explicit ordering by created_at
       const { data: questionnaireData, error: questionnaireError } = await supabase
         .from('questionnaire_responses')
         .select('*')
         .eq('profile_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
 
       if (questionnaireError) throw questionnaireError;
@@ -77,13 +79,8 @@ export const xaiService: XAIService = {
         throw new Error('Required profile data not found');
       }
 
-      const initialMetrics = {
-        flirtLevel: 3,
-        charmFactor: 5, 
-        wittyExchanges: 0,
-        energyLevel: 'warm',
-        connectionStyle: 'charming'
-      };
+      console.log('Fetched questionnaire data:', questionnaireData);
+      console.log('Fetched companion data:', companionData);
 
       const firstMeetingPrompt = `You are ${companionData.name} (${companionData.age}), ${companionData.occupation}. ${companionData.personality}
 
@@ -130,6 +127,8 @@ Your first message should feel natural and spontaneous - like a real person exci
         .from('questionnaire_responses')
         .select('*')
         .eq('profile_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
 
       const { data: companionData } = await supabase
@@ -141,6 +140,9 @@ Your first message should feel natural and spontaneous - like a real person exci
       if (!questionnaireData || !companionData) {
         throw new Error('Required profile data not found');
       }
+
+      console.log('Response - Questionnaire data:', questionnaireData);
+      console.log('Response - Companion data:', companionData);
 
       const context = {
         name: questionnaireData.name,
@@ -161,11 +163,4 @@ Current relationship stage: ${determineStage(metrics)}`;
       return "I'm having trouble processing that right now. Could you try again?";
     }
   }
-};
-
-const determineStage = (metrics: InteractionMetrics): string => {
-  if (metrics.wittyExchanges === 0) return 'First meeting';
-  if (metrics.wittyExchanges < 5) return 'Getting to know each other';
-  if (metrics.flirtLevel > 7) return 'Strong connection';
-  return 'Building rapport';
 };
