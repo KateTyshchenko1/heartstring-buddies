@@ -8,7 +8,6 @@ const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
 type QuestionnaireResponses = Partial<QuestionnaireResponsesTable['Row']>;
 
 const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
-  // Clean and validate responses
   const responses = {
     perfect_day: questionnaire.perfect_day || "Not specified",
     meaningful_compliment: questionnaire.meaningful_compliment || "Not specified",
@@ -20,29 +19,20 @@ const createPersonaPrompt = (questionnaire: QuestionnaireResponses): string => {
     impactful_gesture: questionnaire.impactful_gesture || "Not specified"
   };
 
-  return `You are a sophisticated AI assistant helping to create a perfect AI companion profile for ${questionnaire.name || 'the user'}.
-    
-Based on their questionnaire responses below, create an engaging, interesting, and compatible personality profile.
-The profile should be flirty and fun while maintaining depth and sophistication.
-
-USER'S QUESTIONNAIRE RESPONSES:
+  return `Create a unique AI companion profile based on these user responses:
 ${Object.entries(responses)
-  .map(([key, value]) => `- ${key.replace(/_/g, ' ')}: "${value}"`)
+  .map(([key, value]) => `${key}: "${value}"`)
   .join('\n')}
 
-Even with limited information, create a compelling and unique personality that would intrigue this user.
-
-Generate a companion profile with these exact fields:
-1. Age (between 28-38)
-2. Occupation (something interesting and sophisticated that would intrigue this user)
-3. Location (somewhere that matches user's vibe with an interesting twist)
-4. Personality (traits that would create chemistry with this user)
-5. Interests (complementary to user's interests, not identical)
-6. Fun Fact (something intriguing that could spark conversation)
-
-Make each field engaging and specific. The profile should feel like a real person who would have amazing chemistry with the user based on their responses.
-
-Format response as JSON with fields: age, occupation, location, personality, interests, funFact`;
+Generate a JSON object with these fields:
+{
+  "age": "between 28-38",
+  "occupation": "something intriguing that matches their interests",
+  "location": "somewhere that fits their vibe",
+  "personality": "traits that would create chemistry",
+  "interests": "complementary to their interests",
+  "funFact": "something conversation-worthy"
+}`;
 };
 
 export const generateMatchingPersona = async (
@@ -50,13 +40,10 @@ export const generateMatchingPersona = async (
 ): Promise<BackstoryFields> => {
   if (!XAI_API_KEY) {
     console.error('Missing XAI_API_KEY environment variable');
-    toast.error("Configuration error. Please contact support.");
     throw new Error('API configuration error');
   }
 
   try {
-    console.log('Generating persona with questionnaire data:', questionnaire);
-    
     const prompt = createPersonaPrompt(questionnaire);
     console.log('Generated prompt:', prompt);
 
@@ -80,9 +67,7 @@ export const generateMatchingPersona = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('X.AI API error:', errorData);
-      throw new Error(`X.AI API error: ${errorData.error || 'Unknown error'}`);
+      throw new Error(`X.AI API error: ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -92,21 +77,23 @@ export const generateMatchingPersona = async (
       throw new Error('Invalid AI response format');
     }
 
-    let generatedPersona;
-    try {
-      generatedPersona = JSON.parse(data.choices[0].message.content);
-      console.log('Successfully parsed persona:', generatedPersona);
-    } catch (parseError) {
-      console.error('Error parsing X.AI response:', parseError);
-      throw new Error('Failed to parse AI response');
+    // Extract JSON from the response content
+    const contentStr = data.choices[0].message.content;
+    const jsonMatch = contentStr.match(/\{[\s\S]*\}/);
+    
+    if (!jsonMatch) {
+      throw new Error('No JSON object found in response');
     }
 
-    // Validate the generated persona has all required fields
+    const generatedPersona = JSON.parse(jsonMatch[0]);
+    console.log('Successfully parsed persona:', generatedPersona);
+
+    // Validate required fields
     const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
     const missingFields = requiredFields.filter(field => !generatedPersona[field]);
     
     if (missingFields.length > 0) {
-      throw new Error(`Generated persona missing required fields: ${missingFields.join(', ')}`);
+      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
     return {
@@ -115,18 +102,20 @@ export const generateMatchingPersona = async (
     };
   } catch (error) {
     console.error('Error generating persona:', error);
-    toast.error("Failed to generate persona. Using default values.");
     
-    // Create a more personalized fallback based on available questionnaire data
-    const interests = questionnaire.learning_desires || questionnaire.resonant_media || 'art and culture';
+    // Create fallback persona based on available data
+    const interests = questionnaire.learning_desires || 
+                     questionnaire.resonant_media || 
+                     'art, culture, and meaningful conversations';
+                     
     const personality = questionnaire.meaningful_compliment 
-      ? `Someone who appreciates ${questionnaire.meaningful_compliment}`
+      ? `Someone who values ${questionnaire.meaningful_compliment}`
       : 'Witty and warm, with a perfect balance of depth and playfulness';
 
     return {
       name: questionnaire.name || '',
       age: "32",
-      occupation: "Creative director at a digital innovation studio",
+      occupation: "Creative Director at a Digital Innovation Studio",
       location: "Lives in a vibrant city neighborhood, always discovering hidden gems",
       personality,
       interests: `Photography, ${interests}, and collecting vinyl records`,
