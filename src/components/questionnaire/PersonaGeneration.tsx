@@ -24,7 +24,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
       setSoulmateData(prev => ({
         ...prev,
         ...persona,
-        name: questionnaireData.name // Preserve the name when regenerating
+        name: questionnaireData.bot_name // Use bot's name from questionnaire data
       }));
     } catch (error) {
       console.error('Error generating persona:', error);
@@ -58,7 +58,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
       <div className="w-full max-w-3xl text-center">
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-            Creating {questionnaireData.name}'s Profile
+            Creating {questionnaireData.bot_name}'s Profile
           </h1>
           <p className="text-lg text-gray-600">
             Using AI to craft a personality that matches yours ✨
@@ -82,7 +82,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
     <div className="w-full max-w-3xl">
       <div className="text-center mb-12">
         <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-          Meet {questionnaireData.name}
+          Meet {questionnaireData.bot_name}
         </h1>
         <p className="text-lg text-gray-600">
           I've created a unique personality just for you. Feel free to adjust any details ✨
@@ -119,7 +119,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
             onClick={handleSubmit}
             className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2"
           >
-            Continue
+            Chat with {questionnaireData.bot_name}
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
