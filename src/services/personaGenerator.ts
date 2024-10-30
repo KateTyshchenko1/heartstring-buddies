@@ -16,8 +16,6 @@ export const generateMatchingPersona = async (
   }
 
   try {
-    console.log('Generating persona with questionnaire:', questionnaire);
-
     const prompt = `You are a sophisticated AI assistant helping to create a perfect AI companion profile for ${questionnaire.name}.
     
     Based on their questionnaire responses below, create an engaging, interesting, and compatible personality profile.

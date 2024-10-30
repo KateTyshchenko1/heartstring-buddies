@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Question from "@/components/questionnaire/Question";
 import AuthModal from "@/components/auth/AuthModal";
-import BackstoryForm from "@/components/questionnaire/BackstoryForm";
+import PersonaGeneration from "@/components/questionnaire/PersonaGeneration";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [showAuth, setShowAuth] = useState(false);
-  const [showBotProfile, setShowBotProfile] = useState(false);
+  const [showPersonaGen, setShowPersonaGen] = useState(false);
   const [questions, setQuestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +23,45 @@ const Questionnaire = () => {
   } | null>(null);
   
   const navigate = useNavigate();
+
+  const handleAnswer = (answer: string) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answer;
+    setAnswers(newAnswers);
+
+    if (currentQuestion === questions.length - 1) {
+      // Prepare questionnaire data
+      const questionnaireData = {
+        name: answer, // Last question is the name
+        perfect_day: newAnswers[0],
+        meaningful_compliment: newAnswers[1],
+        unwind_method: newAnswers[2],
+        learning_desires: newAnswers[3],
+        dinner_guest: newAnswers[4],
+        resonant_media: newAnswers[5],
+        childhood_memory: newAnswers[6],
+        impactful_gesture: newAnswers[7]
+      };
+
+      // Store questionnaire data temporarily
+      setTemporaryData(prev => ({
+        ...prev,
+        questionnaire: questionnaireData
+      }));
+      
+      setShowPersonaGen(true);
+    } else {
+      setCurrentQuestion(currentQuestion + 1);
+    }
+  };
+
+  const handlePersonaComplete = (companionData: BackstoryFields) => {
+    setTemporaryData(prev => ({
+      ...prev,
+      companion: companionData
+    }));
+    setShowAuth(true);
+  };
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -96,37 +136,6 @@ const Questionnaire = () => {
     return () => subscription.unsubscribe();
   }, [navigate, temporaryData]);
 
-  const handleAnswer = (answer: string) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = answer;
-    setAnswers(newAnswers);
-
-    if (currentQuestion === questions.length - 1) {
-      // Prepare questionnaire data
-      const questionnaireData = {
-        name: answer, // Last question is the name
-        perfect_day: newAnswers[0],
-        meaningful_compliment: newAnswers[1],
-        unwind_method: newAnswers[2],
-        learning_desires: newAnswers[3],
-        dinner_guest: newAnswers[4],
-        resonant_media: newAnswers[5],
-        childhood_memory: newAnswers[6],
-        impactful_gesture: newAnswers[7]
-      };
-
-      // Store questionnaire data temporarily
-      setTemporaryData(prev => ({
-        ...prev,
-        questionnaire: questionnaireData
-      }));
-      
-      setShowBotProfile(true);
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
-    }
-  };
-
   const handleBack = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
@@ -139,18 +148,10 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
     
     if (currentQuestion === questions.length - 1) {
-      setShowBotProfile(true);
+      setShowPersonaGen(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
-  };
-
-  const handleBotProfileComplete = (companionData: any) => {
-    setTemporaryData(prev => ({
-      ...prev,
-      companion: companionData
-    }));
-    setShowAuth(true);
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -166,12 +167,12 @@ const Questionnaire = () => {
     );
   }
 
-  if (showBotProfile) {
+  if (showPersonaGen && temporaryData?.questionnaire) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
-        <BackstoryForm 
-          soulmateName={answers[answers.length - 1]} 
-          onComplete={handleBotProfileComplete}
+        <PersonaGeneration 
+          questionnaireData={temporaryData.questionnaire}
+          onComplete={handlePersonaComplete}
         />
       </div>
     );
