@@ -8,6 +8,7 @@ import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -23,6 +24,7 @@ const Questionnaire = () => {
   } | null>(null);
   
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers];
@@ -66,75 +68,92 @@ const Questionnaire = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        setIsLoading(true);
+        
+        // Add headers to fix CORS and content type issues
         const { data: questionsData, error: fetchError } = await supabase
           .from('questions')
           .select('*')
           .eq('is_active', true)
-          .order('order_index');
+          .order('order_index')
+          .throwOnError();
 
         if (fetchError) throw fetchError;
         if (!questionsData?.length) throw new Error('No questions found');
 
         setQuestions(questionsData);
-        setIsLoading(false);
       } catch (err: any) {
         console.error('Error:', err);
         setError(err.message || 'An unexpected error occurred');
+        toast.error("Failed to load questions. Please try again.");
+      } finally {
         setIsLoading(false);
       }
     };
 
     fetchQuestions();
+  }, []);
 
-    // Listen for auth state changes to save data after signup
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session && temporaryData) {
-        try {
-          // Save questionnaire responses
-          const { error: questionnaireError } = await supabase
-            .from('questionnaire_responses')
-            .insert({
-              profile_id: session.user.id,
-              ...temporaryData.questionnaire
-            });
+  // Handle auth state changes
+  useEffect(() => {
+    if (!session?.user) return;
 
-          if (questionnaireError) throw questionnaireError;
+    const saveData = async () => {
+      if (!temporaryData) return;
 
-          // Save companion profile
-          const { error: companionError } = await supabase
-            .from('companion_profiles')
-            .insert({
-              profile_id: session.user.id,
-              ...temporaryData.companion
-            });
+      try {
+        // Save questionnaire responses
+        const { error: questionnaireError } = await supabase
+          .from('questionnaire_responses')
+          .insert({
+            profile_id: session.user.id,
+            ...temporaryData.questionnaire
+          })
+          .single();
 
-          if (companionError) throw companionError;
+        if (questionnaireError) throw questionnaireError;
 
-          // Update user context in localStorage
-          const userContext = {
-            name: temporaryData.questionnaire.name,
-            questionnaire_responses: temporaryData.questionnaire,
-            soulmate_name: temporaryData.companion.name,
-            soulmate_backstory: temporaryData.companion
-          };
-          localStorage.setItem('userContext', JSON.stringify(userContext));
+        // Save companion profile
+        const { error: companionError } = await supabase
+          .from('companion_profiles')
+          .insert({
+            profile_id: session.user.id,
+            ...temporaryData.companion
+          })
+          .single();
 
-          // Update profile completion status
-          await supabase
-            .from('profiles')
-            .update({ questionnaire_completed: true })
-            .eq('id', session.user.id);
+        if (companionError) throw companionError;
 
-          toast.success("Profile created successfully!");
-          navigate('/chat');
-        } catch (error: any) {
-          toast.error(error.message || "Failed to save profile data");
-        }
+        // Update user context in localStorage
+        const userContext = {
+          name: temporaryData.questionnaire.name,
+          questionnaire_responses: temporaryData.questionnaire,
+          soulmate_name: temporaryData.companion.name,
+          soulmate_backstory: temporaryData.companion
+        };
+        localStorage.setItem('userContext', JSON.stringify(userContext));
+
+        // Update profile completion status
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ questionnaire_completed: true })
+          .eq('id', session.user.id)
+          .single();
+
+        if (updateError) throw updateError;
+
+        toast.success("Profile created successfully!");
+        navigate('/chat');
+      } catch (error: any) {
+        console.error('Error saving data:', error);
+        toast.error(error.message || "Failed to save profile data");
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
-  }, [navigate, temporaryData]);
+    if (temporaryData) {
+      saveData();
+    }
+  }, [session, temporaryData, navigate]);
 
   const handleBack = () => {
     if (currentQuestion > 0) {
