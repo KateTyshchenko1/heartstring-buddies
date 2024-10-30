@@ -65,15 +65,27 @@ Return ONLY a valid JSON object with these exact fields (no additional text):
 
 const validatePersonaResponse = (response: any): boolean => {
   const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'fun_fact'];
-  const isValid = requiredFields.every(field => {
+  
+  console.log('Validating AI response:', JSON.stringify(response, null, 2));
+  
+  const missingFields = requiredFields.filter(field => {
     const value = response[field];
-    return value && typeof value === 'string' && value.length > 0;
+    const isValid = value && typeof value === 'string' && value.length > 0;
+    if (!isValid) {
+      console.log(`Field ${field} validation:`, {
+        exists: !!value,
+        type: typeof value,
+        length: value?.length
+      });
+    }
+    return !isValid;
   });
 
-  if (!isValid) {
-    console.error('Invalid persona response:', response);
-    const missingFields = requiredFields.filter(field => !response[field]);
-    throw new Error(`Generated profile is incomplete. Missing or invalid fields: ${missingFields.join(', ')}`);
+  if (missingFields.length > 0) {
+    const error = `Generated profile is incomplete. Missing or invalid fields: ${missingFields.join(', ')}`;
+    console.error(error);
+    console.error('Full response:', response);
+    throw new Error(error);
   }
 
   return true;
@@ -110,7 +122,7 @@ export const generateMatchingPersona = async (
         messages: [
           { 
             role: 'system', 
-            content: 'You are an expert in analyzing human psychology and creating deeply compatible companion profiles. Focus on emotional intelligence and authentic connections.' 
+            content: 'You are an expert in analyzing human psychology and creating deeply compatible companion profiles. You must return a valid JSON object with exactly these fields: age, occupation, location, personality, interests, and fun_fact. Each field must be a non-empty string.' 
           },
           { 
             role: 'user', 
@@ -130,8 +142,9 @@ export const generateMatchingPersona = async (
     }
 
     const data = await response.json();
+    console.log('Raw AI response:', data.choices[0].message.content);
+    
     const generatedPersona = parseJsonSafely(data.choices[0].message.content);
-
     validatePersonaResponse(generatedPersona);
 
     return {
