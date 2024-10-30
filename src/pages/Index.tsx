@@ -39,7 +39,7 @@ const Index = () => {
             Your Perfect Person, Thoughtfully Crafted
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 px-4">
-            We've created what every woman secretly wants - someone who actually listens, remembers everything, and gets better at making you happy every day
+            An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
           </p>
           <div className="flex flex-col items-center gap-3">
             <Button 
