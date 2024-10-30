@@ -4,6 +4,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 
 interface AuthModalProps {
   isSignUp?: boolean;
@@ -19,31 +20,58 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
           try {
             const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
             
-            // Save questionnaire responses
-            await supabase
+            // Save questionnaire responses first
+            const { error: questionnaireError } = await supabase
               .from('questionnaire_responses')
               .insert({
                 profile_id: session.user.id,
                 ...userContext.questionnaire_responses
               });
 
-            // Save companion profile
-            await supabase
+            if (questionnaireError) throw questionnaireError;
+
+            // Save companion profile with the generated persona
+            const { error: companionError } = await supabase
               .from('companion_profiles')
               .insert({
                 profile_id: session.user.id,
-                ...userContext.soulmate_backstory
+                age: userContext.soulmate_backstory.age,
+                occupation: userContext.soulmate_backstory.occupation,
+                location: userContext.soulmate_backstory.location,
+                personality: userContext.soulmate_backstory.personality,
+                interests: userContext.soulmate_backstory.interests,
+                fun_fact: userContext.soulmate_backstory.fun_fact,
+                bot_name: userContext.questionnaire_responses.bot_name,
+                user_name: userContext.questionnaire_responses.name
               });
 
-            // Update profile completion
-            await supabase
+            if (companionError) throw companionError;
+
+            // Initialize relationship evolution
+            const { error: relationshipError } = await supabase
+              .from('relationship_evolution')
+              .insert({
+                profile_id: session.user.id,
+                stage: 'flirty_intro',
+                connection_style: 'playful',
+                chemistry_level: 1,
+                last_interaction: new Date().toISOString()
+              });
+
+            if (relationshipError) throw relationshipError;
+
+            // Update profile completion status
+            const { error: profileError } = await supabase
               .from('profiles')
               .update({ questionnaire_completed: true })
               .eq('id', session.user.id);
 
+            if (profileError) throw profileError;
+
             toast.success("Account created successfully!");
             navigate('/chat');
           } catch (error: any) {
+            console.error('Signup error:', error);
             toast.error(error.message || "An error occurred during signup");
           }
         } else {
