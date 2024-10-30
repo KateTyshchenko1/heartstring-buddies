@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface BackstoryFormProps {
   soulmateName: string;
@@ -35,15 +37,34 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     }));
   };
 
-  const handleSubmit = () => {
-    // Store backstory data in localStorage before proceeding to auth
-    const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
-    const updatedContext = {
-      ...userContext,
-      soulmate_backstory: fields
-    };
-    localStorage.setItem('userContext', JSON.stringify(updatedContext));
-    onComplete();
+  const handleSubmit = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      // Save companion profile
+      const { error: companionError } = await supabase
+        .from('companion_profiles')
+        .insert({
+          profile_id: user.id,
+          name: soulmateName,
+          ...fields
+        });
+
+      if (companionError) throw companionError;
+
+      // Store backstory data in localStorage
+      const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
+      const updatedContext = {
+        ...userContext,
+        soulmate_backstory: fields
+      };
+      localStorage.setItem('userContext', JSON.stringify(updatedContext));
+      
+      onComplete();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to save companion profile');
+    }
   };
 
   return (

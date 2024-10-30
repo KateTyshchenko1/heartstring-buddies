@@ -6,6 +6,7 @@ import BackstoryForm from "@/components/questionnaire/BackstoryForm";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/questionnaire/ErrorMessage";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Questionnaire = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -42,13 +43,37 @@ const Questionnaire = () => {
     fetchQuestions();
   }, []);
 
-  const handleAnswer = (answer: string) => {
+  const handleAnswer = async (answer: string) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      setShowBotProfile(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('No user found');
+
+        // Save questionnaire responses
+        const { error: responseError } = await supabase
+          .from('questionnaire_responses')
+          .insert({
+            profile_id: user.id,
+            name: newAnswers[9], // Assuming this is the name question
+            perfect_day: newAnswers[0],
+            meaningful_compliment: newAnswers[1],
+            unwind_method: newAnswers[2],
+            learning_desires: newAnswers[3],
+            dinner_guest: newAnswers[4],
+            resonant_media: newAnswers[5],
+            childhood_memory: newAnswers[6],
+            impactful_gesture: newAnswers[7]
+          });
+
+        if (responseError) throw responseError;
+        setShowBotProfile(true);
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to save questionnaire responses');
+      }
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }

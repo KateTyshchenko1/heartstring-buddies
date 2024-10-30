@@ -75,7 +75,32 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      // Save user message to conversations
+      const { error: userMsgError } = await supabase
+        .from('conversations')
+        .insert({
+          profile_id: user.id,
+          message: text,
+          is_user: true
+        });
+
+      if (userMsgError) throw userMsgError;
+
       const response = await generateResponse(text);
+      
+      // Save AI response to conversations
+      const { error: aiMsgError } = await supabase
+        .from('conversations')
+        .insert({
+          profile_id: user.id,
+          message: response,
+          is_user: false
+        });
+
+      if (aiMsgError) throw aiMsgError;
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -84,8 +109,8 @@ const Chat = () => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      toast.error("Failed to get response. Please try again.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save conversation");
     } finally {
       setIsLoading(false);
     }
