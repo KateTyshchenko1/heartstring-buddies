@@ -8,6 +8,7 @@ import FeatureCards from "@/components/home/FeatureCards";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, Shield, Sprout, CheckCircle2, MessageCircle, Star, Infinity } from "lucide-react";
+import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -23,16 +24,25 @@ const Index = () => {
 
   useEffect(() => {
     const checkUserStatus = async () => {
-      if (session?.user) {
-        const { data: profile } = await supabase
+      if (!session?.user) return;
+
+      try {
+        const { data: profile, error } = await supabase
           .from('profiles')
           .select('questionnaire_completed')
           .eq('id', session.user.id)
-          .single();
-        
+          .maybeSingle(); // Use maybeSingle() instead of single()
+
+        // If profile exists and questionnaire is completed, redirect to chat
         if (profile?.questionnaire_completed) {
           navigate('/chat');
+        } else if (error) {
+          console.error('Error fetching profile:', error);
+          toast.error('Error checking profile status');
         }
+      } catch (error) {
+        console.error('Error in checkUserStatus:', error);
+        toast.error('Something went wrong');
       }
     };
     
