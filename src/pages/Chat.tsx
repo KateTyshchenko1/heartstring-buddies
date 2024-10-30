@@ -16,6 +16,15 @@ interface Message {
   text: string;
   isUser: boolean;
   timestamp: Date;
+  emotionalContext?: {
+    userMood?: string | null;
+    conversationVibe: string;
+    energyLevel: string;
+    flirtFactor: number;
+    wittyExchanges: boolean;
+    followUpNeeded: boolean;
+  };
+  conversationStyle?: 'flirty' | 'witty' | 'playful' | 'charming' | 'mysterious' | 'intellectual' | 'supportive';
 }
 
 const Chat = () => {
@@ -35,7 +44,6 @@ const Chat = () => {
     const soulmateNameFromStorage = userContext.soulmate_name || 'AI Companion';
     setBotName(soulmateNameFromStorage);
 
-    // Create bot personality from soulmate backstory
     const botPersonality: BotPersonality = {
       style: "nurturing",
       profession: userContext.soulmate_backstory?.occupation || "companion",
@@ -43,7 +51,6 @@ const Chat = () => {
       traits: [(userContext.soulmate_backstory?.personality || "").split('.')[0]],
     };
 
-    // Create user context from questionnaire responses
     const userCtx: UserContext = {
       name: userContext.name || "friend",
       seekingFor: "companionship",
@@ -61,6 +68,14 @@ const Chat = () => {
       text: greeting,
       isUser: false,
       timestamp: new Date(),
+      emotionalContext: {
+        conversationVibe: 'light',
+        energyLevel: 'upbeat',
+        flirtFactor: 0,
+        wittyExchanges: false,
+        followUpNeeded: false
+      },
+      conversationStyle: 'playful'
     }]);
   }, []);
 
@@ -70,6 +85,14 @@ const Chat = () => {
       text,
       isUser: true,
       timestamp: new Date(),
+      emotionalContext: {
+        conversationVibe: 'light',
+        energyLevel: 'upbeat',
+        flirtFactor: 0,
+        wittyExchanges: false,
+        followUpNeeded: false
+      },
+      conversationStyle: 'playful'
     };
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
@@ -84,7 +107,9 @@ const Chat = () => {
         .insert({
           profile_id: user.id,
           message: text,
-          is_user: true
+          is_user: true,
+          emotional_context: userMessage.emotionalContext,
+          conversation_style: userMessage.conversationStyle
         });
 
       if (userMsgError) throw userMsgError;
@@ -97,7 +122,15 @@ const Chat = () => {
         .insert({
           profile_id: user.id,
           message: response,
-          is_user: false
+          is_user: false,
+          emotional_context: {
+            conversationVibe: 'light',
+            energyLevel: 'upbeat',
+            flirtFactor: 1,
+            wittyExchanges: true,
+            followUpNeeded: false
+          },
+          conversation_style: 'playful'
         });
 
       if (aiMsgError) throw aiMsgError;
@@ -107,6 +140,14 @@ const Chat = () => {
         text: response,
         isUser: false,
         timestamp: new Date(),
+        emotionalContext: {
+          conversationVibe: 'light',
+          energyLevel: 'upbeat',
+          flirtFactor: 1,
+          wittyExchanges: true,
+          followUpNeeded: false
+        },
+        conversationStyle: 'playful'
       };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error: any) {

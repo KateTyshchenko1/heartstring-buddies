@@ -15,11 +15,13 @@ export type Database = {
           created_at: string | null
           fun_fact: string | null
           id: string
+          interaction_metrics: Json | null
           interests: string | null
           location: string | null
           name: string
           occupation: string | null
           personality: string | null
+          personality_insights: Json | null
           profile_id: string | null
           updated_at: string | null
         }
@@ -28,11 +30,13 @@ export type Database = {
           created_at?: string | null
           fun_fact?: string | null
           id?: string
+          interaction_metrics?: Json | null
           interests?: string | null
           location?: string | null
           name: string
           occupation?: string | null
           personality?: string | null
+          personality_insights?: Json | null
           profile_id?: string | null
           updated_at?: string | null
         }
@@ -41,11 +45,13 @@ export type Database = {
           created_at?: string | null
           fun_fact?: string | null
           id?: string
+          interaction_metrics?: Json | null
           interests?: string | null
           location?: string | null
           name?: string
           occupation?: string | null
           personality?: string | null
+          personality_insights?: Json | null
           profile_id?: string | null
           updated_at?: string | null
         }
@@ -62,6 +68,10 @@ export type Database = {
       conversations: {
         Row: {
           context_type: string | null
+          conversation_style:
+            | Database["public"]["Enums"]["conversation_style"]
+            | null
+          emotional_context: Json | null
           id: string
           is_user: boolean
           message: string
@@ -71,6 +81,10 @@ export type Database = {
         }
         Insert: {
           context_type?: string | null
+          conversation_style?:
+            | Database["public"]["Enums"]["conversation_style"]
+            | null
+          emotional_context?: Json | null
           id?: string
           is_user: boolean
           message: string
@@ -80,6 +94,10 @@ export type Database = {
         }
         Update: {
           context_type?: string | null
+          conversation_style?:
+            | Database["public"]["Enums"]["conversation_style"]
+            | null
+          emotional_context?: Json | null
           id?: string
           is_user?: boolean
           message?: string
@@ -201,6 +219,53 @@ export type Database = {
         }
         Relationships: []
       }
+      relationship_evolution: {
+        Row: {
+          chemistry_level: number | null
+          connection_style: string | null
+          created_at: string | null
+          id: string
+          interaction_preferences: Json | null
+          last_interaction: string | null
+          profile_id: string | null
+          shared_moments: Json | null
+          stage: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          chemistry_level?: number | null
+          connection_style?: string | null
+          created_at?: string | null
+          id?: string
+          interaction_preferences?: Json | null
+          last_interaction?: string | null
+          profile_id?: string | null
+          shared_moments?: Json | null
+          stage?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          chemistry_level?: number | null
+          connection_style?: string | null
+          created_at?: string | null
+          id?: string
+          interaction_preferences?: Json | null
+          last_interaction?: string | null
+          profile_id?: string | null
+          shared_moments?: Json | null
+          stage?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_evolution_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -209,7 +274,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      conversation_style:
+        | "flirty"
+        | "witty"
+        | "playful"
+        | "charming"
+        | "mysterious"
+        | "intellectual"
+        | "supportive"
     }
     CompositeTypes: {
       [_ in never]: never
