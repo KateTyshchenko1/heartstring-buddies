@@ -6,6 +6,7 @@ import { ArrowRight, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { generateMatchingPersona } from "@/services/personaGenerator";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BackstoryFormProps {
   soulmateName: string;
@@ -36,27 +37,46 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
   const [userResponses, setUserResponses] = useState<any>(null);
 
   useEffect(() => {
-    const generatePersona = async () => {
+    const fetchUserResponses = async () => {
       try {
         setIsLoading(true);
-        const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
-        setUserResponses(userContext.questionnaire_responses || null);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('User not found');
+
+        // Fetch questionnaire responses
+        const { data: responses, error: responsesError } = await supabase
+          .from('questionnaire_responses')
+          .select('*')
+          .eq('profile_id', user.id)
+          .single();
+
+        if (responsesError) throw responsesError;
+        if (!responses) throw new Error('No questionnaire responses found');
+
+        setUserResponses(responses);
         
-        if (userContext.questionnaire_responses) {
-          const persona = await generateMatchingPersona(userContext.questionnaire_responses);
-          setFields(prev => ({
-            ...persona,
-            name: soulmateName
-          }));
-        }
-      } catch (error) {
-        toast.error("Error generating profile. Using default values.");
+        // Generate persona based on responses
+        const persona = await generateMatchingPersona(responses);
+        setFields(prev => ({
+          ...persona,
+          name: soulmateName
+        }));
+
+        // Update bot_name in questionnaire_responses
+        await supabase
+          .from('questionnaire_responses')
+          .update({ bot_name: soulmateName })
+          .eq('profile_id', user.id);
+
+      } catch (error: any) {
+        toast.error("Error loading profile data");
+        console.error('Error:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    generatePersona();
+    fetchUserResponses();
   }, [soulmateName]);
 
   const handleFieldChange = (field: keyof BackstoryFields, value: string) => {
@@ -66,8 +86,45 @@ const BackstoryForm = ({ soulmateName, onComplete }: BackstoryFormProps) => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not found');
+
+      // Create companion profile
+      const { error: companionError } = await supabase
+        .from('companion_profiles')
+        .insert({
+          profile_id: user.id,
+          ...fields,
+          personality_insights: {
+            emotionalDepth: 'dynamic',
+            vulnerabilityStyle: 'playful',
+            attachmentStyle: 'confident',
+            conversationStyle: 'witty',
+            humorStyle: 'flirty-playful',
+            intimacyPace: 'natural',
+            romanticStyle: 'charming',
+            primaryNeed: 'connection',
+            loveLanguage: 'banter',
+            personalGrowthFocus: 'adventure'
+          }
+        });
+
+      if (companionError) throw companionError;
+
+      // Create initial relationship evolution entry
+      const { error: relationshipError } = await supabase
+        .from('relationship_evolution')
+        .insert({
+          profile_id: user.id,
+          stage: 'flirty_intro',
+          connection_style: 'playful',
+          chemistry_level: 1
+        });
+
+      if (relationshipError) throw relationshipError;
+
       onComplete(fields);
     } catch (error: any) {
       toast.error(error.message || 'Failed to save companion profile');

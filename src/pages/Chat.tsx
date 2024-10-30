@@ -40,34 +40,76 @@ const Chat = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('No user found');
 
-        const { data: companionData } = await supabase
-          .from('companion_profiles')
-          .select('name')
-          .eq('profile_id', user.id)
-          .single();
-        
-        if (companionData) {
-          setBotName(companionData.name);
-        }
+        // Fetch companion profile and questionnaire data
+        const [companionResponse, questionnaireResponse, conversationsResponse] = await Promise.all([
+          supabase
+            .from('companion_profiles')
+            .select('*')
+            .eq('profile_id', user.id)
+            .single(),
+          supabase
+            .from('questionnaire_responses')
+            .select('*')
+            .eq('profile_id', user.id)
+            .single(),
+          supabase
+            .from('conversations')
+            .select('*')
+            .eq('profile_id', user.id)
+            .order('timestamp', { ascending: true })
+        ]);
 
-        const greeting = await xaiService.generateGreeting(user.id);
-        setMessages([{
-          id: "1",
-          text: greeting,
-          isUser: false,
-          timestamp: new Date(),
-          emotionalContext: {
-            conversationVibe: 'light',
-            energyLevel: 'upbeat',
-            flirtFactor: 0,
-            wittyExchanges: false,
-            followUpNeeded: false
-          },
-          conversationStyle: 'playful'
-        }]);
+        if (companionResponse.error) throw companionResponse.error;
+        if (questionnaireResponse.error) throw questionnaireResponse.error;
+        if (conversationsResponse.error) throw conversationsResponse.error;
+
+        // Set bot name
+        setBotName(companionResponse.data.name);
+
+        // Load existing messages
+        if (conversationsResponse.data.length > 0) {
+          setMessages(conversationsResponse.data.map((msg: any) => ({
+            id: msg.id,
+            text: msg.message,
+            isUser: msg.is_user,
+            timestamp: new Date(msg.timestamp),
+            emotionalContext: msg.emotional_context,
+            conversationStyle: msg.conversation_style
+          })));
+        } else {
+          // Generate initial greeting if no messages exist
+          const greeting = await xaiService.generateGreeting(user.id);
+          const newMessage = {
+            id: "1",
+            text: greeting,
+            isUser: false,
+            timestamp: new Date(),
+            emotionalContext: {
+              conversationVibe: 'light',
+              energyLevel: 'upbeat',
+              flirtFactor: 0,
+              wittyExchanges: false,
+              followUpNeeded: false
+            },
+            conversationStyle: 'playful' as const
+          };
+
+          setMessages([newMessage]);
+
+          // Save greeting to conversations
+          await supabase
+            .from('conversations')
+            .insert({
+              profile_id: user.id,
+              message: greeting,
+              is_user: false,
+              emotional_context: newMessage.emotionalContext,
+              conversation_style: newMessage.conversationStyle
+            });
+        }
       } catch (error) {
-        console.error('Failed to generate greeting:', error);
-        toast.error('Failed to initialize chat');
+        console.error('Failed to initialize chat:', error);
+        toast.error('Failed to load chat history');
       }
     };
 
