@@ -65,11 +65,18 @@ Return ONLY a valid JSON object with these exact fields (no additional text):
 
 const validatePersonaResponse = (response: any): boolean => {
   const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'fun_fact'];
-  return requiredFields.every(field => 
-    response[field] && 
-    typeof response[field] === 'string' &&
-    response[field].length > 0
-  );
+  const isValid = requiredFields.every(field => {
+    const value = response[field];
+    return value && typeof value === 'string' && value.length > 0;
+  });
+
+  if (!isValid) {
+    console.error('Invalid persona response:', response);
+    const missingFields = requiredFields.filter(field => !response[field]);
+    throw new Error(`Generated profile is incomplete. Missing or invalid fields: ${missingFields.join(', ')}`);
+  }
+
+  return true;
 };
 
 const parseJsonSafely = (text: string): any => {
@@ -125,18 +132,16 @@ export const generateMatchingPersona = async (
     const data = await response.json();
     const generatedPersona = parseJsonSafely(data.choices[0].message.content);
 
-    if (!validatePersonaResponse(generatedPersona)) {
-      throw new Error('Generated profile is incomplete');
-    }
+    validatePersonaResponse(generatedPersona);
 
     return {
-      bot_name: questionnaire.bot_name || '',
-      user_name: questionnaire.name,
-      ...generatedPersona
+      ...generatedPersona,
+      bot_name: questionnaire.bot_name,
+      user_name: questionnaire.name
     };
   } catch (error: any) {
     console.error('Error generating persona:', error);
-    toast.error('Failed to generate companion profile. Please try again.');
+    toast.error(error.message || 'Failed to generate companion profile. Please try again.');
     throw error;
   }
 };
