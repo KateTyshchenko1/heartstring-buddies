@@ -30,18 +30,18 @@ const Questionnaire = () => {
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      // First question (index 0) is user's name, last question is bot's name
+      // Map answers to the correct fields based on question order
       const questionnaireData = {
-        name: newAnswers[0], // User's name goes to name field
-        bot_name: answer, // Bot's name goes to bot_name field
-        perfect_day: newAnswers[1],
-        meaningful_compliment: newAnswers[2],
-        unwind_method: newAnswers[3],
-        learning_desires: newAnswers[4],
-        dinner_guest: newAnswers[5],
-        resonant_media: newAnswers[6],
-        childhood_memory: newAnswers[7],
-        impactful_gesture: newAnswers[8]
+        name: newAnswers[0],                    // User's name (1st question)
+        perfect_day: newAnswers[1],             // Perfect day (2nd question)
+        meaningful_compliment: newAnswers[2],    // Meaningful compliment (3rd question)
+        unwind_method: newAnswers[3],           // How they unwind (4th question)
+        learning_desires: newAnswers[4],         // What they want to learn (5th question)
+        dinner_guest: newAnswers[5],            // Dream dinner guest (6th question)
+        resonant_media: newAnswers[6],          // Favorite media (7th question)
+        childhood_memory: newAnswers[7],         // Childhood memory (8th question)
+        impactful_gesture: newAnswers[8],       // Impactful gesture (9th question)
+        bot_name: answer                        // Bot's name (last question)
       };
 
       setTemporaryData(prev => ({
@@ -63,48 +63,17 @@ const Questionnaire = () => {
     setShowAuth(true);
   };
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const { data: questionsData, error: fetchError } = await supabase
-          .from('questions')
-          .select('*')
-          .eq('is_active', true)
-          .order('order_index');
-
-        if (fetchError) throw fetchError;
-        if (!questionsData?.length) {
-          throw new Error('No questions found');
-        }
-
-        setQuestions(questionsData);
-      } catch (err: any) {
-        console.error('Error:', err);
-        setError(err.message || 'An unexpected error occurred');
-        toast.error("Failed to load questions. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchQuestions();
-  }, []);
-
-  // Handle successful authentication
   const handleAuthSuccess = async (userId: string) => {
     if (!temporaryData) return;
 
     try {
-      // Save questionnaire responses with correct name fields
+      // Save questionnaire responses with correct field mapping
       const { error: questionnaireError } = await supabase
         .from('questionnaire_responses')
         .insert({
           profile_id: userId,
-          name: temporaryData.questionnaire.name, // User's name
-          bot_name: temporaryData.questionnaire.bot_name, // Bot's name in correct field
+          name: temporaryData.questionnaire.name,           // User's name
+          bot_name: temporaryData.questionnaire.bot_name,   // Bot's name
           perfect_day: temporaryData.questionnaire.perfect_day,
           meaningful_compliment: temporaryData.questionnaire.meaningful_compliment,
           unwind_method: temporaryData.questionnaire.unwind_method,
@@ -122,17 +91,17 @@ const Questionnaire = () => {
         .from('companion_profiles')
         .insert({
           profile_id: userId,
-          name: temporaryData.questionnaire.bot_name, // Use bot_name here
+          name: temporaryData.questionnaire.bot_name,  // Bot's name
           ...temporaryData.companion
         });
 
       if (companionError) throw companionError;
 
-      // Update user context with correct names
+      // Update user context with correct field mapping
       const userContext = {
-        name: temporaryData.questionnaire.name, // User's name
+        name: temporaryData.questionnaire.name,
         questionnaire_responses: temporaryData.questionnaire,
-        soulmate_name: temporaryData.questionnaire.bot_name, // Bot's name
+        soulmate_name: temporaryData.questionnaire.bot_name,
         soulmate_backstory: temporaryData.companion
       };
       localStorage.setItem('userContext', JSON.stringify(userContext));
