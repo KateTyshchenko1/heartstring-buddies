@@ -69,41 +69,26 @@ const Questionnaire = () => {
     };
 
     fetchQuestions();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        // Save data after successful sign in
+        await saveUserData(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleAnswer = async (answer: string) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = answer;
-    setAnswers(newAnswers);
-
-    if (currentQuestion === questions.length - 1) {
-      setShowBotProfile(true);
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
-    }
-  };
-
-  const handleFieldChange = (field: keyof typeof fields, value: string) => {
-    setFields(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleBotProfileComplete = async () => {
+  const saveUserData = async (userId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error("User not found. Please try again.");
-        return;
-      }
-
-      // Save companion profile to Supabase
+      // Save companion profile
       const { error: companionError } = await supabase
         .from('companion_profiles')
         .insert({
-          profile_id: user.id,
-          name: answers[9], // soulmate_name from questionnaire
+          profile_id: userId,
+          name: answers[9],
           age: fields.age,
           occupation: fields.occupation,
           location: fields.location,
@@ -122,7 +107,7 @@ const Questionnaire = () => {
       const { error: questionnaireError } = await supabase
         .from('questionnaire_responses')
         .insert({
-          profile_id: user.id,
+          profile_id: userId,
           name: answers[0],
           perfect_day: answers[1],
           meaningful_compliment: answers[2],
@@ -157,11 +142,27 @@ const Questionnaire = () => {
       };
       
       localStorage.setItem('userContext', JSON.stringify(userContext));
-      setShowAuth(true);
       toast.success("Profile saved successfully!");
+      navigate('/chat');
     } catch (error) {
       console.error('Error:', error);
       toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+  const handleBotProfileComplete = () => {
+    setShowAuth(true);
+  };
+
+  const handleAnswer = async (answer: string) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answer;
+    setAnswers(newAnswers);
+
+    if (currentQuestion === questions.length - 1) {
+      setShowBotProfile(true);
+    } else {
+      setCurrentQuestion(currentQuestion + 1);
     }
   };
 
@@ -181,6 +182,13 @@ const Questionnaire = () => {
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
+  };
+
+  const handleFieldChange = (field: keyof typeof fields, value: string) => {
+    setFields(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   if (isLoading) {
