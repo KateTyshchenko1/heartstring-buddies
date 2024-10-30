@@ -73,12 +73,14 @@ export const generateMatchingPersona = async (
           }
         ],
         model: 'grok-beta',
-        temperature: 0.8,
-        stream: false
+        stream: false,
+        temperature: 0.8
       }),
     });
 
     if (!response.ok) {
+      const errorData = await response.json();
+      console.error('X.AI API Error:', errorData);
       throw new Error(`API error: ${response.statusText}`);
     }
 

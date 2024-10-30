@@ -30,12 +30,16 @@ export const xaiService = {
         body: JSON.stringify({
           messages: [{ role: 'system', content: prompt }],
           model: 'grok-beta',
-          temperature: 0.7,
-          stream: false
+          stream: false,
+          temperature: 0.7
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate greeting');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('X.AI API Error:', errorData);
+        throw new Error(`API error: ${response.statusText}`);
+      }
 
       const data = await response.json();
       return data.choices[0].message.content;
@@ -81,12 +85,16 @@ export const xaiService = {
         body: JSON.stringify({
           messages: [{ role: 'system', content: prompt }],
           model: 'grok-beta',
-          temperature: 0.8,
-          stream: false
+          stream: false,
+          temperature: 0.8
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate response');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('X.AI API Error:', errorData);
+        throw new Error(`API error: ${response.statusText}`);
+      }
 
       const data = await response.json();
       return data.choices[0].message.content;
@@ -121,12 +129,16 @@ export const xaiService = {
         body: JSON.stringify({
           messages: [{ role: 'system', content: prompt }],
           model: 'grok-beta',
-          temperature: 0.3,
-          stream: false
+          stream: false,
+          temperature: 0.3
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to analyze message');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('X.AI API Error:', errorData);
+        throw new Error(`API error: ${response.statusText}`);
+      }
 
       const data = await response.json();
       return JSON.parse(data.choices[0].message.content);
