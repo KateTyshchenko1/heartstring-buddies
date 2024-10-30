@@ -29,7 +29,9 @@ const PersonaGeneration = ({ questionnaireData, initialPersona, onComplete }: Pe
       }));
     } catch (error) {
       console.error('Error generating persona:', error);
-      toast.error("Error generating profile. Please try again.");
+      toast.error("Error generating profile. Please try again.", {
+        duration: 1000
+      });
     } finally {
       setIsLoading(false);
     }
