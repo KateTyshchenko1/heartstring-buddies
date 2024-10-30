@@ -4,15 +4,15 @@ const LoadingSpinner = () => {
       <div className="text-center">
         <div className="relative w-24 h-24 mx-auto mb-6">
           {/* First floating heart */}
-          <div className="absolute left-0 animate-[float_3s_ease-in-out_infinite]">
+          <div className="absolute left-0 top-0 animate-float">
             <span className="text-3xl text-primary">❤️</span>
           </div>
           {/* Second floating heart */}
-          <div className="absolute left-1/2 -translate-x-1/2 animate-[float_2.5s_ease-in-out_infinite_0.5s]">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 animate-float-delayed">
             <span className="text-3xl text-primary">❤️</span>
           </div>
           {/* Third floating heart */}
-          <div className="absolute right-0 animate-[float_3.5s_ease-in-out_infinite_1s]">
+          <div className="absolute right-0 top-0 animate-float-more-delayed">
             <span className="text-3xl text-primary">❤️</span>
           </div>
         </div>
