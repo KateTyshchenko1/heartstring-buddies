@@ -11,6 +11,7 @@ import { LogOut } from "lucide-react";
 import { selectGreeting } from "@/utils/greetingSystem";
 import type { BotPersonality, UserContext } from "@/types/greeting";
 import type { InteractionMetrics } from "@/types/metrics";
+import { xaiService } from "@/services/xai";
 
 interface Message {
   id: string;
@@ -184,3 +185,4 @@ const Chat = () => {
 };
 
 export default Chat;
+

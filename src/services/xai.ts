@@ -10,9 +10,44 @@ interface XAIService {
   generateResponse: (message: string, context: UserContext, metrics: InteractionMetrics) => Promise<string>;
 }
 
+// Helper function since we can't use private methods in object literals
+const callXAI = async (systemPrompt: string, conversationContext?: string, userMessage?: string) => {
+  const messages = [
+    { role: 'system', content: systemPrompt }
+  ];
+  
+  if (conversationContext && userMessage) {
+    messages.push(
+      { role: 'system', content: conversationContext },
+      { role: 'user', content: userMessage }
+    );
+  }
+
+  const response = await fetch(XAI_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${XAI_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      messages,
+      model: 'grok-beta',
+      temperature: 0.8,
+      max_tokens: 500
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate AI response');
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+};
+
 export const xaiService: XAIService = {
   async generateGreeting(context) {
-    const metrics = {
+    const metrics: InteractionMetrics = {
       flirtLevel: 5,
       charmFactor: 5,
       wittyExchanges: 0,
@@ -21,7 +56,7 @@ export const xaiService: XAIService = {
     };
     
     const prompts = createPrompts(context, metrics);
-    return this.callXAI(prompts.greeting);
+    return callXAI(prompts.greeting);
   },
 
   async generateResponse(message, context, metrics) {
@@ -31,40 +66,8 @@ Time: ${new Date().toLocaleTimeString()}
 User Name: ${context.name}
 Recent Message: ${message}`;
 
-    return this.callXAI(prompts.system, conversationContext, message);
-  },
-
-  private async callXAI(systemPrompt: string, conversationContext?: string, userMessage?: string) {
-    const messages = [
-      { role: 'system', content: systemPrompt }
-    ];
-    
-    if (conversationContext && userMessage) {
-      messages.push(
-        { role: 'system', content: conversationContext },
-        { role: 'user', content: userMessage }
-      );
-    }
-
-    const response = await fetch(XAI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${XAI_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        messages,
-        model: 'grok-beta',
-        temperature: 0.8,
-        max_tokens: 500
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate AI response');
-    }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
+    return callXAI(prompts.system, conversationContext, message);
   }
 };
+
+export const generateResponse = xaiService.generateResponse;

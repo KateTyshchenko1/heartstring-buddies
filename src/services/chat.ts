@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { MetricsManager } from "@/utils/interactionMetrics";
-import { generateResponse } from "./xai";
+import { xaiService } from "./xai";
 import type { InteractionMetrics, ChatResponse, ConversationStyle } from "@/types/metrics";
 
 const adjustTemperature = (metrics: InteractionMetrics): number => {
@@ -31,13 +31,17 @@ export const handleChatInteraction = async (
 
     if (!profile) throw new Error('Profile not found');
 
-    const response = await generateResponse(message);
-    
+    const userContext = JSON.parse(localStorage.getItem('userContext') || '{}');
     const updatedMetrics = await MetricsManager.updateMetrics(
       userId,
       message,
-      response
+      ''  // Will be updated after response generation
     );
+
+    const response = await xaiService.generateResponse(message, userContext, updatedMetrics);
+    
+    // Update metrics with the actual response
+    await MetricsManager.updateMetrics(userId, message, response);
 
     // Adjust temperature for next interaction based on current metrics
     const temperature = adjustTemperature(updatedMetrics);
