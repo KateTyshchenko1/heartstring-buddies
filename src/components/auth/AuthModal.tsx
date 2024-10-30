@@ -4,7 +4,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 
 interface AuthModalProps {
   isSignUp?: boolean;
@@ -35,6 +34,8 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
               .from('companion_profiles')
               .insert({
                 profile_id: session.user.id,
+                bot_name: userContext.questionnaire_responses?.bot_name,
+                user_name: userContext.questionnaire_responses?.name,
                 age: userContext.soulmate_backstory.age,
                 occupation: userContext.soulmate_backstory.occupation,
                 location: userContext.soulmate_backstory.location,
@@ -45,7 +46,7 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
 
             if (companionError) throw companionError;
 
-            // Initialize relationship evolution
+            // Initialize relationship evolution with explicit profile_id
             const { error: relationshipError } = await supabase
               .from('relationship_evolution')
               .insert({
@@ -53,6 +54,17 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
                 stage: 'flirty_intro',
                 connection_style: 'playful',
                 chemistry_level: 1,
+                shared_moments: {
+                  jokes: [],
+                  flirty_exchanges: [],
+                  witty_banter: [],
+                  fun_challenges: []
+                },
+                interaction_preferences: {
+                  humor_type: 'witty',
+                  flirt_style: 'charming',
+                  conversation_pace: 'dynamic'
+                },
                 last_interaction: new Date().toISOString()
               });
 
