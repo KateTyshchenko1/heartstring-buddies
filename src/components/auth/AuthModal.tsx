@@ -77,13 +77,13 @@ const AuthModal = ({ isSignUp = false }: AuthModalProps) => {
             if (profileError) throw profileError;
 
             toast.success("Account created successfully!", {
-              duration: 3000 // Reduced from default to 3 seconds
+              duration: 1000 // 1 second for quick feedback
             });
             navigate('/chat');
           } catch (error: any) {
             console.error('Signup error:', error);
             toast.error(error.message || "An error occurred during signup", {
-              duration: 3000
+              duration: 1000
             });
           }
         } else {
