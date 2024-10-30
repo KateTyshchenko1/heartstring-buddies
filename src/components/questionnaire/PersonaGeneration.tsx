@@ -21,8 +21,13 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
     try {
       setIsLoading(true);
       const persona = await generateMatchingPersona(questionnaireData);
-      setSoulmateData(persona);
+      setSoulmateData(prev => ({
+        ...prev,
+        ...persona,
+        name: questionnaireData.name // Preserve the name when regenerating
+      }));
     } catch (error) {
+      console.error('Error generating persona:', error);
       toast.error("Error generating profile. Please try again.");
     } finally {
       setIsLoading(false);
@@ -53,7 +58,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
       <div className="w-full max-w-3xl text-center">
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-            Creating Your Perfect Match
+            Creating {questionnaireData.name}'s Profile
           </h1>
           <p className="text-lg text-gray-600">
             Using AI to craft a personality that matches yours ✨
@@ -77,7 +82,7 @@ const PersonaGeneration = ({ questionnaireData, onComplete }: PersonaGenerationP
     <div className="w-full max-w-3xl">
       <div className="text-center mb-12">
         <h1 className="text-3xl sm:text-4xl font-display mb-4 text-gray-800">
-          Meet Your AI Companion
+          Meet {questionnaireData.name}
         </h1>
         <p className="text-lg text-gray-600">
           I've created a unique personality just for you. Feel free to adjust any details ✨

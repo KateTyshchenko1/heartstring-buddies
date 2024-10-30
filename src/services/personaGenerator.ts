@@ -2,7 +2,6 @@ import { toast } from "sonner";
 import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 import type { QuestionnaireResponsesTable } from "@/integrations/supabase/types/questionnaire";
 
-// Declare environment variables
 declare global {
   interface ImportMetaEnv {
     VITE_XAI_API_KEY: string;
@@ -55,39 +54,15 @@ Respond ONLY with a JSON object in this exact format:
 Keep all content appropriate and professional. No references to drugs, illegal activities, or inappropriate content.`;
 };
 
-const createDefaultPersona = (questionnaire: QuestionnaireResponses): BackstoryFields => {
-  // Extract any available interests or traits from questionnaire
-  const interests = questionnaire.learning_desires || 
-                   questionnaire.resonant_media || 
-                   'art, literature, and cultural experiences';
-                   
-  const personality = questionnaire.meaningful_compliment 
-    ? `Thoughtful and engaging, values ${questionnaire.meaningful_compliment}`
-    : 'Warm and intellectually curious, with a natural talent for meaningful conversation';
-
-  return {
-    name: questionnaire.name || '',
-    age: "32",
-    occupation: "Cultural Heritage Consultant",
-    location: "Lives in a historic district, surrounded by art galleries and cafes",
-    personality,
-    interests: `Museum curation, ${interests}, artisanal coffee roasting`,
-    fun_fact: "Helped restore a 200-year-old manuscript that revealed a forgotten local legend"
-  };
-};
-
 export const generateMatchingPersona = async (
   questionnaire: QuestionnaireResponses
 ): Promise<BackstoryFields> => {
   if (!XAI_API_KEY) {
-    console.error('Missing XAI_API_KEY environment variable');
-    throw new Error('API configuration error');
+    throw new Error('API configuration error: Missing XAI_API_KEY');
   }
 
   try {
     const prompt = createPersonaPrompt(questionnaire);
-    console.log('Generated prompt:', prompt);
-
     const response = await fetch(XAI_API_URL, {
       method: 'POST',
       headers: {
@@ -114,7 +89,6 @@ export const generateMatchingPersona = async (
       throw new Error('Invalid API response format');
     }
 
-    // Extract JSON from response
     const contentStr = data.choices[0].message.content;
     const jsonMatch = contentStr.match(/\{[\s\S]*\}/);
     
@@ -124,7 +98,7 @@ export const generateMatchingPersona = async (
 
     const generatedPersona = JSON.parse(jsonMatch[0]);
 
-    // Validate all required fields exist and are strings
+    // Validate all required fields
     const requiredFields = ['age', 'occupation', 'location', 'personality', 'interests', 'funFact'];
     for (const field of requiredFields) {
       if (typeof generatedPersona[field] !== 'string' || !generatedPersona[field].trim()) {
@@ -138,9 +112,6 @@ export const generateMatchingPersona = async (
     };
   } catch (error) {
     console.error('Error generating persona:', error);
-    toast.error("Using default profile while we fix some technical issues");
-    
-    // Fall back to default persona
-    return createDefaultPersona(questionnaire);
+    throw error; // Re-throw the error to be handled by the component
   }
 };
