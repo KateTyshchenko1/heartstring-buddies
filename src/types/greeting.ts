@@ -8,7 +8,7 @@ export interface BotPersonality {
 export interface QuestionnaireResponses {
   id?: string;
   profile_id?: string;
-  name: string;
+  name: string;  // User's name from the questionnaire
   perfect_day: string | null;
   meaningful_compliment: string | null;
   unwind_method: string | null;
@@ -17,13 +17,13 @@ export interface QuestionnaireResponses {
   resonant_media: string | null;
   childhood_memory: string | null;
   impactful_gesture: string | null;
-  bot_name: string | null;
+  bot_name: string | null;  // AI companion's name
   created_at?: string;
 }
 
 export interface SoulmateBackstory {
-  bot_name: string;
-  user_name: string;
+  bot_name: string;    // AI companion's name
+  user_name: string;   // User's name (from questionnaire)
   age: string;
   occupation: string;
   location: string;
@@ -33,7 +33,7 @@ export interface SoulmateBackstory {
 }
 
 export interface UserContext {
-  name: string;
+  name: string;  // User's name
   questionnaire_responses?: QuestionnaireResponses;
   soulmate_backstory?: SoulmateBackstory;
 }
