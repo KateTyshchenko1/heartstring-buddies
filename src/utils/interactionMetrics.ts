@@ -19,17 +19,11 @@ export class MetricsManager {
       if (!profile) throw new Error('Profile not found');
 
       const updatedMetrics = this.calculateNewMetrics(
-        profile.interaction_metrics as MetricsJson,
+        this.parseMetricsJson(profile.interaction_metrics),
         metrics
       );
 
-      const metricsJson: MetricsJson = {
-        flirtLevel: updatedMetrics.flirtLevel,
-        charmFactor: updatedMetrics.charmFactor,
-        wittyExchanges: updatedMetrics.wittyExchanges,
-        energyLevel: updatedMetrics.energyLevel,
-        connectionStyle: updatedMetrics.connectionStyle
-      };
+      const metricsJson = this.convertToJson(updatedMetrics);
 
       await supabase
         .from('companion_profiles')
@@ -44,6 +38,39 @@ export class MetricsManager {
       console.error('Error updating metrics:', error);
       throw error;
     }
+  }
+
+  private static parseMetricsJson(json: unknown): InteractionMetrics | null {
+    if (!json || typeof json !== 'object') return null;
+    
+    const metrics = json as Record<string, unknown>;
+    if (!this.isValidMetricsJson(metrics)) return null;
+
+    return {
+      flirtLevel: Number(metrics.flirtLevel) || 0,
+      charmFactor: Number(metrics.charmFactor) || 0,
+      wittyExchanges: Number(metrics.wittyExchanges) || 0,
+      energyLevel: String(metrics.energyLevel) as InteractionMetrics['energyLevel'],
+      connectionStyle: String(metrics.connectionStyle) as ConversationStyle
+    };
+  }
+
+  private static isValidMetricsJson(json: Record<string, unknown>): boolean {
+    return 'flirtLevel' in json &&
+           'charmFactor' in json &&
+           'wittyExchanges' in json &&
+           'energyLevel' in json &&
+           'connectionStyle' in json;
+  }
+
+  private static convertToJson(metrics: InteractionMetrics): Record<string, Json> {
+    return {
+      flirtLevel: metrics.flirtLevel,
+      charmFactor: metrics.charmFactor,
+      wittyExchanges: metrics.wittyExchanges,
+      energyLevel: metrics.energyLevel,
+      connectionStyle: metrics.connectionStyle
+    };
   }
 
   private static analyzeInteraction(
@@ -114,7 +141,7 @@ export class MetricsManager {
   }
 
   private static calculateNewMetrics(
-    currentMetrics: MetricsJson | null,
+    currentMetrics: InteractionMetrics | null,
     newMetrics: InteractionMetrics
   ): InteractionMetrics {
     if (!currentMetrics) return newMetrics;
@@ -124,7 +151,7 @@ export class MetricsManager {
       charmFactor: Math.round((currentMetrics.charmFactor + newMetrics.charmFactor) / 2),
       wittyExchanges: currentMetrics.wittyExchanges + newMetrics.wittyExchanges,
       energyLevel: newMetrics.energyLevel,
-      connectionStyle: newMetrics.connectionStyle as ConversationStyle
+      connectionStyle: newMetrics.connectionStyle
     };
   }
 }

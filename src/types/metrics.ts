@@ -15,10 +15,6 @@ export interface ChatResponse {
   metrics: InteractionMetrics;
 }
 
-export interface MetricsJson extends Json {
-  flirtLevel: number;
-  charmFactor: number;
-  wittyExchanges: number;
-  energyLevel: string;
-  connectionStyle: string;
-}
+export type MetricsJson = {
+  [K in keyof InteractionMetrics]: Json;
+};
