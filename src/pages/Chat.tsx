@@ -42,29 +42,29 @@ const Chat = () => {
         if (!user) throw new Error('No user found');
 
         // Fetch companion profile and questionnaire data
-        const [companionResponse, conversationsResponse] = await Promise.all([
+        const [companionResponse, questionnairResponse] = await Promise.all([
           supabase
             .from('companion_profiles')
-            .select('bot_name, user_name')
+            .select('*')
             .eq('profile_id', user.id)
             .single(),
           supabase
-            .from('conversations')
+            .from('questionnaire_responses')
             .select('*')
             .eq('profile_id', user.id)
-            .order('timestamp', { ascending: true })
+            .single()
         ]);
 
         if (companionResponse.error) throw companionResponse.error;
-        if (conversationsResponse.error) throw conversationsResponse.error;
+        if (questionnairResponse.error) throw questionnairResponse.error;
 
-        // Set bot and user names from companion profile
-        setBotName(companionResponse.data.bot_name || "");
-        setUserName(companionResponse.data.user_name || "");
+        // Set bot and user names from questionnaire responses
+        setBotName(questionnairResponse.data.bot_name || "");
+        setUserName(questionnairResponse.data.name || "");
 
         // Load existing messages
-        if (conversationsResponse.data.length > 0) {
-          setMessages(conversationsResponse.data.map((msg: any) => ({
+        if (questionnairResponse.data.length > 0) {
+          setMessages(questionnairResponse.data.map((msg: any) => ({
             id: msg.id,
             text: msg.message,
             isUser: msg.is_user,
@@ -74,7 +74,7 @@ const Chat = () => {
           })));
         } else {
           // Generate initial greeting using the user's name
-          const greeting = await xaiService.generateGreeting(user.id, companionResponse.data.user_name);
+          const greeting = await xaiService.generateGreeting(user.id, questionnairResponse.data.user_name);
           const newMessage = {
             id: "1",
             text: greeting,

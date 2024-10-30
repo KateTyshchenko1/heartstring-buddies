@@ -56,6 +56,7 @@ Respond ONLY with a JSON object in this exact format:
 }
 
 Keep all content appropriate and professional.`;
+
 };
 
 export const generateMatchingPersona = async (
@@ -122,8 +123,7 @@ export const generateMatchingPersona = async (
 
     // Return the persona with the correct field structure
     return {
-      bot_name: questionnaire.bot_name || '',
-      user_name: questionnaire.name,
+      name: questionnaire.bot_name || '',  // Use bot_name from questionnaire
       age: age.toString(),
       occupation: generatedPersona.occupation,
       location: generatedPersona.location,

@@ -63,16 +63,16 @@ const Questionnaire = () => {
     if (currentQuestion === questions.length - 1) {
       // Map answers to the correct fields based on question order
       const questionnaireData = {
-        name: newAnswers[0],                    // User's name (1st question)
-        perfect_day: newAnswers[1],             // Perfect day (2nd question)
-        meaningful_compliment: newAnswers[2],    // Meaningful compliment (3rd question)
-        unwind_method: newAnswers[3],           // How they unwind (4th question)
-        learning_desires: newAnswers[4],         // What they want to learn (5th question)
-        dinner_guest: newAnswers[5],            // Dream dinner guest (6th question)
-        resonant_media: newAnswers[6],          // Favorite media (7th question)
-        childhood_memory: newAnswers[7],         // Childhood memory (8th question)
-        impactful_gesture: newAnswers[8],       // Impactful gesture (9th question)
-        bot_name: answer                        // Bot's name (last question)
+        name: newAnswers[0],                    // "What's your name?"
+        perfect_day: newAnswers[1],             // "If you could spend a perfect day doing anything you want, what would that look like?"
+        meaningful_compliment: newAnswers[2],    // "What's the most meaningful compliment you've ever received?"
+        unwind_method: newAnswers[3],           // "How do you like to unwind after a long day?"
+        learning_desires: newAnswers[4],         // "What's something you've always wanted to learn?"
+        dinner_guest: newAnswers[5],            // "If you could have dinner with anyone from history, who would it be and why?"
+        resonant_media: newAnswers[6],          // "What book, movie, or song has deeply resonated with you lately?"
+        childhood_memory: newAnswers[7],         // "What's your favorite childhood memory?"
+        impactful_gesture: newAnswers[8],       // "What's the most impactful gesture someone has made for you?"
+        bot_name: answer                        // "Give your companion a name:"
       };
 
       setTemporaryData(prev => ({

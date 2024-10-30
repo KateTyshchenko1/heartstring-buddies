@@ -6,21 +6,20 @@ export interface BotPersonality {
 }
 
 export interface QuestionnaireResponses {
-  name: string;
-  perfect_day?: string;
-  meaningful_compliment?: string;
-  unwind_method?: string;
-  learning_desires?: string;
-  dinner_guest?: string;
-  resonant_media?: string;
-  childhood_memory?: string;
-  impactful_gesture?: string;
-  bot_name?: string;
+  name: string;                    // User's name from first question
+  perfect_day: string;             // Perfect day description
+  meaningful_compliment: string;    // Most meaningful compliment
+  unwind_method: string;           // How they unwind
+  learning_desires: string;        // What they want to learn
+  dinner_guest: string;            // Dream dinner guest
+  resonant_media: string;          // Resonant media
+  childhood_memory: string;        // Childhood memory
+  impactful_gesture: string;       // Most impactful gesture
+  bot_name: string;                // Companion's name (last question)
 }
 
 export interface SoulmateBackstory {
-  bot_name: string;
-  user_name: string;
+  name: string;                    // Bot's name
   age: string;
   occupation: string;
   location: string;
@@ -31,10 +30,6 @@ export interface SoulmateBackstory {
 
 export interface UserContext {
   name: string;
-  seekingFor?: string;
-  interests?: string[];
-  keyGoal?: string;
-  emotionalState?: string;
   questionnaire_responses?: QuestionnaireResponses;
   soulmate_backstory?: SoulmateBackstory;
 }
