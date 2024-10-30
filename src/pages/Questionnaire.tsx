@@ -42,25 +42,27 @@ const Questionnaire = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const { data, error: fetchError } = await supabase
+        const { data: questionsData, error: fetchError } = await supabase
           .from('questions')
           .select('*')
           .eq('is_active', true)
           .order('order_index');
-        
+
         if (fetchError) {
-          throw fetchError;
+          console.error('Supabase error:', fetchError);
+          setError('Failed to load questions. Please try again.');
+          setIsLoading(false);
+          return;
         }
-        
-        if (!data || data.length === 0) {
+
+        if (!questionsData || questionsData.length === 0) {
           setError('No questions found in the database.');
           setIsLoading(false);
           return;
         }
 
-        setQuestions(data);
+        setQuestions(questionsData);
         setIsLoading(false);
-        setError(null);
       } catch (err) {
         console.error('Error fetching questions:', err);
         setError('Failed to load questions. Please try again.');
@@ -79,60 +81,8 @@ const Questionnaire = () => {
     if (currentQuestion === questions.length - 2) {
       setCurrentQuestion(currentQuestion + 1);
     } else if (currentQuestion === questions.length - 1) {
-      try {
-        if (!session?.user?.id) throw new Error("No user ID found");
-
-        // Save questionnaire responses
-        const { error: responseError } = await supabase
-          .from('questionnaire_responses')
-          .insert({
-            profile_id: session.user.id,
-            name: newAnswers[0],
-            perfect_day: newAnswers[1],
-            meaningful_compliment: newAnswers[2],
-            unwind_method: newAnswers[3],
-            learning_desires: newAnswers[4],
-            dinner_guest: newAnswers[5],
-            resonant_media: newAnswers[6],
-            childhood_memory: newAnswers[7],
-            impactful_gesture: newAnswers[8]
-          });
-
-        if (responseError) throw responseError;
-
-        // Save companion profile
-        const { error: companionError } = await supabase
-          .from('companion_profiles')
-          .insert({
-            profile_id: session.user.id,
-            name: newAnswers[9],
-            ...soulmateData
-          });
-
-        if (companionError) throw companionError;
-
-        const userContext = {
-          name: newAnswers[0],
-          questionnaire_responses: {
-            perfect_day: newAnswers[1],
-            meaningful_compliment: newAnswers[2],
-            unwind_method: newAnswers[3],
-            learning_desires: newAnswers[4],
-            dinner_guest: newAnswers[5],
-            resonant_media: newAnswers[6],
-            childhood_memory: newAnswers[7],
-            impactful_gesture: newAnswers[8]
-          },
-          soulmate_name: newAnswers[9],
-          soulmate_backstory: soulmateData
-        };
-        
-        localStorage.setItem('userContext', JSON.stringify(userContext));
-        setShowAuth(true);
-      } catch (error) {
-        console.error('Error saving responses:', error);
-        toast.error("Failed to save your responses. Please try again.");
-      }
+      // Only show auth modal at the end of questionnaire
+      setShowAuth(true);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -155,10 +105,6 @@ const Questionnaire = () => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = "";
     setAnswers(newAnswers);
-    
-    if (currentQuestion === 9) {
-      return;
-    }
     
     if (currentQuestion === questions.length - 1) {
       setShowAuth(true);
