@@ -72,7 +72,7 @@ export const generateMatchingPersona = async (
             content: prompt 
           }
         ],
-        model: 'gpt-4o-mini',
+        model: 'grok-beta',
         temperature: 0.8,
         response_format: { type: "json_object" }
       }),
@@ -83,7 +83,7 @@ export const generateMatchingPersona = async (
     }
 
     const data = await response.json();
-    console.log('API Response:', data); // For debugging
+    console.log('API Response:', data);
 
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid API response format');
@@ -137,7 +137,7 @@ export const generateMatchingPersona = async (
     }
 
     return {
-      name: questionnaire.bot_name || '',
+      name: questionnaire.name,
       ...companionProfile
     };
   } catch (error: any) {
