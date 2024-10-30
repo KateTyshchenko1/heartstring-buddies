@@ -13,7 +13,7 @@ const Logo = ({ className, showName = true }: LogoProps) => {
       </div>
       {showName && (
         <div className="flex items-baseline gap-2">
-          <span className="font-display text-2xl">Soulmate.ai</span>
+          <span className="font-display text-2xl">Romantics.ai</span>
           {/* Only show user name if passed as a prop in future updates */}
         </div>
       )}
