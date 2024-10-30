@@ -26,7 +26,7 @@ export interface ConversationData {
   message: string;
   is_user: boolean;
   timestamp: string | null;
-  emotional_context: EmotionalContext;
+  emotional_context: Json;
   conversation_style: ConversationStyle | null;
   context_type?: string | null;
   metadata?: Json | null;

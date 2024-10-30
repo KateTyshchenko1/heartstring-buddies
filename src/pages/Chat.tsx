@@ -52,14 +52,19 @@ const Chat = () => {
 
         // Load existing messages
         if (conversationsResponse.data?.length > 0) {
-          const mappedMessages = conversationsResponse.data.map((msg: ConversationData) => ({
-            id: msg.id,
-            text: msg.message,
-            isUser: msg.is_user,
-            timestamp: new Date(msg.timestamp || Date.now()),
-            emotionalContext: msg.emotional_context,
-            conversationStyle: msg.conversation_style
-          }));
+          const mappedMessages = conversationsResponse.data.map((msg: ConversationData) => {
+            // Convert the JSON emotional_context to EmotionalContext type
+            const emotionalContext = msg.emotional_context as unknown as EmotionalContext;
+            
+            return {
+              id: msg.id,
+              text: msg.message,
+              isUser: msg.is_user,
+              timestamp: new Date(msg.timestamp || Date.now()),
+              emotionalContext,
+              conversationStyle: msg.conversation_style
+            };
+          });
           setMessages(mappedMessages);
         } else {
           // Generate initial greeting
