@@ -29,7 +29,7 @@ Create a profile that would be compatible with them, following these guidelines:
 5. Interests should be 4-5 specific hobbies
 6. Include one intriguing fun fact
 
-Respond with ONLY a JSON object in this format:
+Format your response as a JSON object with these exact keys:
 {
   "age": "32",
   "occupation": "Marine Biologist specializing in bioluminescent creatures",
@@ -73,8 +73,7 @@ export const generateMatchingPersona = async (
           }
         ],
         model: 'grok-beta',
-        temperature: 0.8,
-        response_format: { type: "json_object" }
+        temperature: 0.8
       }),
     });
 
