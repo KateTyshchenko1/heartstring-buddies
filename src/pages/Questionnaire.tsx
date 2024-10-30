@@ -78,17 +78,18 @@ const Questionnaire = () => {
           .order('order_index');
 
         if (fetchError) {
-          console.error('Supabase error:', fetchError);
-          throw new Error('Failed to fetch questions');
+          console.error('Error details:', fetchError);
+          throw new Error(`Failed to fetch questions: ${fetchError.message}`);
         }
 
         if (!questionsData?.length) {
-          throw new Error('No questions found');
+          throw new Error('No questions found in the database');
         }
 
+        console.log('Fetched questions:', questionsData);
         setQuestions(questionsData);
       } catch (err: any) {
-        console.error('Error:', err);
+        console.error('Detailed error:', err);
         setError(err.message || 'An unexpected error occurred');
         toast.error("Failed to load questions. Please try again.");
       } finally {
@@ -96,7 +97,6 @@ const Questionnaire = () => {
       }
     };
 
-    // Fetch questions when component mounts
     fetchQuestions();
   }, []);
 

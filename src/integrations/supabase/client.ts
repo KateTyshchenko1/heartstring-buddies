@@ -11,5 +11,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
     detectSessionInUrl: true,
     storage: window.localStorage,
     flowType: 'pkce'
+  },
+  global: {
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': supabaseKey
+    }
   }
 });
