@@ -6,11 +6,14 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
+import Footer from "@/components/shared/Footer";
 import Index from "./pages/Index";
 import Questionnaire from "./pages/Questionnaire";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
+import Privacy from "./pages/Privacy";
+import About from "./pages/About";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,17 +61,24 @@ const App = () => (
     <SessionContextProvider supabaseClient={supabase} initialSession={null}>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-              <Route path="/" element={<Index />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/questionnaire" element={<Questionnaire />} />
-              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-            </Routes>
-          </BrowserRouter>
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-1">
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+                  <Route path="/" element={<Index />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/questionnaire" element={<Questionnaire />} />
+                  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/about" element={<About />} />
+                </Routes>
+                <Footer />
+              </BrowserRouter>
+            </div>
+          </div>
         </TooltipProvider>
       </AuthProvider>
     </SessionContextProvider>
