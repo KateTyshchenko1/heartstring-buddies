@@ -75,7 +75,11 @@ const App = () => (
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/about" element={<About />} />
                 </Routes>
-                <Footer />
+                {/* Only show Footer on non-chat pages */}
+                <Routes>
+                  <Route path="/chat" element={null} />
+                  <Route path="*" element={<Footer />} />
+                </Routes>
               </BrowserRouter>
             </div>
           </div>
