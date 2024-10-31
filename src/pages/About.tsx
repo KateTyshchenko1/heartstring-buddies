@@ -24,7 +24,7 @@ const About = () => {
               <h2 className="text-2xl font-display">Our Story</h2>
             </div>
             <p className="text-gray-600">
-              We noticed that existing AI companions were largely designed by men, for men—missing the nuanced emotional intelligence that women value in relationships. We knew we could do better. Our team combines expertise in psychology, technology, and personal growth to create companions that understand the complexity of women's emotional needs.
+              We noticed that existing AI companions were largely designed by men, for men—missing the nuanced emotional intelligence that women value in relationships. We knew we could do better. Our team has expertise in AI technology, and we've worked with experts in psychology and personal growth to create companions that understand the complexity of women's emotional needs.
             </p>
           </div>
 
