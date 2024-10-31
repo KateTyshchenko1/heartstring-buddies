@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import ChatHeader from "@/components/chat/ChatHeader";
@@ -7,11 +7,8 @@ import ChatContainer from "@/components/chat/ChatContainer";
 import { handleChatInteraction } from "@/services/chat";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import { xaiService } from "@/services/xai";
 import type { Message, ConversationData, EmotionalContext } from "@/types/chat";
-import type { InteractionMetrics } from "@/types/metrics";
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
