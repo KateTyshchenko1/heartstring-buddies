@@ -1,213 +1,113 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import Question from "@/components/questionnaire/Question";
-import AuthModal from "@/components/auth/AuthModal";
-import PersonaGeneration from "@/components/questionnaire/PersonaGeneration";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import ErrorMessage from "@/components/questionnaire/ErrorMessage";
-import Logo from "@/components/shared/Logo";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
+import Question from "@/components/questionnaire/Question";
+import BackstoryForm from "@/components/questionnaire/BackstoryForm";
+import PersonaGeneration from "@/components/questionnaire/PersonaGeneration";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { generateMatchingPersona } from "@/services/personaGenerator";
-import type { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
-import type { QuestionnaireResponses } from "@/types/greeting";
 
 const Questionnaire = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  const [showAuth, setShowAuth] = useState(false);
-  const [showPersonaGen, setShowPersonaGen] = useState(false);
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [generatedPersona, setGeneratedPersona] = useState<BackstoryFields | null>(null);
-  const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireResponses | null>(null);
-  
   const navigate = useNavigate();
+  const { session } = useAuth();
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [questions, setQuestions] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const { data: questionsData, error: fetchError } = await supabase
-          .from('questions')
-          .select('*')
-          .eq('is_active', true)
-          .order('order_index');
-
-        if (fetchError) throw fetchError;
-        if (!questionsData?.length) {
-          throw new Error('No questions found');
-        }
-
-        setQuestions(questionsData);
-      } catch (err: any) {
-        console.error('Error:', err);
-        setError(err.message || 'An unexpected error occurred');
-        toast.error("Failed to load questions. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchQuestions();
   }, []);
 
-  const handleAnswer = async (answer: string) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = answer;
-    setAnswers(newAnswers);
+  const fetchQuestions = async () => {
+    try {
+      const { data: questionsData, error } = await supabase
+        .from("questions")
+        .select("*")
+        .order("order_index");
 
-    if (currentQuestion === questions.length - 1) {
-      try {
-        const mappedData: QuestionnaireResponses = {
-          name: newAnswers[0],
-          perfect_day: newAnswers[1],
-          meaningful_compliment: newAnswers[2],
-          unwind_method: newAnswers[3],
-          learning_desires: newAnswers[4],
-          dinner_guest: newAnswers[5],
-          resonant_media: newAnswers[6],
-          childhood_memory: newAnswers[7],
-          impactful_gesture: newAnswers[8],
-          bot_name: answer
-        };
-
-        setQuestionnaireData(mappedData);
-        setIsLoading(true);
-
-        const persona = await generateMatchingPersona(mappedData);
-        const backstoryFields: BackstoryFields = {
-          age: persona.age,
-          occupation: persona.occupation,
-          location: persona.location,
-          personality: persona.personality,
-          interests: persona.interests,
-          fun_fact: persona.fun_fact
-        };
-
-        setGeneratedPersona(backstoryFields);
-        setShowPersonaGen(true);
-      } catch (error: any) {
-        console.error('Error generating persona:', error);
-        toast.error("Failed to generate companion profile. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
+      if (error) throw error;
+      setQuestions(questionsData || []);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      toast.error("Failed to load questions. Please try again.");
     }
   };
 
-  const handlePersonaComplete = (updatedPersona: BackstoryFields) => {
-    setGeneratedPersona(updatedPersona);
-    
-    // Store data in localStorage before auth
-    const userContext = {
-      questionnaire_responses: questionnaireData,
-      soulmate_backstory: updatedPersona
-    };
-    localStorage.setItem('userContext', JSON.stringify(userContext));
-    
-    setShowAuth(true);
+  const handleAnswer = (answer: string) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [questions[step].id]: answer,
+    }));
+    setStep((prev) => prev + 1);
   };
 
-  const handleBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
+  const handleBackstorySubmit = (backstory: Record<string, string>) => {
+    setAnswers((prev) => ({
+      ...prev,
+      ...backstory,
+    }));
+    setStep((prev) => prev + 1);
   };
 
-  const handleSkip = () => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = "";
-    setAnswers(newAnswers);
-    
-    if (currentQuestion === questions.length - 1) {
-      setShowPersonaGen(true);
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
-    }
+  const handlePersonaSubmit = (persona: Record<string, string>) => {
+    console.log("Final Persona: ", persona);
+    // handle the completed persona data
+    navigate("/chat");
   };
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
-
-  if (showAuth) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
-          <h2 className="text-2xl font-display mb-6 text-center">Create Your Account</h2>
-          <AuthModal isSignUp={true} />
-        </div>
-      </div>
-    );
-  }
-
-  if (showPersonaGen && questionnaireData && generatedPersona) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex items-center justify-center p-4">
-        <PersonaGeneration 
-          questionnaireData={questionnaireData}
-          initialPersona={generatedPersona}
-          onComplete={handlePersonaComplete}
+  const renderStep = () => {
+    if (step < questions.length) {
+      return (
+        <Question
+          question={questions[step]}
+          onAnswer={handleAnswer}
+          totalQuestions={questions.length}
+          currentQuestion={step + 1}
         />
-      </div>
+      );
+    }
+
+    if (step === questions.length) {
+      return (
+        <BackstoryForm
+          questionnaireData={answers}
+          onSubmit={handleBackstorySubmit}
+        />
+      );
+    }
+
+    return (
+      <PersonaGeneration
+        questionnaireData={answers}
+        initialPersona={{
+          name: answers.bot_name || "",
+          personality: "",
+          interests: "",
+          occupation: "",
+          fun_fact: "",
+        }}
+        onComplete={handlePersonaSubmit}
+      />;
     );
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] py-8">
       <div className="container mx-auto px-4">
-        <div className="py-4">
-          <Link to="/" className="inline-block">
-            <Logo />
-          </Link>
-        </div>
-        
-        <div className="flex items-center justify-center">
-          <div className="w-full max-w-4xl">
-            {showAuth ? (
-              <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
-                <h2 className="text-2xl font-display mb-6 text-center">Create Your Account</h2>
-                <AuthModal isSignUp={true} />
-              </div>
-            ) : showPersonaGen && questionnaireData && generatedPersona ? (
-              <PersonaGeneration 
-                questionnaireData={questionnaireData}
-                initialPersona={generatedPersona}
-                onComplete={handlePersonaComplete}
-              />
-            ) : (
-              <>
-                <div className="text-center mb-16">
-                  <div className="w-full bg-gray-100 rounded-full h-1 mb-4">
-                    <div
-                      className="bg-[#D91F3A] rounded-full h-1 transition-all duration-300"
-                      style={{
-                        width: `${((currentQuestion + 1) / questions.length) * 100}%`
-                      }}
-                    />
-                  </div>
-                  <p className="text-sm text-gray-400">
-                    Question {currentQuestion + 1} of {questions.length}
-                  </p>
-                </div>
-                
-                <Question
-                  question={questions[currentQuestion]?.question_text || ""}
-                  onAnswer={handleAnswer}
-                  onBack={handleBack}
-                  onSkip={handleSkip}
-                  isFirstQuestion={currentQuestion === 0}
-                  isLastQuestion={currentQuestion === questions.length - 1}
-                  hideSkip={currentQuestion === questions.length - 1}
-                />
-              </>
-            )}
-          </div>
+        {step > 0 && step <= questions.length && (
+          <Button
+            variant="ghost"
+            onClick={() => setStep(step - 1)}
+            className="mb-8"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+        )}
+        <div className="flex justify-center">
+          {renderStep()}
         </div>
       </div>
     </div>
