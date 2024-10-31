@@ -89,7 +89,7 @@ const Questionnaire = () => {
           fun_fact: "",
         }}
         onComplete={handlePersonaSubmit}
-      />;
+      />
     );
   };
 
