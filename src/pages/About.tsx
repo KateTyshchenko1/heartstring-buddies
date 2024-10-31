@@ -14,8 +14,11 @@ const About = () => {
         
         <article className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg mb-12">
           <h1 className="text-4xl font-display text-[#D91F3A] mb-6">About Us</h1>
+          <p className="text-lg text-gray-600 mb-4">
+            We created WhatAGirlWants.ai because we saw something missing in the AI companion space. While other companies treated female users as an afterthought, we started with a fundamental question: what do women actually want in a companion?
+          </p>
           <p className="text-lg text-gray-600 mb-8">
-            We created WhatAGirlWants.ai because we saw something missing in the AI companion space. While other companies treated female users as an afterthought, we started with a fundamental question: what do women actually want in an emotional connection?
+            As a team of women, we understand that the answer isn't a simplified "AI boyfriend." It's about creating a meaningful connection with someone who truly listens, understands your unique journey, and grows alongside you.
           </p>
           
           <div className="bg-cream-soft p-6 rounded-xl mb-8">
