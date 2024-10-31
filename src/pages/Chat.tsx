@@ -8,7 +8,7 @@ import { handleChatInteraction } from "@/services/chat";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { xaiService } from "@/services/xai";
-import type { Message, ConversationData } from "@/types/chat";
+import type { Message, ConversationData, EmotionalContext } from "@/types/chat";
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -50,19 +50,24 @@ const Chat = () => {
 
         // Load existing messages
         if (conversationsResponse.data?.length > 0) {
-          const mappedMessages = conversationsResponse.data.map((msg: ConversationData) => ({
-            id: msg.id,
-            text: msg.message,
-            isUser: msg.is_user,
-            timestamp: new Date(msg.timestamp || Date.now()),
-            emotionalContext: msg.emotional_context,
-            conversationStyle: msg.conversation_style
-          }));
+          const mappedMessages = conversationsResponse.data.map((msg: ConversationData) => {
+            // Convert the JSON emotional_context to EmotionalContext type
+            const emotionalContext = msg.emotional_context as unknown as EmotionalContext;
+            
+            return {
+              id: msg.id,
+              text: msg.message,
+              isUser: msg.is_user,
+              timestamp: new Date(msg.timestamp || Date.now()),
+              emotionalContext,
+              conversationStyle: msg.conversation_style
+            };
+          });
           setMessages(mappedMessages);
         } else {
           // Generate initial greeting
           const greeting = await xaiService.generateGreeting(user.id, questionnairResponse.data.name);
-          const newMessage = {
+          const newMessage: Message = {
             id: "1",
             text: greeting,
             isUser: false,
@@ -74,7 +79,7 @@ const Chat = () => {
               wittyExchanges: false,
               followUpNeeded: false
             },
-            conversationStyle: 'playful' as const
+            conversationStyle: 'playful'
           };
 
           setMessages([newMessage]);
@@ -100,7 +105,7 @@ const Chat = () => {
   }, []);
 
   const handleSendMessage = async (text: string) => {
-    const userMessage = {
+    const userMessage: Message = {
       id: Date.now().toString(),
       text,
       isUser: true,
@@ -112,7 +117,7 @@ const Chat = () => {
         wittyExchanges: false,
         followUpNeeded: false
       },
-      conversationStyle: 'playful' as const
+      conversationStyle: 'playful'
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -135,7 +140,7 @@ const Chat = () => {
 
       const { response, metrics } = await handleChatInteraction(text, user.id);
 
-      const aiMessage = {
+      const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: response,
         isUser: false,
@@ -180,7 +185,7 @@ const Chat = () => {
       <div className="mx-auto max-w-3xl h-screen flex flex-col">
         <ChatHeader botName={botName} onLogout={handleLogout} />
         <ChatContainer messages={messages} isLoading={isLoading} />
-        <div className="p-2 bg-white/80 backdrop-blur-sm border-t border-gray-100 sticky bottom-0">
+        <div className="p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100 sticky bottom-0">
           <ChatInput onSendMessage={handleSendMessage} />
         </div>
       </div>
