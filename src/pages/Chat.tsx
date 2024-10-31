@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
-import Logo from "@/components/shared/Logo";
+import ChatHeader from "@/components/chat/ChatHeader";
+import ChatContainer from "@/components/chat/ChatContainer";
 import { handleChatInteraction } from "@/services/chat";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -184,51 +185,11 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/5">
-      <div className="mx-auto max-w-2xl h-screen flex flex-col">
-        <div className="p-3 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center gap-2">
-            <Link to="/">
-              <Logo />
-            </Link>
-            <span className="text-base font-display text-primary hidden sm:inline">
-              {botName}
-            </span>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleLogout}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Logout</span>
-          </Button>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto p-3 space-y-4">
-          {messages.map((message) => (
-            <ChatMessage
-              key={message.id}
-              message={message.text}
-              isUser={message.isUser}
-              timestamp={message.timestamp}
-              emotionalContext={message.emotionalContext}
-              conversationStyle={message.conversationStyle}
-            />
-          ))}
-          {isLoading && (
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce" />
-              <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce delay-100" />
-              <div className="w-2 h-2 rounded-full bg-gray-300 animate-bounce delay-200" />
-            </div>
-          )}
-        </div>
-        
-        <div className="p-3 bg-white/80 backdrop-blur-sm border-t border-gray-100 sticky bottom-0">
-          <div className="mx-auto w-full">
-            <ChatInput onSendMessage={handleSendMessage} />
-          </div>
+      <div className="mx-auto max-w-3xl h-screen flex flex-col">
+        <ChatHeader botName={botName} onLogout={handleLogout} />
+        <ChatContainer messages={messages} isLoading={isLoading} />
+        <div className="p-2 bg-white/80 backdrop-blur-sm border-t border-gray-100 sticky bottom-0">
+          <ChatInput onSendMessage={handleSendMessage} />
         </div>
       </div>
     </div>
