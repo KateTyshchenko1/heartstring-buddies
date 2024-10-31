@@ -9,8 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { xaiService } from "@/services/xai";
-import type { Message, ConversationData, EmotionalContext } from "@/types/chat";
-import type { InteractionMetrics } from "@/types/metrics";
+import type { Message, ConversationData } from "@/types/chat";
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,24 +51,19 @@ const Chat = () => {
 
         // Load existing messages
         if (conversationsResponse.data?.length > 0) {
-          const mappedMessages = conversationsResponse.data.map((msg: ConversationData) => {
-            // Convert the JSON emotional_context to EmotionalContext type
-            const emotionalContext = msg.emotional_context as unknown as EmotionalContext;
-            
-            return {
-              id: msg.id,
-              text: msg.message,
-              isUser: msg.is_user,
-              timestamp: new Date(msg.timestamp || Date.now()),
-              emotionalContext,
-              conversationStyle: msg.conversation_style
-            };
-          });
+          const mappedMessages: Message[] = conversationsResponse.data.map((msg: ConversationData) => ({
+            id: msg.id,
+            text: msg.message,
+            isUser: msg.is_user,
+            timestamp: new Date(msg.timestamp || Date.now()),
+            emotionalContext: msg.emotional_context as any,
+            conversationStyle: msg.conversation_style
+          }));
           setMessages(mappedMessages);
         } else {
           // Generate initial greeting
           const greeting = await xaiService.generateGreeting(user.id, questionnairResponse.data.name);
-          const newMessage = {
+          const newMessage: Message = {
             id: "1",
             text: greeting,
             isUser: false,
@@ -81,7 +75,7 @@ const Chat = () => {
               wittyExchanges: false,
               followUpNeeded: false
             },
-            conversationStyle: 'playful' as const
+            conversationStyle: 'playful'
           };
 
           setMessages([newMessage]);
@@ -143,24 +137,14 @@ const Chat = () => {
           wittyExchanges: metrics.wittyExchanges > 0,
           followUpNeeded: false
         },
-        conversationStyle: metrics.connectionStyle as Message['conversationStyle']
+        conversationStyle: metrics.connectionStyle
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-      updateChatUI(metrics);
     } catch (error: any) {
       toast.error(error.message || "Failed to save conversation");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const updateChatUI = (metrics: InteractionMetrics) => {
-    // Add subtle UI updates based on metrics
-    if (metrics.flirtLevel > 7) {
-      document.body.classList.add('high-chemistry');
-    } else {
-      document.body.classList.remove('high-chemistry');
     }
   };
 
@@ -172,8 +156,8 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/5">
-      <div className="container mx-auto max-w-4xl h-screen flex flex-col">
-        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
+      <div className="container mx-auto max-w-3xl h-screen flex flex-col">
+        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2">
             <Link to="/">
               <Logo />
@@ -200,6 +184,8 @@ const Chat = () => {
               message={message.text}
               isUser={message.isUser}
               timestamp={message.timestamp}
+              emotionalContext={message.emotionalContext}
+              conversationStyle={message.conversationStyle}
             />
           ))}
           {isLoading && (
@@ -211,8 +197,8 @@ const Chat = () => {
           )}
         </div>
         
-        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
-          <div className="max-w-4xl mx-auto w-full px-2">
+        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100 sticky bottom-0">
+          <div className="max-w-3xl mx-auto w-full px-2">
             <ChatInput onSendMessage={handleSendMessage} />
           </div>
         </div>
