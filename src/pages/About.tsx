@@ -84,7 +84,7 @@ const About = () => {
               <h2 className="text-2xl font-display">Our Promise</h2>
             </div>
             <div className="space-y-4 text-gray-600">
-              <p>We're committed to creating a service that truly understands and supports women's emotional needs. No games, no drama, no judgment—just genuine support and growth on your terms.</p>
+              <p>We're committed to creating a service that truly understands and supports women's emotional needs. From late-night heart-to-hearts to playful banter, witty exchanges to meaningful support—your companion matches your energy and desires. No games, no drama, no judgment—just genuine connection, charming conversations, and personal growth on your terms.</p>
               <p className="font-display text-lg text-[#D91F3A]">Built by women, for women, with love and understanding. 💕</p>
             </div>
           </div>
