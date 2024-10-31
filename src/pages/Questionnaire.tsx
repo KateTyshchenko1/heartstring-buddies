@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import Question from "@/components/questionnaire/Question";
-import BackstoryForm from "@/components/questionnaire/BackstoryForm";
+import BackstoryForm, { BackstoryFields } from "@/components/questionnaire/BackstoryForm";
 import PersonaGeneration from "@/components/questionnaire/PersonaGeneration";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -43,7 +43,7 @@ const Questionnaire = () => {
     setStep((prev) => prev + 1);
   };
 
-  const handleBackstorySubmit = (backstory: Record<string, string>) => {
+  const handleBackstorySubmit = (backstory: BackstoryFields) => {
     setAnswers((prev) => ({
       ...prev,
       ...backstory,
@@ -51,9 +51,8 @@ const Questionnaire = () => {
     setStep((prev) => prev + 1);
   };
 
-  const handlePersonaSubmit = (persona: Record<string, string>) => {
+  const handlePersonaSubmit = (persona: BackstoryFields) => {
     console.log("Final Persona: ", persona);
-    // handle the completed persona data
     navigate("/chat");
   };
 
@@ -61,10 +60,12 @@ const Questionnaire = () => {
     if (step < questions.length) {
       return (
         <Question
-          question={questions[step]}
+          question={questions[step].question_text}
           onAnswer={handleAnswer}
-          totalQuestions={questions.length}
-          currentQuestion={step + 1}
+          onBack={() => setStep((prev) => prev - 1)}
+          onSkip={() => setStep((prev) => prev + 1)}
+          isFirstQuestion={step === 0}
+          isLastQuestion={step === questions.length - 1}
         />
       );
     }
@@ -72,8 +73,9 @@ const Questionnaire = () => {
     if (step === questions.length) {
       return (
         <BackstoryForm
-          questionnaireData={answers}
-          onSubmit={handleBackstorySubmit}
+          userName={answers.name || ''}
+          botName={answers.bot_name || ''}
+          onComplete={handleBackstorySubmit}
         />
       );
     }
@@ -82,10 +84,11 @@ const Questionnaire = () => {
       <PersonaGeneration
         questionnaireData={answers}
         initialPersona={{
-          name: answers.bot_name || "",
+          age: "",
+          occupation: "",
+          location: "",
           personality: "",
           interests: "",
-          occupation: "",
           fun_fact: "",
         }}
         onComplete={handlePersonaSubmit}
