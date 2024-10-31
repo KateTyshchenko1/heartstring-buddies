@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Logo from "@/components/shared/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/components/auth/AuthModal";
@@ -31,7 +31,9 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
         <div className="flex justify-center mb-8">
-          <Logo />
+          <Link to="/">
+            <Logo />
+          </Link>
         </div>
         <AuthModal isSignUp={false} />
       </div>

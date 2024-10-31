@@ -19,7 +19,7 @@ const Index = () => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Infinity className="w-6 h-6 text-[#D91F3A]" />
-            <span className="font-display text-xl sm:text-2xl text-gray-800">Romantics.ai</span>
+            <span className="font-display text-xl sm:text-2xl text-gray-800">WhatAGirlWants.ai</span>
           </div>
           <Badge variant="secondary" className="bg-[#FFD7D0] text-[#D91F3A] font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm">
             <Star className="w-3 h-3 mr-1 fill-[#D91F3A]" /> Beta

@@ -175,7 +175,9 @@ const Chat = () => {
       <div className="container mx-auto max-w-4xl h-screen flex flex-col">
         <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Logo />
+            <Link to="/">
+              <Logo />
+            </Link>
             <span className="text-base sm:text-lg font-display text-primary hidden sm:inline">
               {botName}
             </span>

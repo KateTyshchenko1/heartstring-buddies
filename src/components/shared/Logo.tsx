@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Infinity } from "lucide-react";
 
 interface LogoProps {
   className?: string;
@@ -9,12 +10,11 @@ const Logo = ({ className, showName = true }: LogoProps) => {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <div className="flex items-center">
-        <span className="text-3xl text-primary">∞</span>
+        <Infinity className="w-6 h-6 text-[#D91F3A]" />
       </div>
       {showName && (
         <div className="flex items-baseline gap-2">
-          <span className="font-display text-2xl">Romantics.ai</span>
-          {/* Only show user name if passed as a prop in future updates */}
+          <span className="font-display text-2xl">WhatAGirlWants.ai</span>
         </div>
       )}
     </div>
