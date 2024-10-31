@@ -129,6 +129,17 @@ const Chat = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
+      // Save user message
+      await supabase
+        .from('conversations')
+        .insert({
+          profile_id: user.id,
+          message: text,
+          is_user: true,
+          emotional_context: userMessage.emotionalContext,
+          conversation_style: userMessage.conversationStyle
+        });
+
       const { response, metrics } = await handleChatInteraction(text, user.id);
 
       const aiMessage: Message = {
@@ -143,24 +154,25 @@ const Chat = () => {
           wittyExchanges: metrics.wittyExchanges > 0,
           followUpNeeded: false
         },
-        conversationStyle: metrics.connectionStyle as Message['conversationStyle']
+        conversationStyle: metrics.connectionStyle
       };
 
+      // Save AI response
+      await supabase
+        .from('conversations')
+        .insert({
+          profile_id: user.id,
+          message: response,
+          is_user: false,
+          emotional_context: aiMessage.emotionalContext,
+          conversation_style: aiMessage.conversationStyle
+        });
+
       setMessages((prev) => [...prev, aiMessage]);
-      updateChatUI(metrics);
     } catch (error: any) {
-      toast.error(error.message || "Failed to save conversation");
+      toast.error(error.message || "Failed to send message");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const updateChatUI = (metrics: InteractionMetrics) => {
-    // Add subtle UI updates based on metrics
-    if (metrics.flirtLevel > 7) {
-      document.body.classList.add('high-chemistry');
-    } else {
-      document.body.classList.remove('high-chemistry');
     }
   };
 
@@ -172,13 +184,13 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-primary/5 to-secondary/5">
-      <div className="container mx-auto max-w-4xl h-screen flex flex-col">
-        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between">
+      <div className="mx-auto max-w-2xl h-screen flex flex-col">
+        <div className="p-3 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2">
             <Link to="/">
               <Logo />
             </Link>
-            <span className="text-base sm:text-lg font-display text-primary hidden sm:inline">
+            <span className="text-base font-display text-primary hidden sm:inline">
               {botName}
             </span>
           </div>
@@ -193,13 +205,15 @@ const Chat = () => {
           </Button>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 space-y-4">
           {messages.map((message) => (
             <ChatMessage
               key={message.id}
               message={message.text}
               isUser={message.isUser}
               timestamp={message.timestamp}
+              emotionalContext={message.emotionalContext}
+              conversationStyle={message.conversationStyle}
             />
           ))}
           {isLoading && (
@@ -211,8 +225,8 @@ const Chat = () => {
           )}
         </div>
         
-        <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
-          <div className="max-w-4xl mx-auto w-full px-2">
+        <div className="p-3 bg-white/80 backdrop-blur-sm border-t border-gray-100 sticky bottom-0">
+          <div className="mx-auto w-full">
             <ChatInput onSendMessage={handleSendMessage} />
           </div>
         </div>
