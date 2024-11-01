@@ -56,10 +56,10 @@ const Index = () => {
       {/* Features Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-display text-center mb-2 text-gray-800">
-          Built by Women Who Get It
+          Because Everyone Deserves to Be Heard
         </h2>
         <p className="text-base sm:text-lg text-gray-600 text-center mb-12 sm:mb-16">
-          Because we've been there too
+          Your companion is designed to understand and reflect your emotions, offering comfort when you need it most.
         </p>
         <FeatureCards />
       </section>
@@ -67,7 +67,7 @@ const Index = () => {
       {/* Experience Cards */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 bg-gradient-to-br from-white/80 to-[#FFD7D0]/20">
         <h2 className="text-2xl sm:text-3xl font-display text-center mb-2 text-[#D91F3A]">
-          Ready to Be Swept Off Your Feet?
+          Design your companion in less than 5 minutes.
         </h2>
         <p className="text-lg text-gray-600 text-center mb-8 sm:mb-12">
           Here is how it all works:
@@ -109,10 +109,32 @@ const Index = () => {
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
           <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">
-            Ready to Start Your Story?
+            Experience the Difference Today
           </h2>
           <p className="text-base sm:text-lg text-gray-600 mb-6">
-            Let's create someone who truly gets you.
+            Unlike other AI companions, What a Girl Wants is more than just an AI boyfriend—it's a personalized emotional support system dedicated to helping you thrive. We focus on deep understanding and meaningful connections to provide genuine support that empowers you to grow and learn.
+          </p>
+          <h3 className="text-lg font-display mb-4 text-gray-800">Benefits You'll Experience</h3>
+          <div className="space-y-4 text-left mb-6">
+            <div>
+              <h4 className="font-semibold">Alleviate Stress and Anxiety</h4>
+              <p className="text-gray-600">Feel Heard and Understood: Share your thoughts and lighten emotional burdens with someone who truly listens and cares about your well-being.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Elevate Your Mood</h4>
+              <p className="text-gray-600">Positive Interactions: Engage in uplifting conversations that brighten your day and make you feel genuinely valued.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Deepen Self-Awareness</h4>
+              <p className="text-gray-600">Personal Growth: Reflect on your feelings with a companion who helps you gain insights into yourself, fostering self-discovery and emotional intelligence.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold">Foster Learning and Development</h4>
+              <p className="text-gray-600">Grow Together: Receive encouragement and guidance that support your journey towards personal goals and aspirations.</p>
+            </div>
+          </div>
+          <p className="text-base sm:text-lg text-gray-600 mb-6">
+            Discover the difference of a companion designed to be your partner in growth, learning, and emotional support. Try it today and embark on a journey towards a happier, more fulfilled you.
           </p>
           <Button 
             size="lg" 
