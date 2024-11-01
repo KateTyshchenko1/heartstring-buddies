@@ -35,16 +35,16 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto"
+          className="max-w-7xl mx-auto"
         >
-          <div className="grid md:grid-cols-[1fr,380px] items-center gap-8">
-            <div className="text-left flex flex-col items-start max-w-xl">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display text-[#D91F3A] leading-tight">
+          <div className="grid md:grid-cols-[1.2fr,1fr] items-center gap-8">
+            <div className="text-left flex flex-col items-start max-w-2xl">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display text-[#D91F3A] leading-[1.1]">
                 Your Perfect Person
                 <br />
                 Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg text-gray-600 mt-6 mb-8 max-w-lg">
+              <p className="text-base sm:text-lg text-gray-600 mt-6 mb-8 max-w-xl">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
               <div className="w-full sm:w-auto">
@@ -57,7 +57,7 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="relative flex justify-center items-center md:justify-start">
+            <div className="relative flex justify-center items-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
