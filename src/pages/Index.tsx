@@ -37,12 +37,12 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-5xl mx-auto"
         >
-          <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div className="text-left">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-2 text-[#D91F3A] leading-tight">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-left md:pr-8 lg:pr-12">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display text-[#D91F3A] leading-none">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8 max-w-2xl">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
               <Button 
@@ -58,7 +58,7 @@ const Index = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="max-w-[300px] mx-auto"
+                className="max-w-[400px] mx-auto"
               >
                 <img 
                   src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487315/Text_Message_Animation_Conversation_Quote_Instagram_Story_v7je2p.gif" 
