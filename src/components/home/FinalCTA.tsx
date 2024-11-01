@@ -84,7 +84,7 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
             <Button 
               size="lg" 
               onClick={onTryNowClick}
-              className="text-lg md:text-xl px-8 sm:px-12 py-6 sm:py-8 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
+              className="text-lg px-8 py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
             >
               Try Now
             </Button>
