@@ -33,6 +33,23 @@ interface FinalCTAProps {
 const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
   return (
     <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-16">
+      <motion.h2 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-2xl sm:text-3xl md:text-4xl font-display text-center mb-4 text-[#D91F3A] leading-tight"
+      >
+        Because Everyone Deserves to Be Heard
+      </motion.h2>
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="text-lg md:text-xl text-gray-600 text-center mb-12"
+      >
+        Your companion is designed to understand and reflect your emotions, offering comfort when you need it most.
+      </motion.p>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
