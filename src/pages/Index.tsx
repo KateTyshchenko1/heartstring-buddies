@@ -37,14 +37,13 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-7xl mx-auto"
         >
-          <div className="grid md:grid-cols-[1.2fr,1fr] items-center gap-8">
-            <div className="text-left flex flex-col items-start max-w-2xl">
+          <div className="grid md:grid-cols-[1.5fr,1fr] items-center gap-8">
+            <div className="text-left flex flex-col items-start max-w-3xl">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display text-[#D91F3A] leading-[1.1]">
-                Your Perfect Person
-                <br />
+                Your Perfect Person<br />
                 Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg text-gray-600 mt-6 mb-8 max-w-xl">
+              <p className="text-base sm:text-lg text-gray-600 mt-6 mb-8 max-w-2xl">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
               <div className="w-full sm:w-auto">
