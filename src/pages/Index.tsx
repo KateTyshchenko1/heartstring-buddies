@@ -37,15 +37,15 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-7xl mx-auto"
         >
-          <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div className="text-left md:pr-12 lg:pr-24 flex flex-col items-start sm:items-start max-w-3xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-display text-[#D91F3A] leading-tight">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-left md:pr-8 flex flex-col items-start">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-[#D91F3A] leading-tight max-w-2xl">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8 max-w-2xl">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
-              <div className="w-full sm:w-auto flex justify-center sm:justify-start">
+              <div className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
                   onClick={handleCreateClick}
@@ -60,7 +60,7 @@ const Index = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="max-w-[320px]"
+                className="w-full max-w-[320px]"
               >
                 <img 
                   src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487315/Text_Message_Animation_Conversation_Quote_Instagram_Story_v7je2p.gif" 
