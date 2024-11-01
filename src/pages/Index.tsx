@@ -16,8 +16,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
-      {/* Header section */}
-      <header className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      {/* Header section - reduced top padding */}
+      <header className="container mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Infinity className="w-6 h-6 text-[#D91F3A]" />
@@ -29,8 +29,8 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 sm:px-6 pt-4 sm:pt-8 pb-8 sm:pb-12 text-center border-b border-gray-100">
+      {/* Hero Section - adjusted spacing */}
+      <section className="container mx-auto px-4 sm:px-6 pt-2 sm:pt-4 pb-6 sm:pb-8 text-center border-b border-gray-100">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,7 +39,7 @@ const Index = () => {
         >
           <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="text-left">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-3 text-[#D91F3A] leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-2 text-[#D91F3A] leading-tight">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4">
@@ -71,14 +71,12 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Features Section */}
-      <FeatureCards />
-
-      {/* Experience Cards */}
-      <ExperienceCards />
-
-      {/* Final CTA */}
-      <FinalCTA onTryNowClick={handleCreateClick} />
+      {/* Features Section - reduced vertical spacing */}
+      <div className="space-y-8">
+        <FeatureCards />
+        <ExperienceCards />
+        <FinalCTA onTryNowClick={handleCreateClick} />
+      </div>
     </div>
   );
 };
