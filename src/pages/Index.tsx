@@ -40,7 +40,8 @@ const Index = () => {
           <div className="grid md:grid-cols-[1fr,320px] items-center gap-12">
             <div className="text-left flex flex-col items-start pr-0">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-[#D91F3A] leading-tight">
-                Your Perfect Person, Thoughtfully Crafted
+                Your Perfect Person<br />
+                Thoughtfully Crafted
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
