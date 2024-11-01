@@ -38,23 +38,22 @@ const Index = () => {
           className="max-w-6xl mx-auto"
         >
           <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div className="text-left md:pr-12 lg:pr-16">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display text-[#D91F3A] leading-none whitespace-nowrap">
-                Your Perfect Person,
-              </h1>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display text-[#D91F3A] leading-none mt-2">
-                Thoughtfully Crafted
+            <div className="text-left md:pr-12 lg:pr-16 flex flex-col items-start sm:items-start">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-display text-[#D91F3A] leading-tight">
+                Your Perfect Person, Thoughtfully Crafted
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8 pr-4 md:pr-8">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
-              <Button 
-                size="lg" 
-                onClick={handleCreateClick}
-                className="text-lg px-8 py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
-              >
-                Create Yours
-              </Button>
+              <div className="w-full sm:w-auto flex justify-center sm:justify-start">
+                <Button 
+                  size="lg" 
+                  onClick={handleCreateClick}
+                  className="text-lg px-8 py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
+                >
+                  Create Yours
+                </Button>
+              </div>
             </div>
             <div className="relative flex justify-center items-center">
               <motion.div

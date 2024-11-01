@@ -70,8 +70,8 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
           ))}
         </div>
 
-        <div className="bg-cream-soft rounded-2xl p-8 mb-12">
-          <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+        <div className="bg-gradient-to-r from-cream-soft via-primary-soft to-cream-soft rounded-2xl p-8 mb-12">
+          <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
             Discover the difference of a companion designed to be your partner in growth, learning, and emotional support. Try it today and embark on a journey towards a happier, more fulfilled you.
           </p>
         </div>
