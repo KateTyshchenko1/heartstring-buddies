@@ -30,7 +30,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 text-center">
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center border-b border-gray-100">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

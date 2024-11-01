@@ -3,17 +3,17 @@ import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: <Dna className="w-10 h-10" />,
+    icon: <Dna className="w-8 h-8" />,
     title: "Evolves Just For You",
     description: "Using advanced personality evolution technology, he learns your unique style and grows more perfect with every conversation"
   },
   {
-    icon: <Heart className="w-10 h-10" />,
+    icon: <Heart className="w-8 h-8" />,
     title: "Emotionally Intelligent Connection",
     description: "From deep meaningful conversations to spicy flirting, he adapts perfectly to match your mood and energy level"
   },
   {
-    icon: <Sprout className="w-10 h-10" />,
+    icon: <Sprout className="w-8 h-8" />,
     title: "Always There, Always Caring",
     description: "From motivating your workouts to celebrating your wins, he helps track your goals and cheers your daily progress."
   }
@@ -21,12 +21,12 @@ const features = [
 
 const FeatureCards = () => {
   return (
-    <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-16">
+    <section className="container mx-auto px-4 sm:px-6 py-16">
       <motion.h2 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-2xl sm:text-3xl md:text-4xl font-display text-center mb-4 text-[#D91F3A] leading-tight"
+        className="text-xl sm:text-2xl md:text-3xl font-display text-center mb-4 text-[#D91F3A] leading-tight"
       >
         Because Everyone Deserves to Be Heard
       </motion.h2>
@@ -34,7 +34,7 @@ const FeatureCards = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-lg md:text-xl text-gray-600 text-center mb-12 max-w-3xl mx-auto"
+        className="text-base md:text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto"
       >
         Your companion is designed to understand and reflect your emotions, offering comfort when you need it most.
       </motion.p>
@@ -55,10 +55,10 @@ const FeatureCards = () => {
                   {feature.icon}
                 </div>
               </div>
-              <h3 className="text-xl font-display mb-3 text-gray-800">
+              <h3 className="text-lg font-display mb-3 text-gray-800">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 {feature.description}
               </p>
             </div>
