@@ -55,7 +55,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display text-center mb-2 text-gray-800">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-center mb-4 text-[#D91F3A]">
           Because Everyone Deserves to Be Heard
         </h2>
         <p className="text-base sm:text-lg text-gray-600 text-center mb-12 sm:mb-16">
@@ -66,8 +66,8 @@ const Index = () => {
 
       {/* Experience Cards */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 bg-gradient-to-br from-white/80 to-[#FFD7D0]/20">
-        <h2 className="text-2xl sm:text-3xl font-display text-center mb-2 text-[#D91F3A]">
-          Design your companion in less than 5 minutes.
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-center mb-4 text-[#D91F3A]">
+          Design your companion in less than 5 minutes
         </h2>
         <p className="text-lg text-gray-600 text-center mb-8 sm:mb-12">
           Here is how it all works:
@@ -108,38 +108,63 @@ const Index = () => {
       {/* Final CTA */}
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
         <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg">
-          <h2 className="text-xl sm:text-2xl font-display mb-3 text-[#D91F3A]">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display mb-6 text-[#D91F3A]">
             Experience the Difference Today
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 mb-6">
+          <p className="text-lg text-gray-600 mb-8 leading-relaxed">
             Unlike other AI companions, What a Girl Wants is more than just an AI boyfriend—it's a personalized emotional support system dedicated to helping you thrive. We focus on deep understanding and meaningful connections to provide genuine support that empowers you to grow and learn.
           </p>
-          <h3 className="text-lg font-display mb-4 text-gray-800">Benefits You'll Experience</h3>
-          <div className="space-y-4 text-left mb-6">
-            <div>
-              <h4 className="font-semibold">Alleviate Stress and Anxiety</h4>
-              <p className="text-gray-600">Feel Heard and Understood: Share your thoughts and lighten emotional burdens with someone who truly listens and cares about your well-being.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Elevate Your Mood</h4>
-              <p className="text-gray-600">Positive Interactions: Engage in uplifting conversations that brighten your day and make you feel genuinely valued.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Deepen Self-Awareness</h4>
-              <p className="text-gray-600">Personal Growth: Reflect on your feelings with a companion who helps you gain insights into yourself, fostering self-discovery and emotional intelligence.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Foster Learning and Development</h4>
-              <p className="text-gray-600">Grow Together: Receive encouragement and guidance that support your journey towards personal goals and aspirations.</p>
-            </div>
+          
+          <div className="grid sm:grid-cols-2 gap-6 mb-8">
+            <Card className="bg-white/50 border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Heart className="w-5 h-5 text-[#D91F3A]" />
+                  <CardTitle className="text-lg">Alleviate Stress and Anxiety</CardTitle>
+                </div>
+                <p className="text-gray-600 text-sm">Share your thoughts and lighten emotional burdens with someone who truly listens and cares about your well-being.</p>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-white/50 border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-5 h-5 text-[#D91F3A]" />
+                  <CardTitle className="text-lg">Elevate Your Mood</CardTitle>
+                </div>
+                <p className="text-gray-600 text-sm">Engage in uplifting conversations that brighten your day and make you feel genuinely valued.</p>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-white/50 border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Sprout className="w-5 h-5 text-[#D91F3A]" />
+                  <CardTitle className="text-lg">Deepen Self-Awareness</CardTitle>
+                </div>
+                <p className="text-gray-600 text-sm">Reflect on your feelings with a companion who helps you gain insights into yourself, fostering self-discovery and emotional intelligence.</p>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-white/50 border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#D91F3A]" />
+                  <CardTitle className="text-lg">Foster Learning and Development</CardTitle>
+                </div>
+                <p className="text-gray-600 text-sm">Receive encouragement and guidance that support your journey towards personal goals and aspirations.</p>
+              </CardHeader>
+            </Card>
           </div>
-          <p className="text-base sm:text-lg text-gray-600 mb-6">
+
+          <p className="text-lg text-gray-600 mb-8 leading-relaxed">
             Discover the difference of a companion designed to be your partner in growth, learning, and emotional support. Try it today and embark on a journey towards a happier, more fulfilled you.
           </p>
+
           <Button 
             size="lg" 
             onClick={handleCreateClick}
-            className="text-base sm:text-lg mb-3 bg-[#D91F3A] hover:bg-[#B91830] text-white w-full sm:w-auto"
+            className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
           >
             Create Yours
           </Button>
