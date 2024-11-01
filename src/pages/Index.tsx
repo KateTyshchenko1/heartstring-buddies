@@ -30,19 +30,19 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 sm:px-6 pt-8 sm:pt-16 pb-12 sm:pb-20 text-center border-b border-gray-100">
+      <section className="container mx-auto px-4 sm:px-6 pt-4 sm:pt-8 pb-8 sm:pb-12 text-center border-b border-gray-100">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-5xl mx-auto"
         >
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="text-left">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-3 text-[#D91F3A] leading-tight">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
               <Button 
