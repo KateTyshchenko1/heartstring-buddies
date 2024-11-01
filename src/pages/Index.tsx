@@ -35,14 +35,14 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto"
+          className="max-w-7xl mx-auto"
         >
           <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div className="text-left md:pr-12 lg:pr-16 flex flex-col items-start sm:items-start">
+            <div className="text-left md:pr-12 lg:pr-24 flex flex-col items-start sm:items-start max-w-3xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-display text-[#D91F3A] leading-tight">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8 pr-4 md:pr-8">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
               <div className="w-full sm:w-auto flex justify-center sm:justify-start">
@@ -55,12 +55,12 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="relative flex justify-center items-center">
+            <div className="relative flex justify-center items-center md:justify-end">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="max-w-[320px] mx-auto"
+                className="max-w-[320px]"
               >
                 <img 
                   src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487315/Text_Message_Animation_Conversation_Quote_Instagram_Story_v7je2p.gif" 

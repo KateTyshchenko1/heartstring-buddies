@@ -37,16 +37,16 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-xl text-center"
+        className="max-w-6xl mx-auto bg-white/90 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-xl text-center"
       >
         <h2 className="text-lg sm:text-xl md:text-2xl font-display mb-8 text-[#D91F3A] leading-tight">
           Experience the Difference Today
         </h2>
-        <p className="text-sm md:text-base text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
+        <p className="text-sm md:text-base text-gray-600 mb-12 leading-relaxed max-w-4xl mx-auto">
           Unlike other AI companions, What a Girl Wants is more than just an AI boyfriend—it's a personalized emotional support system dedicated to helping you thrive. We focus on deep understanding and meaningful connections to provide genuine support that empowers you to grow and learn.
         </p>
         
-        <div className="grid sm:grid-cols-2 gap-6 mb-12">
+        <div className="grid sm:grid-cols-2 gap-6 mb-12 max-w-6xl mx-auto">
           {benefits.map((benefit, index) => (
             <motion.div
               key={index}
@@ -70,8 +70,8 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
           ))}
         </div>
 
-        <div className="bg-gradient-to-r from-cream-soft via-primary-soft to-cream-soft rounded-2xl p-8 mb-12">
-          <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
+        <div className="bg-gradient-to-r from-cream-soft via-primary-soft to-cream-soft rounded-2xl p-8 mb-12 max-w-4xl mx-auto">
+          <p className="text-base md:text-lg text-gray-700 leading-relaxed">
             Discover the difference of a companion designed to be your partner in growth, learning, and emotional support. Try it today and embark on a journey towards a happier, more fulfilled you.
           </p>
         </div>
