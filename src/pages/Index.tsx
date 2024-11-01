@@ -63,7 +63,7 @@ const Index = () => {
                 className="w-[320px]"
               >
                 <img 
-                  src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487315/Text_Message_Animation_Conversation_Quote_Instagram_Story_v7je2p.gif" 
+                  src="https://res.cloudinary.com/djzoneohv/image/upload/v1730491257/Hero_gif_fzb8jl.gif" 
                   alt="AI Companion Animation" 
                   className="w-full h-auto"
                 />
