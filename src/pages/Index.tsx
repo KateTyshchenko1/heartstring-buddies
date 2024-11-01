@@ -61,7 +61,7 @@ const Index = () => {
                 className="rounded-2xl overflow-hidden shadow-2xl"
               >
                 <img 
-                  src="https://i.imgur.com/1DsPlrT.gif" 
+                  src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487135/Hero_Gif_if2dqa.gif" 
                   alt="AI Companion Animation" 
                   className="w-full h-auto rounded-2xl"
                 />
