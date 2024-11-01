@@ -88,7 +88,16 @@ const Index = () => {
             },
             {
               title: "Ongoing Support",
-              description: "Available Anytime, Anywhere: Access your companion whenever you need support—24/7.\n\nEvolving with You: The more you interact, the better your companion understands and supports you."
+              description: [
+                {
+                  subtitle: "24/7 Availability:",
+                  text: "Access your companion whenever you need support—day or night."
+                },
+                {
+                  subtitle: "Continuous Growth:",
+                  text: "The more you interact, the better your companion understands and supports you."
+                }
+              ]
             }
           ].map((card, index) => (
             <motion.div
@@ -102,9 +111,22 @@ const Index = () => {
                   <CardTitle className="text-xl font-display mb-4 text-[#D91F3A]">
                     {card.title}
                   </CardTitle>
-                  <p className="text-gray-600 text-base leading-relaxed whitespace-pre-line">
-                    {card.description}
-                  </p>
+                  {typeof card.description === 'string' ? (
+                    <p className="text-gray-600 text-base leading-relaxed">
+                      {card.description}
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {card.description.map((item, idx) => (
+                        <div key={idx} className="space-y-2">
+                          <h4 className="text-gray-800 font-medium">{item.subtitle}</h4>
+                          <p className="text-gray-600 text-base leading-relaxed">
+                            {item.text}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardHeader>
               </Card>
             </motion.div>
