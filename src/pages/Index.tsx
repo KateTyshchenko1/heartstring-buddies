@@ -15,6 +15,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
+      {/* Header section */}
       <header className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -35,7 +36,7 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-3xl mx-auto"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display mb-4 text-[#D91F3A] leading-tight">
             Your Perfect Person, Thoughtfully Crafted
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 px-4">
@@ -62,7 +63,7 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center mb-4 text-[#D91F3A] leading-tight"
+          className="text-2xl sm:text-3xl md:text-4xl font-display text-center mb-4 text-[#D91F3A] leading-tight"
         >
           Design your companion in less than 5 minutes
         </motion.h2>
@@ -78,7 +79,7 @@ const Index = () => {
           {[
             {
               title: "Personalize Your Companion",
-              description: "Answer X questions to help you build your perfect companion. From things like personality traits to communication style."
+              description: "Answer 10 questions to help you build your perfect companion. From things like personality traits to communication style."
             },
             {
               title: "Start the Conversation",
@@ -96,7 +97,7 @@ const Index = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Card className="border-none shadow-md bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
-                <CardHeader>
+                <CardHeader className="p-6">
                   <CardTitle className="text-xl font-display mb-4 text-[#D91F3A]">
                     {card.title}
                   </CardTitle>
@@ -118,9 +119,56 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-xl text-center"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display mb-8 text-[#D91F3A] leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display mb-8 text-[#D91F3A] leading-tight">
             Experience the Difference Today
           </h2>
+          <p className="text-lg md:text-xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
+            Unlike other AI companions, What a Girl Wants is more than just an AI boyfriend—it's a personalized emotional support system dedicated to helping you thrive. We focus on deep understanding and meaningful connections to provide genuine support that empowers you to grow and learn.
+          </p>
+          
+          <div className="grid sm:grid-cols-2 gap-6 mb-12">
+            {[
+              {
+                icon: Heart,
+                title: "Alleviate Stress and Anxiety",
+                description: "Share your thoughts and lighten emotional burdens with someone who truly listens and cares about your well-being."
+              },
+              {
+                icon: Star,
+                title: "Elevate Your Mood",
+                description: "Engage in uplifting conversations that brighten your day and make you feel genuinely valued."
+              },
+              {
+                icon: Sprout,
+                title: "Deepen Self-Awareness",
+                description: "Reflect on your feelings with a companion who helps you gain insights into yourself, fostering self-discovery and emotional intelligence."
+              },
+              {
+                icon: CheckCircle2,
+                title: "Foster Learning and Development",
+                description: "Receive encouragement and guidance that support your journey towards personal goals and aspirations."
+              }
+            ].map((benefit, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="bg-white/50 border-none shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-xl bg-primary-soft">
+                        <benefit.icon className="w-6 h-6 text-[#D91F3A]" />
+                      </div>
+                      <CardTitle className="text-xl">{benefit.title}</CardTitle>
+                    </div>
+                    <p className="text-gray-600 text-base leading-relaxed">{benefit.description}</p>
+                  </CardHeader>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
 
           <div className="bg-cream-soft rounded-2xl p-8 mb-12">
             <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
