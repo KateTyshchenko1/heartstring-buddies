@@ -39,10 +39,10 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
         transition={{ duration: 0.6 }}
         className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-xl text-center"
       >
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display mb-8 text-[#D91F3A] leading-tight">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-display mb-8 text-[#D91F3A] leading-tight">
           Experience the Difference Today
         </h2>
-        <p className="text-lg md:text-xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
+        <p className="text-sm md:text-base text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
           Unlike other AI companions, What a Girl Wants is more than just an AI boyfriend—it's a personalized emotional support system dedicated to helping you thrive. We focus on deep understanding and meaningful connections to provide genuine support that empowers you to grow and learn.
         </p>
         
@@ -70,7 +70,7 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
         </div>
 
         <div className="bg-cream-soft rounded-2xl p-8 mb-12">
-          <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+          <p className="text-sm md:text-base text-gray-700 leading-relaxed">
             Discover the difference of a companion designed to be your partner in growth, learning, and emotional support. Try it today and embark on a journey towards a happier, more fulfilled you.
           </p>
         </div>
