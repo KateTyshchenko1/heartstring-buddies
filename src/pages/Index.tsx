@@ -35,22 +35,38 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto"
+          className="max-w-5xl mx-auto"
         >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
-            Your Perfect Person, Thoughtfully Crafted
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 px-4">
-            An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
-          </p>
-          <div className="flex flex-col items-center gap-3">
-            <Button 
-              size="lg" 
-              onClick={handleCreateClick}
-              className="text-lg px-8 py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
-            >
-              Create Yours
-            </Button>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-left">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
+                Your Perfect Person, Thoughtfully Crafted
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8">
+                An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
+              </p>
+              <Button 
+                size="lg" 
+                onClick={handleCreateClick}
+                className="text-lg px-8 py-6 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
+              >
+                Create Yours
+              </Button>
+            </div>
+            <div className="relative">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="rounded-2xl overflow-hidden shadow-2xl"
+              >
+                <img 
+                  src="https://i.imgur.com/BstoFJ1.gif" 
+                  alt="AI Companion Animation" 
+                  className="w-full h-auto rounded-2xl"
+                />
+              </motion.div>
+            </div>
           </div>
         </motion.div>
       </section>
