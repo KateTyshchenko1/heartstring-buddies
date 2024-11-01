@@ -37,8 +37,8 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-7xl mx-auto"
         >
-          <div className="grid md:grid-cols-2 items-center">
-            <div className="text-left flex flex-col items-start">
+          <div className="grid md:grid-cols-[1fr,320px] items-center gap-12">
+            <div className="text-left flex flex-col items-start pr-0">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-[#D91F3A] leading-tight">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
