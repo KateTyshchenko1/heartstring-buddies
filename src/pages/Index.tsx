@@ -61,7 +61,7 @@ const Index = () => {
                 className="rounded-2xl overflow-hidden shadow-2xl"
               >
                 <img 
-                  src="https://i.imgur.com/BstoFJ1.gif" 
+                  src="https://i.imgur.com/1DsPlrT.gif" 
                   alt="AI Companion Animation" 
                   className="w-full h-auto rounded-2xl"
                 />
