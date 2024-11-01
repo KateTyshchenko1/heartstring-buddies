@@ -58,10 +58,10 @@ const Index = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="rounded-2xl overflow-hidden shadow-2xl"
+                className="rounded-2xl overflow-hidden shadow-2xl max-w-[400px] mx-auto"
               >
                 <img 
-                  src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487135/Hero_Gif_if2dqa.gif" 
+                  src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487315/Text_Message_Animation_Conversation_Quote_Instagram_Story_v7je2p.gif" 
                   alt="AI Companion Animation" 
                   className="w-full h-auto rounded-2xl"
                 />
