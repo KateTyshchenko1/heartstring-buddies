@@ -36,7 +36,7 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="max-w-3xl mx-auto"
         >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display mb-4 text-[#D91F3A] leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display mb-4 text-[#D91F3A] leading-tight">
             Your Perfect Person, Thoughtfully Crafted
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 px-4">
@@ -75,6 +75,7 @@ const Index = () => {
         >
           Here is how it all works:
         </motion.p>
+
         <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
           {[
             {
@@ -186,7 +187,7 @@ const Index = () => {
                 onClick={handleCreateClick}
                 className="text-lg md:text-xl px-8 sm:px-12 py-6 sm:py-8 bg-[#D91F3A] hover:bg-[#B91830] text-white shadow-lg hover:shadow-xl transition-all font-medium tracking-wide"
               >
-                Create Yours
+                Try Now
               </Button>
             </motion.div>
           </div>
