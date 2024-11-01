@@ -16,7 +16,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF5F5] via-[#FFEFEF] to-[#FFF0EA]">
-      {/* Header section */}
       <header className="container mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -29,20 +28,19 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="container mx-auto px-4 sm:px-6 pt-2 sm:pt-4 pb-6 sm:pb-8 text-center border-b border-gray-100">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-7xl mx-auto"
+          className="max-w-[1400px] mx-auto"
         >
-          <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div className="text-left md:pr-12 lg:pr-24 flex flex-col items-start sm:items-start max-w-3xl">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-left md:pr-12 lg:pr-32 flex flex-col items-start sm:items-start max-w-[700px]">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-display text-[#D91F3A] leading-tight">
                 Your Perfect Person, Thoughtfully Crafted
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mt-6 mb-8 max-w-[600px]">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
               <div className="w-full sm:w-auto flex justify-center sm:justify-start">
@@ -60,7 +58,7 @@ const Index = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="max-w-[320px]"
+                className="max-w-[400px]"
               >
                 <img 
                   src="https://res.cloudinary.com/djzoneohv/image/upload/v1730487315/Text_Message_Animation_Conversation_Quote_Instagram_Story_v7je2p.gif" 
@@ -73,7 +71,6 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Features Section */}
       <div className="space-y-8">
         <FeatureCards />
         <ExperienceCards />
