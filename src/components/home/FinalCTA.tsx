@@ -53,16 +53,17 @@ const FinalCTA = ({ onTryNowClick }: FinalCTAProps) => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="h-full"
             >
-              <Card className="bg-white/50 border-none shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <CardHeader>
+              <Card className="bg-white/50 border-none shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
+                <CardHeader className="h-full flex flex-col">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 rounded-xl bg-primary-soft">
                       <benefit.icon className="w-6 h-6 text-[#D91F3A]" />
                     </div>
-                    <CardTitle className="text-xl">{benefit.title}</CardTitle>
+                    <CardTitle className="text-xl text-left">{benefit.title}</CardTitle>
                   </div>
-                  <p className="text-gray-600 text-base leading-relaxed">{benefit.description}</p>
+                  <p className="text-gray-600 text-base leading-relaxed text-left flex-grow">{benefit.description}</p>
                 </CardHeader>
               </Card>
             </motion.div>
