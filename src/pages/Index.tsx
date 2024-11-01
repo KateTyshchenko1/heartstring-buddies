@@ -46,7 +46,7 @@ const Index = () => {
               <p className="text-base sm:text-lg text-gray-600 mt-6 mb-8 max-w-2xl">
                 An empathetic AI companion that listens, understands, and grows with you—because everyone deserves to feel heard.
               </p>
-              <div className="w-full sm:w-auto">
+              <div className="w-full sm:w-auto flex justify-center sm:justify-start">
                 <Button 
                   size="lg" 
                   onClick={handleCreateClick}
